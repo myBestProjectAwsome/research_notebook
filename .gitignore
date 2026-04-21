@@ -1,0 +1,31 @@
+
+# Fichiers de compilation LaTeX
+*.aux
+*.log
+*.toc
+*.out
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.blg
+*.bbl
+*.idx
+*.ind
+*.ilg
+*.lof
+*.lot
+
+# PDF généré (optionnel - décommenter si vous ne voulez pas versionner le PDF)
+# cahier_de_recherches.pdf
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+# Éditeurs
+.vscode/
+.idea/
+*.sublime-*

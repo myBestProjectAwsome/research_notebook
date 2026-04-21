@@ -1,0 +1,1698 @@
+\documentclass[12pt,a4paper]{report}
+
+% ── Encodage et langue ──
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% babel french non disponible dans cet environnement
+% Pour compiler localement, décommenter :
+% \usepackage[french]{babel}
+
+% ── Mise en page ──
+\usepackage[margin=2.5cm, top=3cm, bottom=3cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\onehalfspacing
+
+% ── Mathématiques ──
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% ── Graphiques et couleurs ──
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, positioning, decorations.pathreplacing}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+
+% ── Divers ──
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{bookmark}
+% microtype désactivé (incompatible avec les polices disponibles)
+% \usepackage{microtype}
+
+% ═══════════════════════════════════════
+%   PALETTE DE COULEURS
+% ═══════════════════════════════════════
+\definecolor{deepblue}{HTML}{1B3A5C}
+\definecolor{accentblue}{HTML}{2E86C1}
+\definecolor{lightblue}{HTML}{D6EAF8}
+\definecolor{deepgreen}{HTML}{1E6F50}
+\definecolor{lightgreen}{HTML}{D5F5E3}
+\definecolor{deepred}{HTML}{922B21}
+\definecolor{lightred}{HTML}{FADBD8}
+\definecolor{deeporange}{HTML}{B9770E}
+\definecolor{lightorange}{HTML}{FDEBD0}
+\definecolor{deeppurple}{HTML}{6C3483}
+\definecolor{lightpurple}{HTML}{EBDEF0}
+\definecolor{darkgray}{HTML}{2C3E50}
+\definecolor{pagebg}{HTML}{FDFEFE}
+
+% ═══════════════════════════════════════
+%   ENVIRONNEMENTS THÉORIQUES
+% ═══════════════════════════════════════
+\theoremstyle{definition}
+\newtheorem{definition}{Définition}[chapter]
+\newtheorem{exemple}{Exemple}[chapter]
+
+\theoremstyle{plain}
+\newtheorem{theoreme}{Théorème}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{corollaire}{Corollaire}[chapter]
+\newtheorem{lemme}{Lemme}[chapter]
+
+\theoremstyle{remark}
+\newtheorem{remarque}{Remarque}[chapter]
+
+% ═══════════════════════════════════════
+%   BOÎTES COLORÉES (tcolorbox)
+% ═══════════════════════════════════════
+
+% Boîte Définition
+\newtcolorbox{defbox}[1][]{
+  colback=lightblue,
+  colframe=accentblue,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={Définition~#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% Boîte Théorème
+\newtcolorbox{thmbox}[1][]{
+  colback=lightgreen,
+  colframe=deepgreen,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={Théorème~#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% Boîte Proposition
+\newtcolorbox{propbox}[1][]{
+  colback=lightgreen!60,
+  colframe=deepgreen!70,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={Proposition~#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% Boîte Preuve / Démonstration
+\newtcolorbox{proofbox}[1][Démonstration]{
+  colback=white,
+  colframe=darkgray!50,
+  coltitle=darkgray,
+  fonttitle=\itshape\sffamily,
+  title={#1},
+  arc=2pt,
+  boxrule=0.5pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  breakable
+}
+
+% Boîte Remarque
+\newtcolorbox{rembox}[1][Remarque]{
+  colback=lightorange,
+  colframe=deeporange,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% Boîte Exemple
+\newtcolorbox{exbox}[1][Exemple]{
+  colback=lightpurple!50,
+  colframe=deeppurple!70,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  breakable
+}
+
+% Boîte Intuition personnelle
+\newtcolorbox{intuitionbox}[1][Mon intuition]{
+  colback=lightred!40,
+  colframe=deepred!70,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={\(\star\) #1},
+  arc=3pt,
+  boxrule=1.5pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  breakable
+}
+
+% Boîte Méthode
+\newtcolorbox{methodbox}[1][Méthode]{
+  enhanced,
+  colback=white,
+  colframe=accentblue!80,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={#1},
+  arc=3pt,
+  boxrule=1.5pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  shadow={2pt}{-2pt}{0pt}{black!20},
+  breakable
+}
+
+% ═══════════════════════════════════════
+%   EN-TÊTES ET PIEDS DE PAGE
+% ═══════════════════════════════════════
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\sffamily\color{darkgray}\leftmark}
+\fancyhead[R]{\small\sffamily\color{darkgray}Cahier de Recherche}
+\fancyfoot[C]{\small\sffamily\color{darkgray}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ═══════════════════════════════════════
+%   FORMAT DES TITRES
+% ═══════════════════════════════════════
+\titleformat{\chapter}[display]
+  {\normalfont\Huge\bfseries\sffamily\color{deepblue}}
+  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\sffamily\color{deepblue}}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\sffamily\color{accentblue}}
+  {\thesubsection}{1em}{}
+
+% ═══════════════════════════════════════
+%   COMMANDES PERSONNALISÉES
+% ═══════════════════════════════════════
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\DeclareMathOperator{\re}{Re}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\argop}{arg}
+
+% ═══════════════════════════════════════
+%   HYPERREF CONFIG
+% ═══════════════════════════════════════
+\hypersetup{
+  colorlinks=true,
+  linkcolor=deepblue,
+  urlcolor=accentblue,
+  citecolor=deepgreen,
+  pdftitle={Cahier de Recherche -- Mathématiques},
+  pdfauthor={},
+  bookmarksnumbered=true,
+}
+
+% ═══════════════════════════════════════
+\begin{document}
+
+% ═══════════════════════════════════════
+%   PAGE DE TITRE
+% ═══════════════════════════════════════
+\begin{titlepage}
+\begin{center}
+
+\vspace*{2cm}
+
+{\color{deepblue}\rule{\textwidth}{2pt}}
+
+\vspace{1cm}
+
+{\Huge\bfseries\sffamily\color{deepblue} Cahier de Recherche}
+
+\vspace{0.5cm}
+
+{\LARGE\sffamily\color{accentblue} Mathématiques --- Fondements}
+
+\vspace{0.3cm}
+
+{\large\sffamily\color{darkgray} Logique \(\cdot\) Nombres Complexes \(\cdot\) Suites Numériques \(\cdot\) Arithmétique}
+
+\vspace{1cm}
+
+{\color{deepblue}\rule{\textwidth}{2pt}}
+
+\vspace{2cm}
+
+{\Large\sffamily\color{darkgray} \textbf{Auteur :} \textit{[MAJDOUB BILEL]}}
+
+\vspace{0.5cm}
+
+{\large\sffamily\color{darkgray} EPITA --- Cycle Ingénieur 1\textsuperscript{re} année}
+
+\vspace{0.3cm}
+
+{\large\sffamily\color{darkgray} Spécialisation Cybersécurité}
+
+\vspace{2cm}
+
+\begin{tikzpicture}
+  \draw[accentblue, thick] (0,0) circle (1.5);
+  \foreach \k in {0,...,6} {
+    \fill[deepblue] ({1.5*cos(360*\k/7)},{1.5*sin(360*\k/7)}) circle (2pt);
+    \draw[accentblue!60, thin] ({1.5*cos(360*\k/7)},{1.5*sin(360*\k/7)}) -- ({1.5*cos(360*(\k+2)/7)},{1.5*sin(360*(\k+2)/7)});
+  }
+  \node[deepblue, font=\small\sffamily] at (0,-2.2) {Racines 7\textsuperscript{e} de l'unité};
+\end{tikzpicture}
+
+\vfill
+
+{\sffamily\color{darkgray} Année universitaire 2025--2026}
+
+\vspace{0.5cm}
+
+{\small\sffamily\color{darkgray!60} Document de recherche personnel attestant de la maîtrise des fondements mathématiques.}
+
+\end{center}
+\end{titlepage}
+
+% ═══════════════════════════════════════
+%   TABLE DES MATIÈRES
+% ═══════════════════════════════════════
+\tableofcontents
+\newpage
+
+% ═══════════════════════════════════════
+%   INTRODUCTION GÉNÉRALE
+% ═══════════════════════════════════════
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+
+Ce cahier de recherche documente mon apprentissage approfondi de trois piliers fondamentaux des mathématiques : la \textbf{logique et les raisonnements}, les \textbf{nombres complexes}, et les \textbf{suites numériques}. Il ne s'agit pas d'une simple recopie de cours, mais d'une reconstruction personnelle des concepts, enrichie de mes propres reformulations, intuitions et démonstrations détaillées.
+
+\begin{intuitionbox}[Démarche]
+Ma méthode d'apprentissage repose sur un principe directeur : pour chaque concept, je cherche la \emph{règle génératrice} sous-jacente plutôt que de mémoriser le résultat en surface. La question que je me pose systématiquement est :
+
+\medskip
+\centerline{\textit{<<~Quelle règle me permettrait de retrouver cela si je l'avais oublié~?~>>}}
+\medskip
+
+Ce cahier reflète cette approche. Chaque section reconstruit la théorie à partir de ses fondations, et mes commentaires personnels (dans des encadrés comme celui-ci) explicitent les liens structurels que j'ai identifiés.
+\end{intuitionbox}
+
+\textbf{Structure du cahier.} Chaque chapitre suit le même schéma :
+\begin{enumerate}[leftmargin=2cm]
+  \item \textbf{Définitions et constructions} --- les objets fondamentaux, posés rigoureusement.
+  \item \textbf{Propriétés et théorèmes} --- les résultats clés avec démonstrations complètes.
+  \item \textbf{Applications et exemples} --- mise en pratique concrète.
+  \item \textbf{Synthèse personnelle} --- mes observations sur les connexions entre concepts.
+\end{enumerate}
+
+
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 1 : LOGIQUE               ║
+% ╚═══════════════════════════════════════╝
+\chapter{Logique et Raisonnements}
+
+\section{Pourquoi la logique est fondamentale}
+
+Les mathématiques reposent sur un langage précis là où la langue naturelle est ambiguë. Le mot <<~ou~>> en français peut être exclusif (<<~fromage ou dessert~>>) ou inclusif (<<~les as ou les c\oe urs~>>). La logique formelle lève cette ambiguïté.
+
+\begin{intuitionbox}[Lien avec la cybersécurité]
+En cybersécurité, la logique formelle est omniprésente : les règles de pare-feu, les politiques de contrôle d'accès, et même les requêtes SQL reposent sur des opérations booléennes. Comprendre \texttt{AND}, \texttt{OR}, \texttt{NOT} en logique, c'est comprendre les fondements de la sécurité informatique.
+\end{intuitionbox}
+
+\section{Assertions et connecteurs logiques}
+
+\begin{defbox}[--- Assertion]
+Une \textbf{assertion} (ou proposition logique) est un énoncé qui est soit \textbf{vrai}, soit \textbf{faux}, mais jamais les deux simultanément.
+\end{defbox}
+
+\subsection{Les connecteurs fondamentaux}
+
+À partir de deux assertions $P$ et $Q$, on construit de nouvelles assertions :
+
+\begin{defbox}[--- Connecteurs logiques]
+\begin{itemize}[leftmargin=1.5cm]
+  \item \textbf{Conjonction} : <<~$P$ et $Q$~>> est vraie si et seulement si $P$ est vraie \emph{et} $Q$ est vraie.
+  \item \textbf{Disjonction} : <<~$P$ ou $Q$~>> est vraie si \emph{au moins} l'une des deux est vraie.
+  \item \textbf{Négation} : <<~non $P$~>> est vraie si $P$ est fausse, et réciproquement.
+\end{itemize}
+\end{defbox}
+
+\subsection{Tables de vérité}
+
+\begin{center}
+\begin{tikzpicture}[
+  every node/.style={font=\small\sffamily},
+  table/.style={
+    matrix of nodes,
+    row sep=-\pgflinewidth,
+    column sep=-\pgflinewidth,
+    nodes={draw, minimum width=1.2cm, minimum height=0.7cm, anchor=center},
+    row 1/.style={nodes={fill=deepblue, text=white, font=\small\sffamily\bfseries}},
+    column 1/.style={nodes={fill=lightblue}},
+  }
+]
+
+% ET
+\matrix[table] (et) at (0,0) {
+  $P \wedge Q$ & V & F \\
+  V & V & F \\
+  F & F & F \\
+};
+\node[above=0.3cm, font=\sffamily\bfseries\color{deepblue}] at (et.north) {ET ($\wedge$)};
+
+% OU
+\matrix[table] (ou) at (5,0) {
+  $P \vee Q$ & V & F \\
+  V & V & V \\
+  F & V & F \\
+};
+\node[above=0.3cm, font=\sffamily\bfseries\color{deepblue}] at (ou.north) {OU ($\vee$)};
+
+% NON
+\matrix[table] (non) at (10,0) {
+  $P$ & non $P$ \\
+  V & F \\
+  F & V \\
+};
+\node[above=0.3cm, font=\sffamily\bfseries\color{deepblue}] at (non.north) {NON ($\neg$)};
+
+\end{tikzpicture}
+\end{center}
+
+\subsection{L'implication}
+
+\begin{defbox}[--- Implication]
+L'implication $P \Rightarrow Q$ est définie comme l'assertion <<~$(\text{non } P) \text{ ou } Q$~>>. Autrement dit :
+
+\medskip
+$P \Rightarrow Q$ est \textbf{fausse} uniquement lorsque $P$ est vraie et $Q$ est fausse.
+
+\medskip
+En particulier, si $P$ est fausse, alors $P \Rightarrow Q$ est \textbf{toujours vraie}, quel que soit $Q$.
+\end{defbox}
+
+\begin{intuitionbox}[Comprendre le <<~faux implique tout~>>]
+Ce point est contre-intuitif. L'astuce : l'implication $P \Rightarrow Q$ est une \emph{promesse}. Si je dis <<~s'il pleut, je prends un parapluie~>>, la promesse n'est brisée que dans un cas : il pleut et je n'ai pas de parapluie. S'il ne pleut pas, je n'ai rien promis, donc la promesse est respectée dans tous les cas. C'est exactement la ligne <<~F $\Rightarrow$ \dots = V~>> de la table de vérité.
+\end{intuitionbox}
+
+\subsection{L'équivalence}
+
+\begin{defbox}[--- Équivalence]
+L'équivalence $P \Leftrightarrow Q$ est l'assertion <<~$(P \Rightarrow Q)$ et $(Q \Rightarrow P)$~>>.
+
+Elle est vraie lorsque $P$ et $Q$ ont la même valeur de vérité (toutes deux vraies ou toutes deux fausses).
+\end{defbox}
+
+\subsection{Lois fondamentales}
+
+\begin{propbox}[--- Lois de De Morgan et distributivité]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $\text{non}(P \text{ et } Q) \;\Leftrightarrow\; (\text{non } P) \text{ ou } (\text{non } Q)$
+  \item $\text{non}(P \text{ ou } Q) \;\Leftrightarrow\; (\text{non } P) \text{ et } (\text{non } Q)$
+  \item $P \text{ et } (Q \text{ ou } R) \;\Leftrightarrow\; (P \text{ et } Q) \text{ ou } (P \text{ et } R)$
+  \item $(P \Rightarrow Q) \;\Leftrightarrow\; (\text{non } Q \Rightarrow \text{non } P)$ \quad \textit{(contraposée)}
+\end{enumerate}
+\end{propbox}
+
+\begin{proofbox}
+Pour la loi de De Morgan (1), on vérifie par table de vérité que les deux colonnes sont identiques pour toutes les combinaisons de valeurs de $P$ et $Q$ :
+
+\smallskip
+\begin{center}
+\begin{tabular}{cc|c|c}
+$P$ & $Q$ & $\text{non}(P \wedge Q)$ & $(\neg P) \vee (\neg Q)$ \\
+\hline
+V & V & F & F \\
+V & F & V & V \\
+F & V & V & V \\
+F & F & V & V \\
+\end{tabular}
+\end{center}
+\smallskip
+
+Les deux colonnes sont identiques, donc les assertions sont logiquement équivalentes. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Pattern structurel des lois de De Morgan]
+La règle génératrice est simple : la négation <<~traverse~>> un connecteur en le transformant en son dual :
+\begin{itemize}[leftmargin=1cm]
+  \item $\text{non}(\text{et}) \longrightarrow \text{ou}$
+  \item $\text{non}(\text{ou}) \longrightarrow \text{et}$
+\end{itemize}
+C'est la même structure que $\overline{A \cap B} = \overline{A} \cup \overline{B}$ en théorie des ensembles.
+\end{intuitionbox}
+
+
+\section{Quantificateurs}
+
+\begin{defbox}[--- Quantificateurs]
+\begin{itemize}[leftmargin=1.5cm]
+  \item \textbf{Universel} : $\forall x \in E,\; P(x)$ est vraie si $P(x)$ est vraie pour \emph{tout} élément $x$ de $E$.
+  \item \textbf{Existentiel} : $\exists x \in E,\; P(x)$ est vraie s'il existe \emph{au moins un} $x$ dans $E$ tel que $P(x)$ soit vraie.
+\end{itemize}
+\end{defbox}
+
+\subsection{Négation des quantificateurs}
+
+\begin{propbox}[--- Règles de négation]
+\[
+  \text{non}\bigl(\forall x \in E,\; P(x)\bigr) \;\Leftrightarrow\; \exists x \in E,\; \text{non } P(x)
+\]
+\[
+  \text{non}\bigl(\exists x \in E,\; P(x)\bigr) \;\Leftrightarrow\; \forall x \in E,\; \text{non } P(x)
+\]
+\end{propbox}
+
+\begin{intuitionbox}[Algorithme de négation]
+Pour nier une phrase logique, on applique mécaniquement :
+\begin{enumerate}[leftmargin=1cm]
+  \item $\forall \longleftrightarrow \exists$ (on échange les quantificateurs)
+  \item On nie la proposition finale
+  \item Les inégalités strictes deviennent larges et vice versa
+\end{enumerate}
+\textbf{Exemple :} La négation de $\forall \varepsilon > 0,\; \exists N \in \N,\; \forall n \geqslant N,\; |u_n - \ell| \leqslant \varepsilon$ est :
+\[
+  \exists \varepsilon > 0,\; \forall N \in \N,\; \exists n \geqslant N,\; |u_n - \ell| > \varepsilon
+\]
+C'est exactement <<~la suite ne converge pas vers $\ell$~>>.
+\end{intuitionbox}
+
+\subsection{L'ordre des quantificateurs compte}
+
+\begin{exbox}[Permutation interdite]
+Les deux assertions suivantes sont \textbf{différentes} :
+\begin{align*}
+  &\forall x \in \R,\; \exists y \in \R,\; x + y > 0 \quad \text{(\textbf{vraie} : prendre $y = |x| + 1$)} \\
+  &\exists y \in \R,\; \forall x \in \R,\; x + y > 0 \quad \text{(\textbf{fausse} : aucun $y$ fixé ne convient pour tout $x$)}
+\end{align*}
+Dans la première, $y$ \emph{dépend} de $x$. Dans la seconde, $y$ doit être \emph{universel}.
+\end{exbox}
+
+
+\section{Méthodes de raisonnement}
+
+\subsection{Raisonnement direct}
+
+Pour montrer $P \Rightarrow Q$ : on suppose $P$ vraie et on montre $Q$.
+
+\begin{exbox}
+\textbf{Montrer que si $a, b \in \Q$ alors $a + b \in \Q$.}
+
+On écrit $a = \frac{p}{q}$ et $b = \frac{p'}{q'}$ avec $p, p' \in \Z$ et $q, q' \in \N^*$. Alors :
+\[
+  a + b = \frac{pq' + qp'}{qq'} \in \Q
+\]
+car $pq' + qp' \in \Z$ et $qq' \in \N^*$. \hfill$\square$
+\end{exbox}
+
+\subsection{Raisonnement par contraposée}
+
+On exploite l'équivalence : $(P \Rightarrow Q) \;\Leftrightarrow\; (\text{non } Q \Rightarrow \text{non } P)$.
+
+\begin{exbox}
+\textbf{Montrer que si $n^2$ est pair alors $n$ est pair.}
+
+\textit{Contraposée :} on montre que si $n$ est impair alors $n^2$ est impair. Si $n = 2k+1$, alors $n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1$, qui est bien impair. \hfill$\square$
+\end{exbox}
+
+\subsection{Raisonnement par l'absurde}
+
+On suppose $P$ vraie et $Q$ fausse simultanément, puis on dérive une contradiction.
+
+\begin{exbox}
+\textbf{Montrer :} si $a, b \geqslant 0$ et $\frac{a}{1+b} = \frac{b}{1+a}$, alors $a = b$.
+
+Supposons $a \neq b$. De $a(1+a) = b(1+b)$, on tire $a^2 - b^2 = b - a$, soit $(a-b)(a+b) = -(a-b)$. Comme $a \neq b$, on simplifie : $a + b = -1$. Contradiction car $a, b \geqslant 0$. \hfill$\square$
+\end{exbox}
+
+\subsection{Récurrence}
+
+\begin{methodbox}[Raisonnement par récurrence]
+Pour montrer $P(n)$ pour tout $n \geqslant n_0$ :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Initialisation :} vérifier $P(n_0)$.
+  \item \textbf{Hérédité :} fixer $n \geqslant n_0$, supposer $P(n)$ vraie (\textit{hypothèse de récurrence}), montrer $P(n+1)$.
+  \item \textbf{Conclusion :} par le principe de récurrence, $P(n)$ est vraie pour tout $n \geqslant n_0$.
+\end{enumerate}
+\end{methodbox}
+
+\begin{exbox}
+\textbf{Montrer que $2^n \geqslant n$ pour tout $n \in \N$.}
+
+\textit{Initialisation :} $2^0 = 1 \geqslant 0$. \checkmark
+
+\textit{Hérédité :} supposons $2^n \geqslant n$. Alors $2^{n+1} = 2 \cdot 2^n \geqslant 2n \geqslant n + 1$ (car $n \geqslant 1$).
+
+Pour $n = 0$ : $2^1 = 2 \geqslant 1$. \checkmark \hfill$\square$
+\end{exbox}
+
+
+\section{Synthèse personnelle --- Logique}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. La logique comme fondation unificatrice.} Tout le reste des mathématiques (suites, complexes, analyse, algèbre) s'appuie sur ce langage. La définition $\varepsilon$-$N$ de la limite d'une suite, la caractérisation d'un point fixe --- tout cela n'est que de la logique appliquée.
+
+\textbf{2. Lien avec la programmation.} Les lois de De Morgan apparaissent directement dans l'optimisation de conditions booléennes en code. Le raisonnement par récurrence est l'analogue mathématique de la preuve de correction d'un algorithme récursif.
+
+\textbf{3. Pattern de la contraposée.} Quand une implication directe semble difficile (car la conclusion donne peu de prise), essayer la contraposée. C'est un réflexe que j'ai intégré : <<~si la conclusion est plus simple à nier que l'hypothèse n'est à exploiter, prendre la contraposée~>>.
+\end{intuitionbox}
+
+
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 2 : NOMBRES COMPLEXES     ║
+% ╚═══════════════════════════════════════╝
+\chapter{Nombres Complexes}
+
+\section{Construction et motivations}
+
+La chaîne d'extensions $\N \subset \Z \subset \Q \subset \R \subset \C$ répond chaque fois à un besoin : résoudre une équation qui n'a pas de solution dans l'ensemble courant. Les complexes sont le \emph{bout de la chaîne} grâce au théorème de d'Alembert-Gauss.
+
+\begin{intuitionbox}[Pourquoi les complexes en cybersécurité]
+Les nombres complexes interviennent en cryptographie (transformée de Fourier rapide pour la multiplication polynomiale dans les algorithmes de chiffrement), en traitement du signal (analyse fréquentielle), et les racines de l'unité sont au c\oe ur de la NTT (\textit{Number Theoretic Transform}) utilisée dans les schémas post-quantiques comme Kyber/CRYSTALS.
+\end{intuitionbox}
+
+\section{Définitions fondamentales}
+
+\begin{defbox}[--- Nombre complexe]
+Un nombre complexe est un élément $z = a + ib$ où $a, b \in \R$ et $i^2 = -1$.
+\begin{itemize}[leftmargin=1cm]
+  \item $a = \re(z)$ est la \textbf{partie réelle},
+  \item $b = \im(z)$ est la \textbf{partie imaginaire},
+  \item L'écriture $z = a + ib$ est la \textbf{forme algébrique}.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[--- Conjugué et module]
+Pour $z = a + ib$ :
+\begin{itemize}[leftmargin=1cm]
+  \item Le \textbf{conjugué} est $\bar{z} = a - ib$ (symétrie par rapport à l'axe réel).
+  \item Le \textbf{module} est $|z| = \sqrt{a^2 + b^2} = \sqrt{z\bar{z}}$.
+\end{itemize}
+\end{defbox}
+
+\subsection{Propriétés du conjugué et du module}
+
+\begin{propbox}[--- Propriétés algébriques]
+Pour $z, z' \in \C$ :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $\overline{z + z'} = \bar{z} + \bar{z'}$, \quad $\overline{z \cdot z'} = \bar{z} \cdot \bar{z'}$, \quad $\bar{\bar{z}} = z$
+  \item $z = \bar{z} \;\Leftrightarrow\; z \in \R$
+  \item $|z|^2 = z \cdot \bar{z}$, \quad $|\bar{z}| = |z|$, \quad $|z \cdot z'| = |z| \cdot |z'|$
+  \item $|z| = 0 \;\Leftrightarrow\; z = 0$
+  \item $z + \bar{z} = 2\re(z)$, \quad $z - \bar{z} = 2i\,\im(z)$
+\end{enumerate}
+\end{propbox}
+
+\begin{intuitionbox}[Le conjugué comme <<~miroir~>>]
+Le conjugué est l'outil central pour ramener un calcul complexe à des calculs réels. L'identité $z\bar{z} = |z|^2 \in \R_+$ est la clé : multiplier par le conjugué <<~réalise~>> une expression.
+
+C'est le même mécanisme que rationaliser $\frac{1}{\sqrt{2}} = \frac{\sqrt{2}}{2}$, mais en dimension 2.
+\end{intuitionbox}
+
+
+\section{Inégalité triangulaire}
+
+\begin{thmbox}[--- Inégalité triangulaire]
+Pour tous $z, z' \in \C$ :
+\[
+  |z + z'| \leqslant |z| + |z'|
+\]
+\end{thmbox}
+
+\begin{proofbox}
+On calcule $|z + z'|^2$ :
+\begin{align*}
+  |z + z'|^2 &= (z + z')\overline{(z + z')} = (z + z')(\bar{z} + \bar{z'}) \\
+  &= z\bar{z} + z'\bar{z'} + z\bar{z'} + \overline{z\bar{z'}} \\
+  &= |z|^2 + |z'|^2 + 2\re(z\bar{z'})
+\end{align*}
+Or $\re(w) \leqslant |w|$ pour tout $w \in \C$, donc :
+\[
+  |z + z'|^2 \leqslant |z|^2 + |z'|^2 + 2|z\bar{z'}| = |z|^2 + |z'|^2 + 2|z||z'| = (|z| + |z'|)^2
+\]
+On conclut en prenant la racine carrée (les deux membres sont positifs). \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Application géométrique : identité du parallélogramme]
+Dans un parallélogramme de côtés $L = |z|$ et $\ell = |z'|$, avec diagonales $D = |z + z'|$ et $d = |z - z'|$ :
+\[
+  D^2 + d^2 = 2L^2 + 2\ell^2
+\]
+\textit{Preuve :} on développe $|z+z'|^2 + |z-z'|^2 = 2|z|^2 + 2|z'|^2$ par calcul direct.
+\end{exbox}
+
+
+\section{Racines carrées et équation du second degré}
+
+\begin{methodbox}[Calcul des racines carrées de $z = a + ib$]
+On cherche $\omega = x + iy$ tel que $\omega^2 = z$. On obtient le système :
+\[
+\begin{cases}
+  x^2 - y^2 = a \\
+  2xy = b \\
+  x^2 + y^2 = \sqrt{a^2 + b^2}
+\end{cases}
+\]
+La troisième équation (issue de $|\omega|^2 = |z|$) est l'astuce clé. On en déduit :
+\[
+  x^2 = \frac{\sqrt{a^2+b^2} + a}{2}, \qquad y^2 = \frac{\sqrt{a^2+b^2} - a}{2}
+\]
+Le signe de $b$ fixe le signe relatif de $x$ et $y$.
+\end{methodbox}
+
+\begin{propbox}[--- Équation du second degré]
+Pour $az^2 + bz + c = 0$ avec $a, b, c \in \C$, $a \neq 0$ :
+\begin{itemize}[leftmargin=1cm]
+  \item Discriminant : $\Delta = b^2 - 4ac$
+  \item Soit $\delta$ une racine carrée de $\Delta$. Les solutions sont :
+  \[
+    z_1 = \frac{-b + \delta}{2a}, \qquad z_2 = \frac{-b - \delta}{2a}
+  \]
+\end{itemize}
+\end{propbox}
+
+\begin{intuitionbox}[Pas de <<~$\sqrt{\Delta}$~>> en complexe]
+En complexe, il n'y a pas de choix canonique entre les deux racines carrées. On écrit $\delta$ (pas $\sqrt{\Delta}$) pour insister sur ce fait. C'est un piège classique d'examen.
+\end{intuitionbox}
+
+
+\section{Forme trigonométrique et exponentielle}
+
+\begin{defbox}[--- Argument et forme exponentielle]
+Pour $z \in \C^*$, il existe $\theta \in \R$ (défini modulo $2\pi$) tel que :
+\[
+  z = |z|(\cos\theta + i\sin\theta) = |z| \, e^{i\theta}
+\]
+où $\theta = \argop(z)$ est l'\textbf{argument} de $z$.
+\end{defbox}
+
+\subsection{Formule de Moivre}
+
+\begin{thmbox}[--- Formule de Moivre]
+\[
+  (\cos\theta + i\sin\theta)^n = \cos(n\theta) + i\sin(n\theta)
+\]
+En notation exponentielle : $(e^{i\theta})^n = e^{in\theta}$.
+\end{thmbox}
+
+\begin{proofbox}
+Par récurrence sur $n \geqslant 1$.
+
+\textit{Initialisation :} pour $n = 1$, c'est trivial.
+
+\textit{Hérédité :} supposons le résultat vrai au rang $n$. Alors :
+\begin{align*}
+  (\cos\theta + i\sin\theta)^{n+1} &= (\cos(n\theta) + i\sin(n\theta))(\cos\theta + i\sin\theta) \\
+  &= (\cos(n\theta)\cos\theta - \sin(n\theta)\sin\theta) + i(\cos(n\theta)\sin\theta + \sin(n\theta)\cos\theta) \\
+  &= \cos((n+1)\theta) + i\sin((n+1)\theta)
+\end{align*}
+par les formules d'addition. \hfill$\square$
+\end{proofbox}
+
+\subsection{Formules d'Euler}
+
+\begin{propbox}[--- Formules d'Euler]
+\[
+  \cos\theta = \frac{e^{i\theta} + e^{-i\theta}}{2}, \qquad \sin\theta = \frac{e^{i\theta} - e^{-i\theta}}{2i}
+\]
+\end{propbox}
+
+\subsection{Applications : développement et linéarisation}
+
+\begin{methodbox}[Développement : exprimer $\cos(n\theta)$ en puissances de $\cos\theta$, $\sin\theta$]
+On utilise la formule de Moivre : $\cos(n\theta) + i\sin(n\theta) = (\cos\theta + i\sin\theta)^n$, puis on développe par le binôme de Newton et on identifie parties réelle et imaginaire.
+\end{methodbox}
+
+\begin{exbox}[Développement de $\cos 3\theta$]
+\begin{align*}
+  \cos 3\theta + i\sin 3\theta &= (\cos\theta + i\sin\theta)^3 \\
+  &= \cos^3\theta + 3i\cos^2\theta\sin\theta - 3\cos\theta\sin^2\theta - i\sin^3\theta
+\end{align*}
+En identifiant les parties réelles : $\cos 3\theta = \cos^3\theta - 3\cos\theta\sin^2\theta$.
+\end{exbox}
+
+\begin{methodbox}[Linéarisation : exprimer $\cos^n\theta$ en termes de $\cos(k\theta)$]
+On utilise les formules d'Euler : $\cos^n\theta = \left(\frac{e^{i\theta} + e^{-i\theta}}{2}\right)^n$, on développe par le binôme, puis on regroupe les termes conjugués.
+\end{methodbox}
+
+
+\section{Racines $n$-ièmes}
+
+\begin{propbox}[--- Racines $n$-ièmes de $z$]
+Pour $z = \rho e^{i\theta}$ et $n \geqslant 1$, les $n$ racines $n$-ièmes de $z$ sont :
+\[
+  \omega_k = \rho^{1/n} \, e^{i\frac{\theta + 2k\pi}{n}}, \qquad k = 0, 1, \ldots, n-1
+\]
+\end{propbox}
+
+\begin{proofbox}
+On cherche $\omega = re^{it}$ tel que $\omega^n = z$, soit $r^n e^{int} = \rho e^{i\theta}$.
+\begin{itemize}[leftmargin=1cm]
+  \item Module : $r^n = \rho$, donc $r = \rho^{1/n}$.
+  \item Argument : $nt \equiv \theta \pmod{2\pi}$, donc $t = \frac{\theta + 2k\pi}{n}$ pour $k \in \Z$.
+\end{itemize}
+Comme $\omega_{k+n} = \omega_k$, il y a exactement $n$ valeurs distinctes. \hfill$\square$
+\end{proofbox}
+
+\begin{center}
+\begin{tikzpicture}[scale=1.8]
+  \draw[->] (-1.4,0) -- (1.6,0) node[right] {\small $\R$};
+  \draw[->] (0,-1.4) -- (0,1.6) node[above] {\small $i\R$};
+  \draw[accentblue, thin] (0,0) circle (1);
+  \foreach \k in {0,...,4} {
+    \fill[deepblue] ({cos(72*\k)},{sin(72*\k)}) circle (1.5pt);
+    \draw[deepblue, thin] (0,0) -- ({cos(72*\k)},{sin(72*\k)});
+    \node[deepblue, font=\scriptsize] at ({1.25*cos(72*\k)},{1.25*sin(72*\k)}) {$\omega_{\k}$};
+  }
+  \draw[deepred, thin] ({cos(0)},{sin(0)}) -- ({cos(72)},{sin(72)}) -- ({cos(144)},{sin(144)}) -- ({cos(216)},{sin(216)}) -- ({cos(288)},{sin(288)}) -- cycle;
+  \node[below, font=\small\sffamily\color{darkgray}] at (0,-1.6) {Racines 5\textsuperscript{e} de l'unité (pentagone régulier)};
+\end{tikzpicture}
+\end{center}
+
+\begin{intuitionbox}[Structure géométrique des racines $n$-ièmes]
+Les racines $n$-ièmes de l'unité forment un polygone régulier inscrit dans le cercle unité. Cette observation géométrique rend les calculs plus intuitifs : au lieu de retenir la formule, il suffit de savoir que l'on divise le cercle en $n$ parts égales en partant de l'angle $\theta/n$.
+
+\textbf{Application immédiate :} $\omega_0 + \omega_1 + \cdots + \omega_{n-1} = 0$ pour les racines $n$-ièmes de l'unité. C'est la somme géométrique $\frac{1 - 1}{1 - e^{2i\pi/n}} = 0$.
+\end{intuitionbox}
+
+
+\section{Géométrie complexe}
+
+\begin{propbox}[--- Équations géométriques]
+\begin{itemize}[leftmargin=1cm]
+  \item \textbf{Droite :} $\bar{\omega}z + \omega\bar{z} = k$ \quad ($\omega \in \C^*, k \in \R$)
+  \item \textbf{Cercle} de centre $\omega$, rayon $r$ : $z\bar{z} - \bar{\omega}z - \omega\bar{z} = r^2 - |\omega|^2$
+\end{itemize}
+\end{propbox}
+
+\begin{intuitionbox}[Reconnaître droite vs cercle]
+La présence ou l'absence du terme $z\bar{z}$ distingue immédiatement les deux cas : $z\bar{z} = |z|^2$ est un terme quadratique (cercle), son absence donne une équation linéaire (droite).
+\end{intuitionbox}
+
+
+\section{Synthèse personnelle --- Complexes}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Dualité algèbre/géométrie.} Le passage forme algébrique $\leftrightarrow$ forme exponentielle est au c\oe ur de tout. L'addition est naturelle en forme algébrique, la multiplication en forme exponentielle. Choisir la bonne représentation, c'est simplifier le problème.
+
+\textbf{2. La somme géométrique comme outil universel.} La formule $1 + z + z^2 + \cdots + z^n = \frac{1 - z^{n+1}}{1 - z}$ apparaît dans les complexes, les suites, et la cryptographie (polynômes cyclotomiques).
+
+\textbf{3. La racine carrée en complexe.} Le système $\{x^2 - y^2 = a,\; 2xy = b,\; x^2 + y^2 = |z|\}$ est un pattern que l'on peut appliquer mécaniquement. La troisième équation est l'astuce qui rend le système soluble.
+\end{intuitionbox}
+
+
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 3 : LES SUITES            ║
+% ╚═══════════════════════════════════════╝
+\chapter{Les Suites Numériques}
+
+\section{Définitions fondamentales}
+
+\begin{defbox}[--- Suite numérique]
+Une \textbf{suite} est une application $u : \N \to \R$ (ou $\C$). Pour $n \in \N$, on note $u(n) = u_n$ le \textbf{terme général}. La suite est notée $(u_n)_{n \in \N}$ ou $(u_n)_{n \geqslant n_0}$.
+\end{defbox}
+
+\begin{defbox}[--- Bornitude]
+Soit $(u_n)$ une suite.
+\begin{itemize}[leftmargin=1cm]
+  \item $(u_n)$ est \textbf{majorée} si $\exists M \in \R,\; \forall n \in \N,\; u_n \leqslant M$.
+  \item $(u_n)$ est \textbf{minorée} si $\exists m \in \R,\; \forall n \in \N,\; u_n \geqslant m$.
+  \item $(u_n)$ est \textbf{bornée} si $\exists M \in \R,\; \forall n \in \N,\; |u_n| \leqslant M$.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[--- Monotonie]
+\begin{itemize}[leftmargin=1cm]
+  \item $(u_n)$ est \textbf{croissante} si $\forall n \in \N,\; u_{n+1} \geqslant u_n$, soit $u_{n+1} - u_n \geqslant 0$.
+  \item Pour une suite à termes \textbf{strictement positifs} : $(u_n)$ croissante $\Leftrightarrow$ $\forall n,\; \frac{u_{n+1}}{u_n} \geqslant 1$.
+\end{itemize}
+\end{defbox}
+
+
+\section{Limites}
+
+\subsection{Définition formelle}
+
+\begin{defbox}[--- Limite finie]
+La suite $(u_n)$ a pour limite $\ell \in \R$ si :
+\[
+  \forall \varepsilon > 0,\; \exists N \in \N,\; \forall n \geqslant N,\; |u_n - \ell| \leqslant \varepsilon
+\]
+On note $\displaystyle\lim_{n \to +\infty} u_n = \ell$. La suite est alors dite \textbf{convergente}.
+\end{defbox}
+
+\begin{defbox}[--- Limite infinie]
+$(u_n)$ tend vers $+\infty$ si :
+\[
+  \forall A > 0,\; \exists N \in \N,\; \forall n \geqslant N,\; u_n \geqslant A
+\]
+\end{defbox}
+
+\begin{intuitionbox}[Lecture de la définition $\varepsilon$-$N$]
+La définition dit : <<~quel que soit le niveau de précision $\varepsilon$ que l'on exige, il existe un rang $N$ à partir duquel tous les termes de la suite sont dans la bande $[\ell - \varepsilon,\, \ell + \varepsilon]$~>>.
+
+\textbf{Attention à l'ordre :} $N$ \emph{dépend} de $\varepsilon$. Plus $\varepsilon$ est petit, plus $N$ est grand (en général). On ne peut \textbf{pas} échanger $\forall \varepsilon$ et $\exists N$.
+\end{intuitionbox}
+
+\subsection{Unicité de la limite}
+
+\begin{propbox}[--- Unicité]
+Si une suite converge, sa limite est unique.
+\end{propbox}
+
+\begin{proofbox}
+Par l'absurde. Supposons $u_n \to \ell$ et $u_n \to \ell'$ avec $\ell \neq \ell'$. Posons $\varepsilon = \frac{|\ell - \ell'|}{2} > 0$.
+\begin{itemize}[leftmargin=1cm]
+  \item Il existe $N_1$ tel que $n \geqslant N_1 \Rightarrow |u_n - \ell| < \varepsilon$.
+  \item Il existe $N_2$ tel que $n \geqslant N_2 \Rightarrow |u_n - \ell'| < \varepsilon$.
+\end{itemize}
+Pour $N = \max(N_1, N_2)$, l'inégalité triangulaire donne :
+\[
+  |\ell - \ell'| = |\ell - u_N + u_N - \ell'| \leqslant |u_N - \ell| + |u_N - \ell'| < 2\varepsilon = |\ell - \ell'|
+\]
+Contradiction : $|\ell - \ell'| < |\ell - \ell'|$. Donc $\ell = \ell'$. \hfill$\square$
+\end{proofbox}
+
+\subsection{Opérations sur les limites}
+
+\begin{propbox}[--- Opérations (cas fini)]
+Si $\displaystyle\lim u_n = \ell$ et $\displaystyle\lim v_n = \ell'$ (limites finies), alors :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $\displaystyle\lim (\lambda u_n) = \lambda \ell$ \quad pour $\lambda \in \R$.
+  \item $\displaystyle\lim (u_n + v_n) = \ell + \ell'$.
+  \item $\displaystyle\lim (u_n \cdot v_n) = \ell \cdot \ell'$.
+  \item Si $\ell \neq 0$, alors $u_n \neq 0$ pour $n$ assez grand et $\displaystyle\lim \frac{1}{u_n} = \frac{1}{\ell}$.
+\end{enumerate}
+\end{propbox}
+
+\begin{rembox}[Formes indéterminées]
+Certaines combinaisons ne permettent pas de conclure directement :
+\[
+  +\infty - \infty, \qquad 0 \times \infty, \qquad \frac{\infty}{\infty}, \qquad \frac{0}{0}, \qquad 1^\infty
+\]
+Il faut alors une étude au cas par cas (factorisation, encadrement, etc.).
+\end{rembox}
+
+
+\section{Théorèmes d'encadrement}
+
+\begin{thmbox}[--- Théorème des gendarmes]
+Si $u_n \leqslant v_n \leqslant w_n$ pour tout $n$ et $\displaystyle\lim u_n = \lim w_n = \ell$, alors $(v_n)$ converge et $\displaystyle\lim v_n = \ell$.
+\end{thmbox}
+
+\begin{proofbox}
+En soustrayant $(u_n)$, on se ramène à montrer : si $0 \leqslant v_n' \leqslant w_n'$ et $\lim w_n' = 0$, alors $\lim v_n' = 0$.
+
+Soit $\varepsilon > 0$. Il existe $N$ tel que $n \geqslant N \Rightarrow |w_n'| < \varepsilon$. Comme $|v_n'| = v_n' \leqslant w_n' = |w_n'|$, on a $|v_n'| < \varepsilon$ pour $n \geqslant N$. \hfill$\square$
+\end{proofbox}
+
+\begin{propbox}[--- Suite convergente $\Rightarrow$ suite bornée]
+Toute suite convergente est bornée.
+\end{propbox}
+
+\begin{proofbox}
+Soit $(u_n)$ convergente vers $\ell$. Pour $\varepsilon = 1$, il existe $N$ tel que $n \geqslant N \Rightarrow |u_n| \leqslant |\ell| + 1$.
+
+Posons $M = \max(|u_0|, |u_1|, \ldots, |u_{N-1}|, |\ell| + 1)$. Alors $|u_n| \leqslant M$ pour tout $n$. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[La réciproque est fausse !]
+La suite $u_n = (-1)^n$ est bornée (par 1) mais diverge. La bornitude est nécessaire mais pas suffisante pour la convergence. Il faut ajouter la monotonie (théorème de la suite monotone) ou une autre condition.
+\end{intuitionbox}
+
+
+\section{Exemples remarquables}
+
+\subsection{Suite géométrique}
+
+\begin{propbox}[--- Suite géométrique $u_n = a^n$]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $a = 1$ : $u_n = 1$ pour tout $n$.
+  \item $a > 1$ : $\lim u_n = +\infty$.
+  \item $-1 < a < 1$ : $\lim u_n = 0$.
+  \item $a \leqslant -1$ : $(u_n)$ diverge.
+\end{enumerate}
+
+\textbf{Somme partielle} ($a \neq 1$) :
+\[
+  \sum_{k=0}^{n} a^k = \frac{1 - a^{n+1}}{1 - a}
+\]
+Si $|a| < 1$ : $\displaystyle\sum_{k=0}^{+\infty} a^k = \frac{1}{1-a}$.
+\end{propbox}
+
+\begin{intuitionbox}[La somme télescopique cachée]
+La preuve de la somme géométrique est un pattern télescopique : en multipliant $S = 1 + a + \cdots + a^n$ par $(1-a)$, les termes intermédiaires s'annulent deux à deux, ne laissant que $1 - a^{n+1}$.
+
+Ce mécanisme revient constamment : somme télescopique, produit télescopique, ou même le calcul de l'inverse d'une matrice par élimination.
+\end{intuitionbox}
+
+\subsection{Le critère du rapport}
+
+\begin{thmbox}[--- Critère $|u_{n+1}/u_n| < \ell < 1$]
+Si $(u_n)$ est une suite de réels non nuls et s'il existe $\ell < 1$ tel que $\left|\frac{u_{n+1}}{u_n}\right| < \ell$ pour tout $n$ (ou à partir d'un certain rang), alors $\lim u_n = 0$.
+\end{thmbox}
+
+\begin{proofbox}
+On écrit $\frac{u_n}{u_0} = \frac{u_1}{u_0} \cdot \frac{u_2}{u_1} \cdots \frac{u_n}{u_{n-1}}$, d'où $|u_n| < |u_0| \cdot \ell^n$. Comme $\ell < 1$, $\ell^n \to 0$ et donc $u_n \to 0$. \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Application classique : $\lim \frac{a^n}{n!} = 0$]
+Pour $u_n = \frac{a^n}{n!}$ (avec $a$ fixé), on a $\frac{u_{n+1}}{u_n} = \frac{a}{n+1} \to 0$. Donc $\lim u_n = 0$.
+
+\textbf{Interprétation :} la factorielle croît plus vite que n'importe quelle exponentielle.
+\end{exbox}
+
+
+\section{Théorèmes de convergence}
+
+\subsection{Suite monotone bornée}
+
+\begin{thmbox}[--- Convergence monotone]
+Toute suite croissante et majorée est convergente.
+
+\medskip
+\textit{Variantes :}
+\begin{itemize}[leftmargin=1cm]
+  \item Suite décroissante et minorée $\Rightarrow$ convergente.
+  \item Suite croissante non majorée $\Rightarrow$ tend vers $+\infty$.
+\end{itemize}
+\end{thmbox}
+
+\begin{proofbox}
+Soit $A = \{u_n \mid n \in \N\}$. L'ensemble $A$ est non vide et majoré, donc admet une borne supérieure $\ell = \sup A$ (propriété de $\R$).
+
+Soit $\varepsilon > 0$. Par caractérisation de la borne supérieure, il existe $u_N \in A$ tel que $\ell - \varepsilon < u_N \leqslant \ell$.
+
+Comme $(u_n)$ est croissante, pour $n \geqslant N$ : $\ell - \varepsilon < u_N \leqslant u_n \leqslant \ell$, donc $|u_n - \ell| \leqslant \varepsilon$. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Pourquoi ce théorème est si puissant]
+Ce théorème permet de prouver la convergence \emph{sans connaître la limite}. On montre séparément :
+\begin{enumerate}[leftmargin=1cm]
+  \item La monotonie (souvent par récurrence ou par étude du signe de $u_{n+1} - u_n$).
+  \item La bornitude (souvent par récurrence ou majoration).
+\end{enumerate}
+La limite est ensuite déterminée par passage à la limite dans la relation de récurrence (pour les suites récurrentes) ou par identification.
+\end{intuitionbox}
+
+\subsection{Suites adjacentes}
+
+\begin{defbox}[--- Suites adjacentes]
+Les suites $(u_n)$ et $(v_n)$ sont \textbf{adjacentes} si :
+\begin{enumerate}[leftmargin=1cm]
+  \item $(u_n)$ est croissante et $(v_n)$ est décroissante,
+  \item $\forall n,\; u_n \leqslant v_n$,
+  \item $\lim(v_n - u_n) = 0$.
+\end{enumerate}
+\end{defbox}
+
+\begin{thmbox}[--- Convergence des suites adjacentes]
+Si $(u_n)$ et $(v_n)$ sont adjacentes, elles convergent vers la même limite $\ell$, avec :
+\[
+  u_0 \leqslant u_1 \leqslant \cdots \leqslant u_n \leqslant \cdots \leqslant \ell \leqslant \cdots \leqslant v_n \leqslant \cdots \leqslant v_1 \leqslant v_0
+\]
+\end{thmbox}
+
+\begin{proofbox}
+$(u_n)$ est croissante et majorée par $v_0$ : elle converge vers $\ell$.
+
+$(v_n)$ est décroissante et minorée par $u_0$ : elle converge vers $\ell'$.
+
+Enfin $\ell' - \ell = \lim(v_n - u_n) = 0$, donc $\ell' = \ell$. \hfill$\square$
+\end{proofbox}
+
+
+\subsection{Suites extraites et Bolzano-Weierstrass}
+
+\begin{defbox}[--- Suite extraite]
+Une \textbf{suite extraite} de $(u_n)$ est une suite $(u_{\varphi(n)})$ où $\varphi : \N \to \N$ est strictement croissante.
+\end{defbox}
+
+\begin{propbox}
+Si $\lim u_n = \ell$, alors toute suite extraite converge aussi vers $\ell$.
+
+\textbf{Contraposée :} si deux sous-suites convergent vers des limites distinctes, la suite diverge.
+\end{propbox}
+
+\begin{thmbox}[--- Bolzano-Weierstrass]
+Toute suite bornée admet une sous-suite convergente.
+\end{thmbox}
+
+\begin{proofbox}[Démonstration (par dichotomie)]
+Les valeurs de $(u_n)$ sont contenues dans $[a_0, b_0]$. On coupe en deux : au moins l'un des sous-intervalles contient $u_n$ pour une infinité d'indices. On note $[a_1, b_1]$ cet intervalle et on choisit $\varphi(1) > \varphi(0)$ tel que $u_{\varphi(1)} \in [a_1, b_1]$.
+
+En itérant, on construit :
+\begin{itemize}[leftmargin=1cm]
+  \item des intervalles emboîtés $[a_k, b_k]$ de longueur $\frac{b_0 - a_0}{2^k} \to 0$,
+  \item une suite extraite $(u_{\varphi(n)})$ avec $u_{\varphi(n)} \in [a_n, b_n]$.
+\end{itemize}
+Les suites $(a_n)$ et $(b_n)$ sont adjacentes, elles convergent vers un même $\ell$. Par le théorème des gendarmes, $u_{\varphi(n)} \to \ell$. \hfill$\square$
+\end{proofbox}
+
+
+\section{Suites récurrentes}
+
+\begin{defbox}[--- Suite récurrente]
+Soit $f : \R \to \R$. Une suite récurrente est définie par :
+\[
+  u_0 \in \R \quad \text{et} \quad u_{n+1} = f(u_n) \;\text{ pour } n \geqslant 0.
+\]
+\end{defbox}
+
+\begin{propbox}[--- Points fixes et limite]
+Si $f$ est continue et $(u_n)$ converge vers $\ell$, alors $f(\ell) = \ell$ \quad ($\ell$ est un \textbf{point fixe} de $f$).
+\end{propbox}
+
+\begin{proofbox}
+Comme $u_n \to \ell$ et $f$ continue, $f(u_n) \to f(\ell)$. Or $f(u_n) = u_{n+1} \to \ell$. Par unicité de la limite, $f(\ell) = \ell$. \hfill$\square$
+\end{proofbox}
+
+\begin{methodbox}[Étude complète d'une suite récurrente $u_{n+1} = f(u_n)$]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Tracer} le graphe de $f$ et la droite $y = x$ (indispensable).
+  \item \textbf{Points fixes :} résoudre $f(\ell) = \ell$.
+  \item \textbf{Stabilité :} montrer que $f([a,b]) \subset [a,b]$ pour un intervalle bien choisi.
+  \item \textbf{Monotonie :} étudier le signe de $f(x) - x$ ou utiliser la croissance/décroissance de $f$.
+  \item \textbf{Convergence :} appliquer le théorème de convergence monotone.
+  \item \textbf{Identifier la limite :} parmi les points fixes.
+\end{enumerate}
+\end{methodbox}
+
+\subsection{Cas $f$ croissante}
+
+\begin{propbox}
+Si $f : [a,b] \to [a,b]$ est continue et croissante, et $u_0 \in [a,b]$, alors $(u_n)$ est \textbf{monotone} et converge vers un point fixe $\ell \in [a,b]$.
+\begin{itemize}[leftmargin=1cm]
+  \item Si $u_1 \geqslant u_0$ : $(u_n)$ croissante.
+  \item Si $u_1 \leqslant u_0$ : $(u_n)$ décroissante.
+\end{itemize}
+\end{propbox}
+
+\subsection{Cas $f$ décroissante}
+
+\begin{propbox}
+Si $f : [a,b] \to [a,b]$ est continue et décroissante, alors :
+\begin{itemize}[leftmargin=1cm]
+  \item La sous-suite $(u_{2n})$ converge vers $\ell$ vérifiant $f \circ f(\ell) = \ell$.
+  \item La sous-suite $(u_{2n+1})$ converge vers $\ell'$ vérifiant $f \circ f(\ell') = \ell'$.
+\end{itemize}
+On étudie $f \circ f$ (qui est croissante) pour se ramener au cas précédent.
+\end{propbox}
+
+\begin{exbox}[Le nombre d'or comme point fixe]
+Soit $f(x) = 1 + \frac{1}{x}$ et $u_0 > 0$ avec $u_{n+1} = f(u_n)$.
+
+$f$ est décroissante sur $]0, +\infty[$. On calcule $f \circ f(x) = \frac{2x+1}{x+1}$.
+
+Les points fixes de $f \circ f$ : $\frac{2x+1}{x+1} = x \Leftrightarrow x^2 - x - 1 = 0$, dont la racine positive est $\ell = \frac{1 + \sqrt{5}}{2}$ --- le nombre d'or.
+
+On montre que $(u_{2n})$ et $(u_{2n+1})$ convergent toutes deux vers $\varphi = \frac{1+\sqrt{5}}{2}$.
+\end{exbox}
+
+\begin{intuitionbox}[Escalier vs escargot]
+\textbf{$f$ croissante :} le graphe donne un <<~escalier~>> (monotone). Les termes montent ou descendent vers le point fixe.
+
+\textbf{$f$ décroissante :} le graphe donne un <<~escargot~>> (spirale). Les termes alternent de part et d'autre du point fixe, se rapprochant en spirale.
+
+Toujours tracer le graphe : il dit immédiatement si la suite converge et vers quel point fixe.
+\end{intuitionbox}
+
+
+\section{Synthèse personnelle --- Suites}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. La logique au service de l'analyse.} La définition $\varepsilon$-$N$ de la convergence est une phrase logique avec quantificateurs imbriqués. Nier cette définition (pour montrer la divergence) exige exactement les compétences du chapitre 1.
+
+\textbf{2. Les complexes dans les suites.} La somme géométrique $\sum a^k = \frac{1 - a^{n+1}}{1-a}$ est valable pour $a \in \C$. Les racines de l'unité (chapitre 2) sont reliées aux suites récurrentes via les suites définies par $u_{n+1} = e^{2i\pi/n} \cdot u_n$.
+
+\textbf{3. Pattern récurrent : séparer existence et calcul.} Les théorèmes de convergence monotone et de Bolzano-Weierstrass prouvent l'\emph{existence} d'une limite sans la calculer. L'identification de la limite (point fixe, borne sup) est une étape distincte. Cette séparation est un principe fondamental en mathématiques.
+
+\textbf{4. La borne supérieure comme clé de voûte.} Le théorème de convergence monotone repose sur la propriété de la borne supérieure de $\R$, qui est l'axiome fondamental distinguant $\R$ de $\Q$. C'est pourquoi les suites de rationnels peuvent converger vers un irrationnel (par ex. les approximations décimales de $\pi$).
+\end{intuitionbox}
+
+
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 4 : ARITHMÉTIQUE          ║
+% ╚═══════════════════════════════════════╝
+\chapter{Arithmétique}
+
+\section{Motivations et lien avec la cryptographie}
+
+L'arithmétique est le socle de la cryptographie moderne. Le chiffrement RSA, que j'étudie en cours de CHIFR1, repose directement sur les notions de ce chapitre :
+\begin{itemize}[leftmargin=1cm]
+  \item On choisit deux nombres premiers $p$ et $q$ gardés secrets, et on pose $n = p \times q$.
+  \item La clé secrète se calcule via l'algorithme d'Euclide et les coefficients de Bézout.
+  \item Le chiffrement opère modulo $n$.
+  \item Le déchiffrement repose sur le petit théorème de Fermat.
+\end{itemize}
+
+\begin{intuitionbox}[Arithmétique = fondation de la cybersécurité]
+Ce chapitre n'est pas un exercice abstrait pour moi : chaque notion a une application directe dans mon domaine de spécialisation. La difficulté de factoriser $n = pq$ (quand $p$ et $q$ ont des centaines de chiffres) est \emph{le} problème de sécurité qui protège les communications mondiales. Comprendre l'arithmétique en profondeur, c'est comprendre pourquoi RSA fonctionne --- et quelles sont ses limites face aux algorithmes quantiques (Shor).
+\end{intuitionbox}
+
+
+\section{Division euclidienne et divisibilité}
+
+\begin{defbox}[--- Divisibilité]
+Soient $a, b \in \Z$. On dit que $b$ \textbf{divise} $a$, noté $b \mid a$, s'il existe $q \in \Z$ tel que $a = bq$.
+
+\medskip
+Propriétés immédiates :
+\begin{itemize}[leftmargin=1cm]
+  \item $\forall a \in \Z$, $a \mid 0$ et $1 \mid a$.
+  \item $a \mid 1 \Rightarrow a = \pm 1$.
+  \item $(a \mid b \text{ et } b \mid a) \Rightarrow b = \pm a$.
+  \item $(a \mid b \text{ et } b \mid c) \Rightarrow a \mid c$ \quad (transitivité).
+  \item $(a \mid b \text{ et } a \mid c) \Rightarrow a \mid (b + c)$ \quad (stabilité par combinaison linéaire).
+\end{itemize}
+\end{defbox}
+
+\begin{thmbox}[--- Division euclidienne]
+Soit $a \in \Z$ et $b \in \N \setminus \{0\}$. Il existe un \textbf{unique} couple $(q, r) \in \Z^2$ tel que :
+\[
+  a = bq + r \qquad \text{avec } 0 \leqslant r < b
+\]
+$q$ est le \textbf{quotient} et $r$ le \textbf{reste}. On a $r = 0$ si et seulement si $b \mid a$.
+\end{thmbox}
+
+\begin{proofbox}
+\textit{Existence.} Supposons $a \geqslant 0$. Soit $\mathcal{N} = \{n \in \N \mid bn \leqslant a\}$. Cet ensemble est non vide ($0 \in \mathcal{N}$) et fini (car $n \leqslant a$ pour $n \in \mathcal{N}$). Soit $q = \max \mathcal{N}$. Alors $bq \leqslant a$ et $b(q+1) > a$, donc $0 \leqslant a - bq < b$. On pose $r = a - bq$.
+
+\textit{Unicité.} Supposons $a = bq + r = bq' + r'$ avec $0 \leqslant r, r' < b$. Alors $b(q - q') = r' - r$, et $|r' - r| < b$ impose $-b < b(q - q') < b$, soit $|q - q'| < 1$. Comme $q - q' \in \Z$, on a $q = q'$ puis $r = r'$. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[L'unicité comme outil]
+L'unicité du couple $(q, r)$ est cruciale en pratique : elle garantit que le reste d'une division est \emph{bien défini}, ce qui permet de parler sans ambiguïté de <<~$a$ modulo $b$~>>. Sans l'unicité, les congruences n'auraient pas de sens.
+\end{intuitionbox}
+
+
+\section{PGCD et algorithme d'Euclide}
+
+\begin{defbox}[--- PGCD]
+Soient $a, b \in \Z$, non tous deux nuls. Le \textbf{plus grand diviseur commun} de $a$ et $b$, noté $\text{pgcd}(a, b)$, est le plus grand entier qui divise à la fois $a$ et $b$.
+\end{defbox}
+
+\subsection{L'algorithme d'Euclide}
+
+\begin{lemme}
+Soient $a, b \in \N^*$. Si $a = bq + r$ (division euclidienne), alors $\text{pgcd}(a, b) = \text{pgcd}(b, r)$.
+\end{lemme}
+
+\begin{proofbox}
+Il suffit de montrer que les diviseurs communs de $(a, b)$ sont exactement les diviseurs communs de $(b, r)$.
+\begin{itemize}[leftmargin=1cm]
+  \item Si $d \mid a$ et $d \mid b$, alors $d \mid bq$, donc $d \mid a - bq = r$.
+  \item Si $d \mid b$ et $d \mid r$, alors $d \mid bq + r = a$.
+\end{itemize}
+Les ensembles de diviseurs communs sont identiques, donc leurs maxima aussi. \hfill$\square$
+\end{proofbox}
+
+\begin{methodbox}[Algorithme d'Euclide]
+Pour calculer $\text{pgcd}(a, b)$ avec $a \geqslant b > 0$, on effectue des divisions euclidiennes successives :
+\begin{align*}
+  a &= bq_1 + r_1 &\quad &\text{pgcd}(a,b) = \text{pgcd}(b, r_1) \\
+  b &= r_1 q_2 + r_2 &\quad &= \text{pgcd}(r_1, r_2) \\
+  r_1 &= r_2 q_3 + r_3 &\quad &= \text{pgcd}(r_2, r_3) \\
+  &\;\;\vdots \\
+  r_{k-1} &= r_k \cdot q_{k+1} + 0 &\quad &= r_k
+\end{align*}
+L'algorithme termine car $b > r_1 > r_2 > \cdots \geqslant 0$ (suite décroissante d'entiers positifs). Le \textbf{dernier reste non nul} est le pgcd.
+\end{methodbox}
+
+\begin{exbox}[Calcul de $\text{pgcd}(9945, 3003)$]
+\begin{align*}
+  9945 &= 3003 \times 3 + 936 \\
+  3003 &= 936 \times 3 + 195 \\
+  936 &= 195 \times 4 + 156 \\
+  195 &= 156 \times 1 + 39 \\
+  156 &= 39 \times 4 + 0
+\end{align*}
+Donc $\text{pgcd}(9945, 3003) = 39$.
+\end{exbox}
+
+\begin{intuitionbox}[Pourquoi l'algorithme d'Euclide est remarquable]
+C'est l'un des plus anciens algorithmes connus (environ 300 av. J.-C.) et il reste l'un des plus efficaces. Sa complexité est $O(\log(\min(a,b)))$ divisions --- logarithmique ! C'est cette efficacité qui rend le calcul des clés RSA praticable même avec des nombres de 2048 bits.
+
+Le principe est toujours le même : \emph{réduire} le problème à un problème plus petit de même nature, jusqu'à un cas trivial. C'est un pattern récurrent en algorithmique (diviser pour régner).
+\end{intuitionbox}
+
+\subsection{Nombres premiers entre eux}
+
+\begin{defbox}[--- Premiers entre eux]
+Deux entiers $a, b$ sont \textbf{premiers entre eux} si $\text{pgcd}(a, b) = 1$.
+\end{defbox}
+
+\begin{exbox}
+Pour tout $a \in \Z$, $a$ et $a + 1$ sont premiers entre eux. En effet, si $d$ divise $a$ et $a+1$, alors $d$ divise $(a+1) - a = 1$, donc $d = \pm 1$.
+\end{exbox}
+
+
+\section{Théorème de Bézout}
+
+\begin{thmbox}[--- Théorème de Bézout]
+Soient $a, b \in \Z$. Il existe des entiers $u, v \in \Z$ tels que :
+\[
+  au + bv = \text{pgcd}(a, b)
+\]
+Les entiers $u, v$ sont appelés \textbf{coefficients de Bézout}. Ils ne sont pas uniques.
+\end{thmbox}
+
+\begin{methodbox}[Remontée de l'algorithme d'Euclide]
+Les coefficients de Bézout s'obtiennent en <<~remontant~>> l'algorithme d'Euclide, de bas en haut :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item On part de la dernière ligne où le reste est non nul : $\text{pgcd} = r_k$.
+  \item On exprime $r_k$ en fonction de $r_{k-1}$ et $r_{k-2}$ (ligne précédente).
+  \item On substitue progressivement chaque reste par son expression issue de la ligne au-dessus.
+  \item On arrive à une expression $au + bv = \text{pgcd}(a,b)$.
+\end{enumerate}
+\textbf{Vérifier systématiquement} le résultat en substituant les valeurs !
+\end{methodbox}
+
+\begin{exbox}[Coefficients de Bézout pour $\text{pgcd}(600, 124) = 4$]
+\begin{align*}
+  600 &= 124 \times 4 + 104 \\
+  124 &= 104 \times 1 + 20 \\
+  104 &= 20 \times 5 + 4 \\
+  20 &= 4 \times 5 + 0
+\end{align*}
+Remontée :
+\begin{align*}
+  4 &= 104 - 20 \times 5 \\
+    &= 104 - (124 - 104 \times 1) \times 5 = 104 \times 6 - 124 \times 5 \\
+    &= (600 - 124 \times 4) \times 6 - 124 \times 5 = 600 \times 6 + 124 \times (-29)
+\end{align*}
+Vérification : $600 \times 6 + 124 \times (-29) = 3600 - 3596 = 4$. \checkmark
+\end{exbox}
+
+\subsection{Corollaires fondamentaux}
+
+\begin{corollaire}[Caractérisation des premiers entre eux]
+$a$ et $b$ sont premiers entre eux si et seulement si il existe $u, v \in \Z$ tels que $au + bv = 1$.
+\end{corollaire}
+
+\begin{proofbox}
+$(\Rightarrow)$ : conséquence directe de Bézout avec $\text{pgcd}(a,b) = 1$.
+
+$(\Leftarrow)$ : si $au + bv = 1$, comme $\text{pgcd}(a,b) \mid a$ et $\text{pgcd}(a,b) \mid b$, on a $\text{pgcd}(a,b) \mid au + bv = 1$, donc $\text{pgcd}(a,b) = 1$. \hfill$\square$
+\end{proofbox}
+
+\begin{rembox}[Attention au piège]
+Si $au + bv = d$, cela n'implique \emph{pas} que $d = \text{pgcd}(a,b)$. On sait seulement que $\text{pgcd}(a,b) \mid d$.
+
+Exemple : $12 \times 1 + 8 \times 3 = 36$, mais $\text{pgcd}(12, 8) = 4 \neq 36$.
+\end{rembox}
+
+\begin{thmbox}[--- Lemme de Gauss]
+Soient $a, b, c \in \Z$. Si $a \mid bc$ et $\text{pgcd}(a, b) = 1$, alors $a \mid c$.
+\end{thmbox}
+
+\begin{proofbox}
+Comme $\text{pgcd}(a,b) = 1$, il existe $u, v$ tels que $au + bv = 1$. En multipliant par $c$ : $acu + bcv = c$. Or $a \mid acu$ et $a \mid bcv$ (par hypothèse $a \mid bc$), donc $a \mid c$. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Le lemme de Gauss comme outil de transfert]
+Le lemme de Gauss dit : si $a$ divise un produit $bc$ mais n'a <<~rien en commun~>> avec $b$ (premiers entre eux), alors toute la divisibilité est <<~portée~>> par $c$. C'est un outil de transfert.
+
+Ce lemme est omniprésent : il intervient dans la preuve d'irrationalité de $\sqrt{p}$, dans l'unicité de la décomposition en facteurs premiers, et dans la résolution des équations diophantiennes.
+\end{intuitionbox}
+
+
+\subsection{Équations diophantiennes $ax + by = c$}
+
+\begin{propbox}[--- Existence et structure des solutions]
+L'équation $ax + by = c$ (avec $a, b, c \in \Z$) possède des solutions $(x, y) \in \Z^2$ si et seulement si $\text{pgcd}(a, b) \mid c$.
+
+Si $(x_0, y_0)$ est une solution particulière, alors \textbf{toutes} les solutions sont :
+\[
+  (x, y) = \left(x_0 + \frac{b}{\text{pgcd}(a,b)} k,\;\; y_0 - \frac{a}{\text{pgcd}(a,b)} k\right), \qquad k \in \Z
+\]
+\end{propbox}
+
+\begin{methodbox}[Résolution d'une équation diophantienne]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Existence :} calculer $d = \text{pgcd}(a,b)$ par Euclide. Vérifier que $d \mid c$.
+  \item \textbf{Solution particulière :} remonter Euclide pour trouver $u, v$ tels que $au + bv = d$. Multiplier par $c/d$.
+  \item \textbf{Solutions générales :} soustraire solution particulière et solution générale, simplifier par $d$, appliquer Gauss.
+\end{enumerate}
+\end{methodbox}
+
+\begin{exbox}[Résolution de $161x + 368y = 115$]
+\textit{Étape 1 :} $\text{pgcd}(161, 368)$. On a $368 = 161 \times 2 + 46$, puis $161 = 46 \times 3 + 23$, puis $46 = 23 \times 2$. Donc $\text{pgcd} = 23$. Comme $23 \mid 115$ ($115 = 5 \times 23$), il y a des solutions.
+
+\textit{Étape 2 :} Remontée : $23 = 161 - 46 \times 3 = 161 - (368 - 161 \times 2) \times 3 = 161 \times 7 + 368 \times (-3)$. En multipliant par 5 : $161 \times 35 + 368 \times (-15) = 115$. Solution particulière : $(x_0, y_0) = (35, -15)$.
+
+\textit{Étape 3 :} Si $(x, y)$ est solution, $161(x - 35) + 368(y + 15) = 0$, soit $7(x - 35) = -16(y + 15)$ après division par 23. Par Gauss ($\text{pgcd}(7, 16) = 1$), $7 \mid y + 15$, donc $y = -15 + 7k$ et $x = 35 - 16k$.
+
+\textbf{Solutions :} $(x, y) = (35 - 16k,\; -15 + 7k)$, $k \in \Z$.
+\end{exbox}
+
+
+\subsection{PPCM}
+
+\begin{defbox}[--- PPCM]
+Le \textbf{ppcm}$(a, b)$ est le plus petit entier $> 0$ divisible par $a$ et par $b$.
+\end{defbox}
+
+\begin{propbox}[--- Relation PGCD-PPCM]
+Pour $a, b$ entiers non tous deux nuls :
+\[
+  \text{pgcd}(a, b) \times \text{ppcm}(a, b) = |ab|
+\]
+\end{propbox}
+
+\begin{intuitionbox}[Dualité PGCD/PPCM]
+Le pgcd prend le \emph{minimum} des exposants dans la décomposition en facteurs premiers, le ppcm prend le \emph{maximum}. Leur produit redonne le produit original car $\min(\alpha, \beta) + \max(\alpha, \beta) = \alpha + \beta$ pour chaque exposant.
+\end{intuitionbox}
+
+
+\section{Nombres premiers}
+
+\begin{defbox}[--- Nombre premier]
+Un nombre premier $p$ est un entier $\geqslant 2$ dont les seuls diviseurs positifs sont $1$ et $p$.
+\end{defbox}
+
+\subsection{Infinité des nombres premiers}
+
+\begin{lemme}
+Tout entier $n \geqslant 2$ admet un diviseur qui est un nombre premier.
+\end{lemme}
+
+\begin{proofbox}
+Soit $\mathcal{D} = \{k \geqslant 2 \mid k \mid n\}$. L'ensemble $\mathcal{D}$ est non vide ($n \in \mathcal{D}$). Soit $p = \min \mathcal{D}$. Si $p$ n'est pas premier, il admet un diviseur $q$ avec $1 < q < p$, mais alors $q \mid n$ donc $q \in \mathcal{D}$ avec $q < p$ : contradiction avec $p = \min \mathcal{D}$. Donc $p$ est premier. \hfill$\square$
+\end{proofbox}
+
+\begin{thmbox}[--- Infinité des nombres premiers (Euclide)]
+Il existe une infinité de nombres premiers.
+\end{thmbox}
+
+\begin{proofbox}
+Par l'absurde. Supposons qu'il n'y ait qu'un nombre fini de nombres premiers $p_1, p_2, \ldots, p_n$. Posons $N = p_1 \times p_2 \times \cdots \times p_n + 1$.
+
+Par le lemme précédent, $N$ admet un diviseur premier $p$. Donc $p$ est l'un des $p_i$, et $p \mid p_1 \cdots p_n$. Comme $p \mid N$, on a $p \mid N - p_1 \cdots p_n = 1$, donc $p = 1$ : contradiction. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[L'élégance de cette preuve]
+La preuve d'Euclide est un modèle de raisonnement par l'absurde : elle construit explicitement un nombre qui contredit l'hypothèse. Attention : $N = p_1 \cdots p_n + 1$ n'est pas nécessairement premier lui-même, mais il \emph{admet} un diviseur premier qui n'est aucun des $p_i$.
+\end{intuitionbox}
+
+\subsection{Lemme d'Euclide et irrationalité}
+
+\begin{propbox}[--- Lemme d'Euclide]
+Soit $p$ un nombre premier. Si $p \mid ab$, alors $p \mid a$ ou $p \mid b$.
+\end{propbox}
+
+\begin{proofbox}
+Si $p \nmid a$, alors $\text{pgcd}(p, a) = 1$ (car les seuls diviseurs de $p$ sont $1$ et $p$). Par le lemme de Gauss, $p \mid b$. \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Application : $\sqrt{p}$ est irrationnel pour $p$ premier]
+Par l'absurde : $\sqrt{p} = \frac{a}{b}$ avec $\text{pgcd}(a, b) = 1$. Alors $pb^2 = a^2$, donc $p \mid a^2$. Par le lemme d'Euclide, $p \mid a$, soit $a = pa'$. Alors $b^2 = pa'^2$, donc $p \mid b^2$, donc $p \mid b$. Mais alors $p \mid a$ et $p \mid b$ : contradiction avec $\text{pgcd}(a,b) = 1$.
+\end{exbox}
+
+\subsection{Décomposition en facteurs premiers}
+
+\begin{thmbox}[--- Théorème fondamental de l'arithmétique]
+Tout entier $n \geqslant 2$ s'écrit de manière unique (à l'ordre près) :
+\[
+  n = p_1^{\alpha_1} \times p_2^{\alpha_2} \times \cdots \times p_r^{\alpha_r}
+\]
+avec $p_1 < p_2 < \cdots < p_r$ premiers et $\alpha_i \geqslant 1$.
+\end{thmbox}
+
+\begin{proofbox}
+\textit{Existence} (par récurrence forte sur $n$). Pour $n = 2$, c'est immédiat. Pour $n \geqslant 3$, si $n$ est premier, c'est fini. Sinon, soit $p_1$ le plus petit diviseur premier de $n$. Alors $n' = n/p_1 < n$ admet une décomposition par hypothèse de récurrence, et $n = p_1 \times n'$ aussi.
+
+\textit{Unicité} (par récurrence sur $\sigma = \sum \alpha_i$). Si $\sigma = 1$, alors $n = p_1$ est premier, c'est unique. Si $\sigma \geqslant 2$, supposons deux décompositions $n = p_1^{\alpha_1} \cdots p_r^{\alpha_r} = q_1^{\beta_1} \cdots q_s^{\beta_s}$. Si $p_1 < q_1$, alors $p_1$ divise $n$ mais ne divise aucun $q_j^{\beta_j}$ (par le lemme d'Euclide itéré) : contradiction. De même si $p_1 > q_1$. Donc $p_1 = q_1$, et on applique la récurrence à $n/p_1$. \hfill$\square$
+\end{proofbox}
+
+\begin{methodbox}[PGCD et PPCM via la décomposition]
+Pour $a = \prod p_i^{\alpha_i}$ et $b = \prod p_i^{\beta_i}$ (en complétant par des exposants nuls) :
+\[
+  \text{pgcd}(a,b) = \prod p_i^{\min(\alpha_i, \beta_i)}, \qquad \text{ppcm}(a,b) = \prod p_i^{\max(\alpha_i, \beta_i)}
+\]
+\end{methodbox}
+
+\begin{exbox}
+$504 = 2^3 \times 3^2 \times 7$ et $300 = 2^2 \times 3 \times 5^2$. Donc :
+\[
+  \text{pgcd}(504, 300) = 2^2 \times 3^1 = 12, \qquad \text{ppcm}(504, 300) = 2^3 \times 3^2 \times 5^2 \times 7 = 12\,600
+\]
+Vérification : $12 \times 12\,600 = 151\,200 = 504 \times 300$. \checkmark
+\end{exbox}
+
+\begin{intuitionbox}[Pourquoi 1 n'est pas premier]
+C'est un choix de convention, mais il est \emph{motivé} par l'unicité de la décomposition. Si 1 était premier, on pourrait écrire $6 = 2 \times 3 = 1 \times 2 \times 3 = 1^{42} \times 2 \times 3$, et l'unicité serait perdue.
+\end{intuitionbox}
+
+
+\section{Congruences}
+
+\begin{defbox}[--- Congruence]
+Soit $n \geqslant 2$. On dit que $a$ est \textbf{congru à $b$ modulo $n$}, noté $a \equiv b \pmod{n}$, si $n \mid (b - a)$.
+
+Formulation équivalente : $a \equiv b \pmod{n} \;\Leftrightarrow\; \exists k \in \Z,\; a = b + kn$.
+\end{defbox}
+
+\begin{propbox}[--- Propriétés des congruences]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Relation d'équivalence :} réflexivité, symétrie, transitivité.
+  \item \textbf{Compatibilité avec $+$ :} si $a \equiv b$ et $c \equiv d \pmod{n}$, alors $a + c \equiv b + d \pmod{n}$.
+  \item \textbf{Compatibilité avec $\times$ :} si $a \equiv b$ et $c \equiv d \pmod{n}$, alors $ac \equiv bd \pmod{n}$.
+  \item \textbf{Puissances :} si $a \equiv b \pmod{n}$, alors $a^k \equiv b^k \pmod{n}$ pour tout $k \geqslant 0$.
+\end{enumerate}
+\end{propbox}
+
+\begin{proofbox}[Démonstration de la compatibilité multiplicative]
+$a = b + kn$ et $c = d + \ell n$. Alors $ac = (b + kn)(d + \ell n) = bd + (b\ell + dk + k\ell n)n = bd + mn$ avec $m \in \Z$. Donc $ac \equiv bd \pmod{n}$. \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Critère de divisibilité par 9]
+$N$ est divisible par 9 si et seulement si la somme de ses chiffres l'est.
+
+\textit{Preuve :} comme $10 \equiv 1 \pmod{9}$, on a $10^k \equiv 1 \pmod{9}$ pour tout $k$. Donc si $N = a_k 10^k + \cdots + a_1 \cdot 10 + a_0$ :
+\[
+  N \equiv a_k + a_{k-1} + \cdots + a_1 + a_0 \pmod{9}
+\]
+\end{exbox}
+
+\begin{intuitionbox}[Les congruences comme <<~lunettes~>>]
+Travailler modulo $n$, c'est regarder les entiers à travers des <<~lunettes~>> qui ne voient que le reste de la division par $n$. Toute l'information sur les multiples de $n$ disparaît. Cette réduction est exactement ce qui rend les calculs de cryptage praticables : on travaille avec des nombres de taille bornée (modulo $n$) même si les exposants sont gigantesques.
+\end{intuitionbox}
+
+\subsection{Exponentiation modulaire efficace}
+
+\begin{methodbox}[Exponentiation rapide (square-and-multiply)]
+Pour calculer $a^m \pmod{n}$ :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item Écrire $m$ en binaire : $m = 2^{e_1} + 2^{e_2} + \cdots$
+  \item Calculer $a^{2^k} \pmod{n}$ par élévations au carré successives.
+  \item Multiplier les termes correspondants modulo $n$.
+\end{enumerate}
+Complexité : $O(\log m)$ multiplications modulaires.
+\end{methodbox}
+
+\begin{exbox}[Calcul de $2^{21} \pmod{37}$]
+$21 = 16 + 4 + 1$, donc $2^{21} = 2^{16} \cdot 2^4 \cdot 2^1$.
+
+Calcul par carrés successifs :
+\begin{align*}
+  2^1 &\equiv 2, \quad 2^2 \equiv 4, \quad 2^4 \equiv 16, \quad 2^8 \equiv 16^2 = 256 \equiv 34 \equiv -3 \pmod{37} \\
+  2^{16} &\equiv (-3)^2 = 9 \pmod{37}
+\end{align*}
+Conclusion : $2^{21} \equiv 9 \times 16 \times 2 = 288 \equiv 288 - 7 \times 37 = 288 - 259 = 29 \pmod{37}$.
+\end{exbox}
+
+
+\subsection{Équation $ax \equiv b \pmod{n}$}
+
+\begin{propbox}[--- Résolution]
+L'équation $ax \equiv b \pmod{n}$ possède des solutions si et seulement si $\text{pgcd}(a, n) \mid b$.
+
+Les solutions forment $\text{pgcd}(a, n)$ classes distinctes modulo $n$.
+\end{propbox}
+
+\begin{intuitionbox}[Lien avec les équations diophantiennes]
+L'équation $ax \equiv b \pmod{n}$ est exactement $ax - kn = b$ (d'inconnues $x, k \in \Z$). C'est une équation diophantienne ! On la résout avec exactement les mêmes outils : Euclide, Bézout, Gauss.
+\end{intuitionbox}
+
+
+\section{Petit théorème de Fermat}
+
+\begin{thmbox}[--- Petit théorème de Fermat]
+Si $p$ est un nombre premier et $a \in \Z$, alors :
+\[
+  a^p \equiv a \pmod{p}
+\]
+Si de plus $p \nmid a$, alors $a^{p-1} \equiv 1 \pmod{p}$.
+\end{thmbox}
+
+\begin{lemme}
+Pour $p$ premier et $1 \leqslant k \leqslant p-1$ : $p \;\Big|\; \binom{p}{k}$.
+\end{lemme}
+
+\begin{proofbox}[Démonstration du lemme]
+$\binom{p}{k} = \frac{p!}{k!(p-k)!}$, donc $p! = k!(p-k)!\binom{p}{k}$. Ainsi $p \mid k!(p-k)!\binom{p}{k}$. Or $p$ ne divise ni $k!$ ni $(p-k)!$ (car tous les facteurs sont $< p$). Par le lemme d'Euclide (itéré), $p \mid \binom{p}{k}$. \hfill$\square$
+\end{proofbox}
+
+\begin{proofbox}[Démonstration du petit théorème de Fermat]
+Par récurrence sur $a \geqslant 0$.
+
+\textit{Initialisation :} $0^p = 0 \equiv 0 \pmod{p}$. \checkmark
+
+\textit{Hérédité :} supposons $a^p \equiv a \pmod{p}$. Par le binôme de Newton :
+\[
+  (a+1)^p = a^p + \binom{p}{1}a^{p-1} + \binom{p}{2}a^{p-2} + \cdots + \binom{p}{p-1}a + 1
+\]
+Par le lemme, tous les termes intermédiaires sont divisibles par $p$, donc :
+\[
+  (a+1)^p \equiv a^p + 1 \equiv a + 1 \pmod{p}
+\]
+par hypothèse de récurrence. \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Application : $14^{3141} \pmod{17}$]
+$17$ est premier et $17 \nmid 14$, donc $14^{16} \equiv 1 \pmod{17}$.
+
+Division euclidienne : $3141 = 16 \times 196 + 5$. Donc :
+\[
+  14^{3141} = (14^{16})^{196} \times 14^5 \equiv 1^{196} \times 14^5 \equiv 14^5 \pmod{17}
+\]
+Or $14 \equiv -3 \pmod{17}$, donc $14^2 \equiv 9$, $14^3 \equiv -27 \equiv 7$, $14^5 = 14^2 \times 14^3 \equiv 9 \times 7 = 63 \equiv 12 \pmod{17}$.
+
+\textbf{Conclusion :} $14^{3141} \equiv 12 \pmod{17}$.
+\end{exbox}
+
+\begin{intuitionbox}[Fermat au c\oe ur de RSA]
+Le petit théorème de Fermat (et sa généralisation, le théorème d'Euler : $a^{\varphi(n)} \equiv 1 \pmod{n}$) est la raison pour laquelle le déchiffrement RSA fonctionne. Quand on chiffre un message $m$ par $c = m^e \pmod{n}$ et qu'on déchiffre par $m = c^d \pmod{n}$, la cohérence $m^{ed} \equiv m \pmod{n}$ repose sur Fermat via l'indicatrice d'Euler.
+
+C'est le lien direct entre ce théorème <<~abstrait~>> et la confidentialité de chaque transaction en ligne.
+\end{intuitionbox}
+
+
+\section{Synthèse personnelle --- Arithmétique}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Tout converge vers la cryptographie.} Divisibilité, Euclide, Bézout, congruences, Fermat : ces cinq briques s'assemblent exactement dans RSA. La clé publique $(n, e)$ utilise les nombres premiers ; la clé privée $d$ utilise Bézout ($ed \equiv 1 \pmod{\varphi(n)}$) ; le chiffrement utilise les congruences ; le déchiffrement utilise Fermat.
+
+\textbf{2. Le lemme de Gauss comme pivot.} Ce lemme apparaît partout : preuve d'irrationalité, unicité de la décomposition, résolution des équations diophantiennes. C'est le résultat le plus transversal du chapitre.
+
+\textbf{3. Pattern algorithmique récurrent.} L'algorithme d'Euclide illustre le principe de \emph{réduction} : remplacer un problème par un problème strictement plus petit de même nature. C'est le même pattern que la dichotomie (Bolzano-Weierstrass, chapitre 3), le crible d'Eratosthène, et plus généralement tout algorithme de type <<~diviser pour régner~>>.
+
+\textbf{4. Connexion avec les suites.} L'algorithme d'Euclide produit une suite $(r_k)$ strictement décroissante d'entiers positifs : elle converge nécessairement (vers 0) en un nombre fini d'étapes. C'est un argument de terminaison qui utilise la même logique que les théorèmes de convergence monotone du chapitre 3.
+
+\textbf{5. L'exponentiation rapide.} Le <<~square-and-multiply~>> est $O(\log m)$ : c'est ce qui rend le calcul de $a^m \pmod{n}$ praticable avec des exposants de 2048 bits. Sans cette technique, RSA serait inutilisable.
+\end{intuitionbox}
+
+
+% ═══════════════════════════════════════
+%   CONCLUSION GÉNÉRALE
+% ═══════════════════════════════════════
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+
+Ce cahier de recherche couvre quatre piliers fondamentaux qui forment un tout cohérent :
+
+\begin{enumerate}[leftmargin=2cm]
+  \item La \textbf{logique} fournit le langage et les méthodes de preuve --- c'est le <<~système d'exploitation~>> sur lequel tout le reste tourne.
+  \item Les \textbf{nombres complexes} étendent le terrain de jeu algébrique et géométrique, fournissant des outils puissants (notation exponentielle, racines de l'unité) qui simplifient radicalement certains problèmes.
+  \item Les \textbf{suites numériques} introduisent l'infini en analyse --- la notion de limite, formalisée par la logique du chapitre 1, est le concept central de toute l'analyse mathématique.
+  \item L'\textbf{arithmétique} fournit les briques calculatoires de la cryptographie --- divisibilité, primalité, congruences et Fermat s'assemblent directement dans les protocoles de sécurité comme RSA.
+\end{enumerate}
+
+\begin{intuitionbox}[Vision d'ensemble]
+Le fil conducteur entre ces quatre chapitres est la \textbf{rigueur progressive} : on part d'un langage formel (logique), on construit des objets (complexes, entiers), puis on étudie leur comportement (suites, divisibilité). Chaque couche s'appuie sur les précédentes.
+
+L'arithmétique boucle la boucle en reliant les mathématiques pures à mon domaine de spécialisation : la cybersécurité. Les mêmes structures --- récurrence, absurde, contraposée --- servent à prouver l'unicité de la décomposition en facteurs premiers comme à montrer la convergence d'une suite.
+
+Ce cahier n'est pas un point d'arrivée mais un point de départ. Les mêmes structures --- limites, complétude, congruences --- se retrouveront dans l'étude des fonctions continues, des séries, de l'algèbre modulaire et de la cryptographie avancée.
+\end{intuitionbox}
+
+
+% ═══════════════════════════════════════
+%   ANNEXE : FORMULAIRE SYNTHÉTIQUE
+% ═══════════════════════════════════════
+\appendix
+\chapter{Formulaire synthétique}
+
+\section{Logique}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Loi} & \textbf{Formule} \\
+\hline
+Double négation & $\text{non}(\text{non } P) \Leftrightarrow P$ \\
+De Morgan (et) & $\text{non}(P \wedge Q) \Leftrightarrow (\neg P) \vee (\neg Q)$ \\
+De Morgan (ou) & $\text{non}(P \vee Q) \Leftrightarrow (\neg P) \wedge (\neg Q)$ \\
+Contraposée & $(P \Rightarrow Q) \Leftrightarrow (\neg Q \Rightarrow \neg P)$ \\
+Négation $\forall$ & $\neg(\forall x, P(x)) \Leftrightarrow \exists x, \neg P(x)$ \\
+Négation $\exists$ & $\neg(\exists x, P(x)) \Leftrightarrow \forall x, \neg P(x)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Nombres complexes}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+Module & $|z| = \sqrt{z\bar{z}} = \sqrt{a^2 + b^2}$ \\
+Inverse & $\frac{1}{z} = \frac{\bar{z}}{|z|^2}$ \\
+Inégalité triangulaire & $|z + z'| \leqslant |z| + |z'|$ \\
+Forme exponentielle & $z = |z| e^{i\theta}$ \\
+Moivre & $(e^{i\theta})^n = e^{in\theta}$ \\
+Euler & $\cos\theta = \frac{e^{i\theta}+e^{-i\theta}}{2}$, \; $\sin\theta = \frac{e^{i\theta}-e^{-i\theta}}{2i}$ \\
+Racines $n$-ièmes & $\omega_k = \rho^{1/n} e^{i(\theta + 2k\pi)/n}$ \\
+Somme géométrique & $\sum_{k=0}^n z^k = \frac{1-z^{n+1}}{1-z}$ \; ($z \neq 1$) \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Suites}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+Convergence & $\forall \varepsilon > 0,\; \exists N,\; n \geqslant N \Rightarrow |u_n - \ell| \leqslant \varepsilon$ \\
+Convergente $\Rightarrow$ bornée & Réciproque fausse \\
+Gendarmes & $u_n \leqslant v_n \leqslant w_n$, $\lim u_n = \lim w_n = \ell \Rightarrow \lim v_n = \ell$ \\
+Monotone bornée & Croissante majorée $\Rightarrow$ convergente \\
+Adjacentes & $u_n \nearrow$, $v_n \searrow$, $\lim(v_n - u_n) = 0 \Rightarrow$ même limite \\
+Critère du rapport & $|u_{n+1}/u_n| < \ell < 1 \Rightarrow \lim u_n = 0$ \\
+Bolzano-Weierstrass & Bornée $\Rightarrow$ sous-suite convergente \\
+Point fixe & $f$ continue, $u_n \to \ell \Rightarrow f(\ell) = \ell$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Arithmétique}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+Division euclidienne & $a = bq + r$, \; $0 \leqslant r < b$ (unique) \\
+Algorithme d'Euclide & $\text{pgcd}(a,b) = \text{pgcd}(b, r)$ où $a = bq + r$ \\
+Bézout & $\exists u,v \in \Z,\; au + bv = \text{pgcd}(a,b)$ \\
+Premiers entre eux & $\text{pgcd}(a,b) = 1 \Leftrightarrow \exists u,v,\; au+bv=1$ \\
+Lemme de Gauss & $a \mid bc$ et $\text{pgcd}(a,b)=1 \Rightarrow a \mid c$ \\
+Relation PGCD-PPCM & $\text{pgcd}(a,b) \times \text{ppcm}(a,b) = |ab|$ \\
+Lemme d'Euclide & $p$ premier, $p \mid ab \Rightarrow p \mid a$ ou $p \mid b$ \\
+Petit Fermat & $p$ premier $\Rightarrow a^p \equiv a \pmod{p}$ \\
+Fermat (inversible) & $p \nmid a \Rightarrow a^{p-1} \equiv 1 \pmod{p}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{document}

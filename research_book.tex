@@ -1592,27 +1592,602 @@ C'est le lien direct entre ce théorème <<~abstrait~>> et la confidentialité d
 \end{intuitionbox}
 
 
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 5 : ENSEMBLES ET          ║
+% ║   APPLICATIONS                        ║
+% ╚═══════════════════════════════════════╝
+\chapter{Ensembles et Applications}
+
+\section{Motivations}
+
+Les ensembles sont le langage universel des mathématiques. Tout objet mathématique --- nombre, fonction, espace --- est formalisé comme un ensemble ou une construction sur des ensembles. Ce chapitre pose les fondations sur lesquelles reposent l'algèbre, l'analyse et la cryptographie.
+
+\begin{intuitionbox}[Le paradoxe de Russell]
+Au début du \textsc{xx}\textsuperscript{e} siècle, Frege pensait avoir refondé les mathématiques sur des bases logiques. Le jeune Russell lui montra qu'un ensemble contenant <<~tous les ensembles~>> mène à une contradiction. Considérons $F = \{E \in \mathcal{E} \mid E \notin E\}$ : si $F \in F$ alors par définition $F \notin F$ ; si $F \notin F$ alors $F$ vérifie la propriété donc $F \in F$. Contradiction dans les deux cas.
+
+L'énigme équivalente : <<~le barbier rase tous ceux qui ne se rasent pas eux-mêmes. Qui rase le barbier ?~>> --- une telle situation ne peut exister.
+
+Ce paradoxe a conduit à la théorie axiomatique des ensembles (ZFC), qui fournit un cadre rigoureux évitant ces contradictions.
+\end{intuitionbox}
+
+\begin{intuitionbox}[Lien avec la cybersécurité]
+En cybersécurité, les ensembles structurent tout : un groupe d'utilisateurs est un ensemble, une politique de contrôle d'accès définit des sous-ensembles d'actions autorisées, les relations d'équivalence apparaissent dans l'arithmétique modulaire ($\Z/n\Z$) qui est au c\oe ur de RSA et de la cryptographie à courbes elliptiques. La notion de bijection garantit qu'un chiffrement est inversible (déchiffrable).
+\end{intuitionbox}
+
+
+% ─── SECTION 1 : ENSEMBLES ───
+\section{Ensembles}
+
+\subsection{Définir des ensembles}
+
+\begin{defbox}[--- Ensemble]
+Un \textbf{ensemble} est une collection d'éléments. On note $x \in E$ si $x$ est un élément de $E$, et $x \notin E$ sinon.
+
+\medskip
+L'\textbf{ensemble vide}, noté $\emptyset$, est l'ensemble ne contenant aucun élément.
+\end{defbox}
+
+\begin{exbox}[Ensembles fondamentaux]
+\begin{itemize}[leftmargin=1.5cm]
+  \item $\N = \{0, 1, 2, 3, \ldots\}$ --- entiers naturels.
+  \item $\Z = \{\ldots, -2, -1, 0, 1, 2, \ldots\}$ --- entiers relatifs.
+  \item $\Q = \left\{\dfrac{p}{q} \;\middle|\; p \in \Z,\; q \in \N \setminus \{0\}\right\}$ --- rationnels.
+  \item $\R$ --- réels (contient $\sqrt{2}$, $\pi$, $\ln 2$, etc.).
+  \item $\C$ --- nombres complexes.
+\end{itemize}
+\end{exbox}
+
+On peut aussi définir des ensembles par une propriété :
+\[
+\{x \in \R \mid |x - 2| < 1\}, \quad \{z \in \C \mid z^5 = 1\}, \quad \{x \in \R \mid 0 \leqslant x \leqslant 1\} = [0,1].
+\]
+
+
+\subsection{Inclusion, union, intersection, complémentaire}
+
+\begin{defbox}[--- Opérations sur les ensembles]
+Soient $A, B$ des parties d'un ensemble $E$.
+
+\medskip
+\textbf{Inclusion :} $E \subset F$ si tout élément de $E$ est aussi un élément de $F$ :
+\[\forall x \in E,\; x \in F.\]
+
+\textbf{Égalité :} $E = F \iff E \subset F \text{ et } F \subset E.$
+
+\medskip
+\textbf{Ensemble des parties :} $\mathcal{P}(E)$ est l'ensemble de tous les sous-ensembles de $E$.
+
+\medskip
+\textbf{Complémentaire :} $\complement_E A = \{x \in E \mid x \notin A\}$, aussi noté $E \setminus A$.
+
+\medskip
+\textbf{Union :} $A \cup B = \{x \in E \mid x \in A \text{ ou } x \in B\}$ (<<~ou~>> inclusif).
+
+\medskip
+\textbf{Intersection :} $A \cap B = \{x \in E \mid x \in A \text{ et } x \in B\}$.
+\end{defbox}
+
+\begin{exbox}
+Si $E = \{1, 2, 3\}$ alors :
+\[\mathcal{P}(\{1,2,3\}) = \{\emptyset,\; \{1\},\; \{2\},\; \{3\},\; \{1,2\},\; \{1,3\},\; \{2,3\},\; \{1,2,3\}\}\]
+soit $2^3 = 8$ parties.
+\end{exbox}
+
+
+\subsection{Règles de calcul}
+
+\begin{propbox}[--- Règles de calcul ensembliste]
+Soient $A, B, C$ des parties d'un ensemble $E$.
+
+\medskip
+\textbf{Commutativité :} $A \cap B = B \cap A$, \quad $A \cup B = B \cup A$.
+
+\textbf{Associativité :} $A \cap (B \cap C) = (A \cap B) \cap C$, \quad $A \cup (B \cup C) = (A \cup B) \cup C$.
+
+\textbf{Éléments neutres :} $A \cap E = A$, \quad $A \cup \emptyset = A$, \quad $A \cap \emptyset = \emptyset$.
+
+\textbf{Idempotence :} $A \cap A = A$, \quad $A \cup A = A$.
+
+\textbf{Caractérisation de l'inclusion :} $A \subset B \iff A \cap B = A \iff A \cup B = B$.
+
+\medskip
+\textbf{Distributivité :}
+\begin{align*}
+A \cap (B \cup C) &= (A \cap B) \cup (A \cap C) \\
+A \cup (B \cap C) &= (A \cup B) \cap (A \cup C)
+\end{align*}
+
+\textbf{Lois de De Morgan :}
+\begin{align*}
+\complement(A \cap B) &= \complement A \cup \complement B \\
+\complement(A \cup B) &= \complement A \cap \complement B
+\end{align*}
+
+\textbf{Double complémentaire :} $\complement(\complement A) = A$, \quad et donc $A \subset B \iff \complement B \subset \complement A$.
+\end{propbox}
+
+\begin{proofbox}[Preuve de la distributivité $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$]
+$x \in A \cap (B \cup C) \iff x \in A \text{ et } x \in (B \cup C) \iff x \in A \text{ et } (x \in B \text{ ou } x \in C)$.
+
+Par distributivité du <<~et~>> sur le <<~ou~>> (logique, chapitre 1) :
+
+$\iff (x \in A \text{ et } x \in B) \text{ ou } (x \in A \text{ et } x \in C) \iff x \in (A \cap B) \cup (A \cap C)$.
+\end{proofbox}
+
+\begin{proofbox}[Preuve de De Morgan $\complement(A \cap B) = \complement A \cup \complement B$]
+$x \in \complement(A \cap B) \iff x \notin (A \cap B) \iff \text{non}(x \in A \text{ et } x \in B)$.
+
+Par la loi de De Morgan logique : $\iff \text{non}(x \in A) \text{ ou } \text{non}(x \in B) \iff x \notin A \text{ ou } x \notin B \iff x \in \complement A \cup \complement B$.
+\end{proofbox}
+
+\begin{intuitionbox}[Pattern structurel]
+Les lois de De Morgan ensemblistes sont \emph{exactement} les lois de De Morgan logiques (chapitre 1), traduites en langage d'ensembles. Chaque preuve ensembliste <<~repasse aux éléments~>> et utilise les connecteurs logiques. C'est le même pattern qui apparaît dans les règles de pare-feu : nier une conjonction de conditions donne une disjonction des négations.
+\end{intuitionbox}
+
+
+\subsection{Produit cartésien}
+
+\begin{defbox}[--- Produit cartésien]
+Soient $E$ et $F$ deux ensembles. Le \textbf{produit cartésien} $E \times F$ est l'ensemble des couples $(x, y)$ avec $x \in E$ et $y \in F$ :
+\[E \times F = \{(x, y) \mid x \in E,\; y \in F\}.\]
+\end{defbox}
+
+\begin{exbox}
+$\R^2 = \R \times \R$ est le plan usuel. Le cube unité est $[0,1] \times [0,1] \times [0,1] = \{(x,y,z) \mid 0 \leqslant x,y,z \leqslant 1\}$.
+\end{exbox}
+
+
+% ─── SECTION 2 : APPLICATIONS ───
+\section{Applications}
+
+\subsection{Définitions}
+
+\begin{defbox}[--- Application]
+Une \textbf{application} (ou fonction) $f : E \to F$ associe à chaque élément $x \in E$ un unique élément $f(x) \in F$.
+
+\medskip
+\textbf{Égalité :} $f = g \iff \forall x \in E,\; f(x) = g(x)$.
+
+\medskip
+\textbf{Graphe :} $\Gamma_f = \{(x, f(x)) \in E \times F \mid x \in E\}$.
+\end{defbox}
+
+\begin{defbox}[--- Composition]
+Soient $f : E \to F$ et $g : F \to G$. La \textbf{composée} $g \circ f : E \to G$ est définie par :
+\[(g \circ f)(x) = g\bigl(f(x)\bigr).\]
+\end{defbox}
+
+\begin{exbox}[Composition concrète]
+Soient $f : ]0, +\infty[ \to ]0, +\infty[$ définie par $f(x) = \frac{1}{x}$ et $g : ]0, +\infty[ \to \R$ par $g(x) = \frac{x-1}{x+1}$.
+
+Alors pour tout $x > 0$ :
+\[
+(g \circ f)(x) = g\!\left(\frac{1}{x}\right) = \frac{\frac{1}{x} - 1}{\frac{1}{x} + 1} = \frac{1 - x}{1 + x} = -g(x).
+\]
+\end{exbox}
+
+L'\textbf{identité} $\mathrm{id}_E : E \to E$ définie par $x \mapsto x$ est l'application neutre pour la composition. La \textbf{restriction} de $f$ à $A \subset E$ est l'application $f_{|A} : A \to F$ définie par $f_{|A}(x) = f(x)$.
+
+
+\subsection{Image directe et image réciproque}
+
+\begin{defbox}[--- Image directe et image réciproque]
+Soit $f : E \to F$.
+
+\medskip
+L'\textbf{image directe} d'une partie $A \subset E$ :
+\[f(A) = \{f(x) \mid x \in A\} \subset F.\]
+
+L'\textbf{image réciproque} d'une partie $B \subset F$ :
+\[f^{-1}(B) = \{x \in E \mid f(x) \in B\} \subset E.\]
+\end{defbox}
+
+\begin{rembox}[Attention]
+La notation $f^{-1}(B)$ est un tout : elle existe pour toute application $f$, même non bijective. L'image réciproque d'un singleton $f^{-1}(\{y\})$ peut être vide (si $y$ n'a pas d'antécédent), un singleton, un ensemble à plusieurs éléments, ou même $E$ tout entier (si $f$ est constante de valeur $y$).
+\end{rembox}
+
+
+\subsection{Antécédents}
+
+\begin{defbox}[--- Antécédent]
+Soit $y \in F$. Tout élément $x \in E$ tel que $f(x) = y$ est un \textbf{antécédent} de $y$ par $f$. L'ensemble des antécédents de $y$ est $f^{-1}(\{y\})$.
+\end{defbox}
+
+
+% ─── SECTION 3 : INJECTION, SURJECTION, BIJECTION ───
+\section{Injection, surjection, bijection}
+
+\subsection{Injection et surjection}
+
+\begin{defbox}[--- Injection]
+$f : E \to F$ est \textbf{injective} si :
+\[\forall x, x' \in E, \quad f(x) = f(x') \implies x = x'.\]
+Autrement dit, tout élément de $F$ a \textbf{au plus un} antécédent.
+\end{defbox}
+
+\begin{defbox}[--- Surjection]
+$f : E \to F$ est \textbf{surjective} si :
+\[\forall y \in F,\; \exists x \in E, \quad y = f(x).\]
+Autrement dit, tout élément de $F$ a \textbf{au moins un} antécédent. De façon équivalente : $f(E) = F$.
+\end{defbox}
+
+\begin{exbox}[Exemples détaillés]
+\textbf{1.} $f_1 : \N \to \Q$ définie par $f_1(x) = \frac{1}{1+x}$.
+
+\emph{Injective :} si $f_1(x) = f_1(x')$ alors $\frac{1}{1+x} = \frac{1}{1+x'}$ donc $1+x = 1+x'$ donc $x = x'$. \checkmark
+
+\emph{Non surjective :} on a toujours $f_1(x) \leqslant 1$, donc $y = 2$ n'a pas d'antécédent.
+
+\medskip
+\textbf{2.} $f_2 : \Z \to \N$ définie par $f_2(x) = x^2$.
+
+\emph{Non injective :} $f_2(2) = f_2(-2) = 4$ mais $2 \neq -2$.
+
+\emph{Non surjective :} $y = 3$ n'a pas d'antécédent dans $\Z$ (car $\sqrt{3} \notin \Z$).
+\end{exbox}
+
+\begin{intuitionbox}[Reformulation par les antécédents]
+C'est la façon la plus intuitive de retenir :
+\begin{itemize}[leftmargin=1.5cm]
+  \item \textbf{Injective} $\iff$ chaque $y$ a \textbf{au plus 1} antécédent (0 ou 1).
+  \item \textbf{Surjective} $\iff$ chaque $y$ a \textbf{au moins 1} antécédent ($\geqslant 1$).
+  \item \textbf{Bijective} $\iff$ chaque $y$ a \textbf{exactement 1} antécédent.
+\end{itemize}
+En crypto : un chiffrement doit être bijectif (chaque texte chiffré a un unique antécédent = le texte clair).
+\end{intuitionbox}
+
+
+\subsection{Bijection}
+
+\begin{defbox}[--- Bijection]
+$f : E \to F$ est \textbf{bijective} si elle est à la fois injective et surjective :
+\[\forall y \in F,\; \exists!\, x \in E, \quad y = f(x).\]
+\end{defbox}
+
+\begin{propbox}[--- Caractérisation par la bijection réciproque]
+Soit $f : E \to F$.
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $f$ est bijective $\iff$ il existe $g : F \to E$ telle que $f \circ g = \mathrm{id}_F$ et $g \circ f = \mathrm{id}_E$.
+  \item Si $f$ est bijective, cette application $g$ est unique, elle-même bijective, appelée \textbf{bijection réciproque} de $f$ et notée $f^{-1}$. De plus $(f^{-1})^{-1} = f$.
+\end{enumerate}
+\end{propbox}
+
+\begin{proofbox}
+\textbf{Sens $\Rightarrow$ :} $f$ bijective. Construction de $g$ : pour chaque $y \in F$, la surjectivité donne un $x \in E$ tel que $y = f(x)$ ; on pose $g(y) = x$. On a $f(g(y)) = f(x) = y$ pour tout $y$, donc $f \circ g = \mathrm{id}_F$. On compose à droite par $f$ : $f \circ g \circ f = f$, et l'injectivité de $f$ donne $g \circ f = \mathrm{id}_E$.
+
+\medskip
+\textbf{Sens $\Leftarrow$ :} Supposons $g$ existe.
+\begin{itemize}[leftmargin=1cm]
+  \item \emph{Surjectivité :} soit $y \in F$. Posons $x = g(y)$ ; alors $f(x) = f(g(y)) = \mathrm{id}_F(y) = y$.
+  \item \emph{Injectivité :} si $f(x) = f(x')$, on compose par $g$ : $g(f(x)) = g(f(x'))$ donc $\mathrm{id}_E(x) = \mathrm{id}_E(x')$ donc $x = x'$.
+\end{itemize}
+
+\medskip
+\textbf{Unicité :} si $h$ vérifie aussi $h \circ f = \mathrm{id}_E$ et $f \circ h = \mathrm{id}_F$, alors $f \circ h = f \circ g$, et l'injectivité de $f$ donne $h(y) = g(y)$ pour tout $y$, donc $h = g$.
+\end{proofbox}
+
+\begin{exbox}
+$f : \R \to ]0, +\infty[$ définie par $f(x) = e^x$ est bijective. Sa réciproque est $f^{-1} = \ln$ :
+\[\exp(\ln(y)) = y \;\;\forall y > 0, \qquad \ln(\exp(x)) = x \;\;\forall x \in \R.\]
+\end{exbox}
+
+\begin{propbox}[--- Composée de bijections]
+Si $f : E \to F$ et $g : F \to G$ sont bijectives, alors $g \circ f$ est bijective et :
+\[(g \circ f)^{-1} = f^{-1} \circ g^{-1}.\]
+\end{propbox}
+
+\begin{proofbox}
+Il existe $u = f^{-1}$ et $v = g^{-1}$ telles que $u \circ f = \mathrm{id}_E$, $f \circ u = \mathrm{id}_F$, $v \circ g = \mathrm{id}_F$, $g \circ v = \mathrm{id}_G$.
+
+Alors $(g \circ f) \circ (u \circ v) = g \circ (f \circ u) \circ v = g \circ \mathrm{id}_F \circ v = g \circ v = \mathrm{id}_G$.
+
+Et $(u \circ v) \circ (g \circ f) = u \circ (v \circ g) \circ f = u \circ \mathrm{id}_F \circ f = u \circ f = \mathrm{id}_E$.
+
+Donc $g \circ f$ est bijective de réciproque $f^{-1} \circ g^{-1}$.
+\end{proofbox}
+
+\begin{intuitionbox}[L'ordre s'inverse]
+$(g \circ f)^{-1} = f^{-1} \circ g^{-1}$ : pour <<~défaire~>> deux opérations successives, on défait la dernière d'abord. C'est le même principe qu'une pile (LIFO) en informatique, ou que l'inversion d'une chaîne de chiffrement.
+\end{intuitionbox}
+
+
+% ─── SECTION 4 : ENSEMBLES FINIS ───
+\section{Ensembles finis}
+
+\subsection{Cardinal}
+
+\begin{defbox}[--- Cardinal]
+Un ensemble $E$ est \textbf{fini} s'il existe $n \in \N$ et une bijection de $E$ vers $\{1, 2, \ldots, n\}$. Cet entier $n$, unique, est le \textbf{cardinal} de $E$, noté $\mathrm{Card}\, E$.
+\end{defbox}
+
+\begin{propbox}[--- Propriétés du cardinal]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $B \subset A$ fini $\implies$ $B$ fini et $\mathrm{Card}\, B \leqslant \mathrm{Card}\, A$.
+  \item $A \cap B = \emptyset \implies \mathrm{Card}(A \cup B) = \mathrm{Card}\, A + \mathrm{Card}\, B$.
+  \item $B \subset A \implies \mathrm{Card}(A \setminus B) = \mathrm{Card}\, A - \mathrm{Card}\, B$.
+  \item \textbf{Formule d'inclusion-exclusion :}
+    \[\mathrm{Card}(A \cup B) = \mathrm{Card}\, A + \mathrm{Card}\, B - \mathrm{Card}(A \cap B).\]
+\end{enumerate}
+\end{propbox}
+
+\begin{proofbox}[Preuve de la formule d'inclusion-exclusion]
+On décompose $A \cup B = A \cup (B \setminus (A \cap B))$. Les ensembles $A$ et $B \setminus (A \cap B)$ sont disjoints, donc $\mathrm{Card}(A \cup B) = \mathrm{Card}\, A + \mathrm{Card}(B \setminus (A \cap B)) = \mathrm{Card}\, A + \mathrm{Card}\, B - \mathrm{Card}(A \cap B)$.
+\end{proofbox}
+
+
+\subsection{Injection, surjection, bijection et ensembles finis}
+
+\begin{propbox}[--- Cardinal et types d'application]
+Soient $E, F$ deux ensembles finis et $f : E \to F$.
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $f$ injective $\implies \mathrm{Card}\, E \leqslant \mathrm{Card}\, F$.
+  \item $f$ surjective $\implies \mathrm{Card}\, E \geqslant \mathrm{Card}\, F$.
+  \item $f$ bijective $\implies \mathrm{Card}\, E = \mathrm{Card}\, F$.
+\end{enumerate}
+\end{propbox}
+
+\begin{propbox}[--- Équivalence pour ensembles de même cardinal]
+Soit $f : E \to F$ avec $\mathrm{Card}\, E = \mathrm{Card}\, F$. Alors :
+\[f \text{ injective} \iff f \text{ surjective} \iff f \text{ bijective}.\]
+\end{propbox}
+
+\begin{proofbox}
+Schéma : on montre (i) $\Rightarrow$ (ii) $\Rightarrow$ (iii) $\Rightarrow$ (i).
+
+\medskip
+\textbf{Injective $\Rightarrow$ surjective :} $\mathrm{Card}\, f(E) = \mathrm{Card}\, E = \mathrm{Card}\, F$, et $f(E) \subset F$, donc $f(E) = F$.
+
+\textbf{Surjective $\Rightarrow$ bijective :} par l'absurde, si $f$ non injective, deux éléments distincts ont même image, donc $\mathrm{Card}\, f(E) < \mathrm{Card}\, E$. Or $f(E) = F$, donc $\mathrm{Card}\, F < \mathrm{Card}\, E$. Contradiction.
+
+\textbf{Bijective $\Rightarrow$ injective :} immédiat.
+\end{proofbox}
+
+\begin{propbox}[--- Principe des tiroirs (Pigeonhole)]
+Si l'on range $n > k$ objets dans $k$ tiroirs, alors au moins un tiroir contient au moins deux objets.
+\end{propbox}
+
+\begin{intuitionbox}[Application concrète]
+Dans un amphi de 400 étudiants, il y a au moins deux étudiants nés le même jour de l'année ($400 > 366$). Le principe des tiroirs est un outil puissant en combinatoire et en cryptanalyse (par ex.\ le paradoxe des anniversaires pour les collisions de hash).
+\end{intuitionbox}
+
+
+\subsection{Dénombrement d'applications}
+
+Soient $E, F$ des ensembles finis non vides avec $\mathrm{Card}\, E = n$ et $\mathrm{Card}\, F = p$.
+
+\begin{propbox}[--- Nombre d'applications]
+Le nombre d'applications de $E$ dans $F$ est $p^n = (\mathrm{Card}\, F)^{\mathrm{Card}\, E}$.
+\end{propbox}
+
+\begin{proofbox}[Preuve par récurrence sur $n$]
+\textbf{Initialisation :} pour $n = 1$, l'unique élément de $E$ peut être envoyé sur $p$ éléments : $p^1$ applications.
+
+\textbf{Hérédité :} supposons le résultat vrai au rang $n$. Soit $E$ de cardinal $n+1$. On fixe $a \in E$ et on pose $E' = E \setminus \{a\}$ ($n$ éléments). Par hypothèse de récurrence, il y a $p^n$ applications de $E'$ vers $F$. Chacune se prolonge en une application de $E$ vers $F$ par $p$ choix pour l'image de $a$. Total : $p^n \times p = p^{n+1}$.
+\end{proofbox}
+
+\begin{propbox}[--- Nombre d'injections]
+Le nombre d'injections de $E$ dans $F$ est :
+\[p \times (p-1) \times \cdots \times (p - n + 1).\]
+\end{propbox}
+
+\begin{proofbox}
+Pour $a_1$ : $p$ choix. Pour $a_2$ : $p-1$ choix (image distincte de celle de $a_1$). Pour $a_k$ : $p - (k-1)$ choix. Total : $p(p-1) \cdots (p-n+1)$.
+\end{proofbox}
+
+\textbf{Notation factorielle :} $n! = 1 \times 2 \times 3 \times \cdots \times n$, avec $0! = 1$ par convention.
+
+\begin{propbox}[--- Nombre de bijections]
+Le nombre de bijections d'un ensemble à $n$ éléments dans lui-même est $n!$
+\end{propbox}
+
+\begin{exbox}
+Parmi les $5^5 = 3125$ applications de $\{1,2,3,4,5\}$ dans lui-même, seules $5! = 120$ sont bijectives.
+\end{exbox}
+
+
+\subsection{Nombre de sous-ensembles}
+
+\begin{propbox}[--- Cardinal de $\mathcal{P}(E)$]
+$\mathrm{Card}\, \mathcal{P}(E) = 2^{\mathrm{Card}\, E} = 2^n$.
+\end{propbox}
+
+\begin{proofbox}[Preuve par récurrence sur $n$]
+\textbf{Initialisation :} $E = \{a\}$ a 2 parties : $\emptyset$ et $\{a\}$.
+
+\textbf{Hérédité :} soit $E$ de cardinal $n+1$. On fixe $a \in E$. Les parties de $E$ se séparent en deux catégories : celles ne contenant pas $a$ (parties de $E \setminus \{a\}$, au nombre de $2^n$) et celles contenant $a$ (de la forme $\{a\} \cup A'$ avec $A' \subset E \setminus \{a\}$, au nombre de $2^n$). Total : $2^n + 2^n = 2^{n+1}$.
+\end{proofbox}
+
+
+\subsection{Coefficients du binôme de Newton}
+
+\begin{defbox}[--- Coefficient binomial]
+Le nombre de parties à $k$ éléments d'un ensemble à $n$ éléments est noté $\displaystyle\binom{n}{k}$.
+\end{defbox}
+
+\begin{propbox}[--- Propriétés élémentaires]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $\displaystyle\binom{n}{0} = 1$, \quad $\displaystyle\binom{n}{1} = n$, \quad $\displaystyle\binom{n}{n} = 1$.
+  \item \textbf{Symétrie :} $\displaystyle\binom{n}{k} = \binom{n}{n-k}$.
+  \item \textbf{Somme :} $\displaystyle\sum_{k=0}^{n} \binom{n}{k} = 2^n$.
+\end{enumerate}
+\end{propbox}
+
+\begin{propbox}[--- Formule de Pascal]
+Pour $0 < k < n$ :
+\[\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}.\]
+\end{propbox}
+
+\begin{proofbox}
+Soit $E$ de cardinal $n$, $a \in E$, $E' = E \setminus \{a\}$. Les parties à $k$ éléments de $E$ se répartissent en deux types : celles ne contenant pas $a$ (parties à $k$ éléments de $E'$ : il y en a $\binom{n-1}{k}$) et celles contenant $a$ ($\{a\} \cup A'$ avec $A'$ partie à $k-1$ éléments de $E'$ : il y en a $\binom{n-1}{k-1}$). D'où la formule.
+\end{proofbox}
+
+Cette formule permet de construire le \textbf{triangle de Pascal} ligne par ligne : chaque coefficient est la somme des deux coefficients au-dessus.
+
+\begin{propbox}[--- Formule explicite]
+\[\binom{n}{k} = \frac{n!}{k!\,(n-k)!}\]
+\end{propbox}
+
+
+\subsection{Formule du binôme de Newton}
+
+\begin{thmbox}[--- Binôme de Newton]
+Pour $a, b \in \R$ (ou $\C$) et $n \in \N^*$ :
+\[(a + b)^n = \sum_{k=0}^{n} \binom{n}{k}\, a^{n-k}\, b^k.\]
+\end{thmbox}
+
+\begin{proofbox}[Preuve par récurrence sur $n$]
+\textbf{Initialisation :} $(a+b)^1 = \binom{1}{0}a + \binom{1}{1}b$. \checkmark
+
+\textbf{Hérédité :} on suppose la formule vraie au rang $n-1$ et on calcule $(a+b)^n = (a+b)(a+b)^{n-1}$. En développant et regroupant les termes en $a^{n-k}b^k$, le coefficient obtenu est $\binom{n-1}{k} + \binom{n-1}{k-1} = \binom{n}{k}$ par la formule de Pascal.
+\end{proofbox}
+
+\begin{exbox}
+$(a+b)^2 = a^2 + 2ab + b^2$. \quad $(a+b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$.
+
+En posant $a = 1$, $b = 1$ : $\sum_{k=0}^n \binom{n}{k} = 2^n$. En posant $a = -1$, $b = 1$ : $\sum_{k=0}^n (-1)^k \binom{n}{k} = 0$, ce qui signifie qu'un ensemble à $n$ éléments a autant de parties de cardinal pair que de cardinal impair.
+\end{exbox}
+
+
+% ─── SECTION 5 : RELATION D'ÉQUIVALENCE ───
+\section{Relation d'équivalence}
+
+\subsection{Définition}
+
+\begin{defbox}[--- Relation d'équivalence]
+Soit $E$ un ensemble et $\mathcal{R}$ une relation sur $E$. C'est une \textbf{relation d'équivalence} si elle est :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Réflexive :} $\forall x \in E, \; x \mathcal{R} x$.
+  \item \textbf{Symétrique :} $\forall x, y \in E, \; x \mathcal{R} y \implies y \mathcal{R} x$.
+  \item \textbf{Transitive :} $\forall x, y, z \in E, \; x \mathcal{R} y \text{ et } y \mathcal{R} z \implies x \mathcal{R} z$.
+\end{enumerate}
+\end{defbox}
+
+\begin{exbox}[Exemples et contre-exemples]
+\begin{itemize}[leftmargin=1.5cm]
+  \item <<~Être parallèle~>> est une relation d'équivalence sur les droites du plan (réflexive, symétrique, transitive). \checkmark
+  \item <<~Être du même âge~>> est une relation d'équivalence. \checkmark
+  \item <<~Être perpendiculaire~>> n'en est pas une (pas réflexive, pas transitive). $\times$
+  \item La relation $\leqslant$ sur $\R$ n'en est pas une (pas symétrique). $\times$
+\end{itemize}
+\end{exbox}
+
+
+\subsection{Classes d'équivalence}
+
+\begin{defbox}[--- Classe d'équivalence]
+La \textbf{classe d'équivalence} de $x \in E$ est :
+\[\mathrm{cl}(x) = \{y \in E \mid y \mathcal{R} x\}.\]
+Si $y \in \mathrm{cl}(x)$, on dit que $y$ est un \textbf{représentant} de la classe.
+\end{defbox}
+
+\begin{propbox}[--- Propriétés des classes]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $\mathrm{cl}(x) = \mathrm{cl}(y) \iff x \mathcal{R} y$.
+  \item Pour tout $x, y \in E$ : soit $\mathrm{cl}(x) = \mathrm{cl}(y)$, soit $\mathrm{cl}(x) \cap \mathrm{cl}(y) = \emptyset$.
+  \item Les classes d'équivalence forment une \textbf{partition} de $E$ : $E$ est l'union disjointe de toutes les classes.
+\end{enumerate}
+\end{propbox}
+
+\begin{rembox}
+Une \textbf{partition} de $E$ est une famille $\{E_i\}$ de parties non vides de $E$ telles que $E = \bigcup_i E_i$ et $E_i \cap E_j = \emptyset$ pour $i \neq j$.
+\end{rembox}
+
+
+\subsection{Construction des rationnels}
+
+\begin{exbox}[Les rationnels comme classes d'équivalence]
+Sur $E = \Z \times \N^*$, on définit :
+\[(p, q) \mathcal{R} (p', q') \iff pq' = p'q.\]
+
+C'est une relation d'équivalence (vérification directe de la réflexivité, symétrie, transitivité). On note $\frac{p}{q} = \mathrm{cl}(p, q)$.
+
+Par exemple $(2, 3) \mathcal{R} (4, 6)$ car $2 \times 6 = 3 \times 4$, donc $\frac{2}{3} = \frac{4}{6}$ : mêmes classes, écritures différentes.
+
+L'ensemble $\Q$ des rationnels est précisément l'ensemble des classes d'équivalence de cette relation.
+\end{exbox}
+
+\begin{intuitionbox}[Importance conceptuelle]
+Cette construction est fondamentale : on \emph{crée} un nouvel objet mathématique (les fractions) à partir d'objets plus simples (les couples d'entiers) en <<~identifiant~>> ceux qui sont équivalents. Le même procédé est utilisé en algèbre abstraite pour construire les groupes quotients, et en crypto pour construire $\Z/n\Z$.
+\end{intuitionbox}
+
+
+\subsection{L'ensemble $\Z/n\Z$}
+
+Soit $n \geqslant 2$ un entier fixé.
+
+\begin{defbox}[--- Congruence modulo $n$]
+On définit sur $\Z$ :
+\[a \equiv b \pmod{n} \iff n \mid (a - b)\]
+c'est-à-dire $a - b$ est un multiple de $n$.
+\end{defbox}
+
+\begin{propbox}[--- La congruence est une relation d'équivalence]
+\begin{itemize}[leftmargin=1cm]
+  \item \emph{Réflexivité :} $a - a = 0 = 0 \cdot n$, donc $a \equiv a \pmod{n}$.
+  \item \emph{Symétrie :} si $a - b = kn$ alors $b - a = (-k)n$.
+  \item \emph{Transitivité :} si $a - b = kn$ et $b - c = k'n$ alors $a - c = (k + k')n$.
+\end{itemize}
+\end{propbox}
+
+La classe d'équivalence de $a$ est :
+\[\bar{a} = \mathrm{cl}(a) = \{a + kn \mid k \in \Z\} = a + n\Z.\]
+
+Comme $\overline{n} = \bar{0}$, $\overline{n+1} = \bar{1}$, etc., l'ensemble des classes est :
+\[\Z/n\Z = \{\bar{0}, \bar{1}, \bar{2}, \ldots, \overline{n-1}\}\]
+qui contient exactement $n$ éléments.
+
+\begin{exbox}[$\Z/7\Z$]
+\begin{itemize}[leftmargin=1cm]
+  \item $\bar{0} = \{\ldots, -14, -7, 0, 7, 14, 21, \ldots\} = 7\Z$
+  \item $\bar{1} = \{\ldots, -13, -6, 1, 8, 15, \ldots\} = 1 + 7\Z$
+  \item $\bar{6} = \{\ldots, -8, -1, 6, 13, 20, \ldots\} = 6 + 7\Z$
+\end{itemize}
+Et $\bar{7} = \bar{0}$, $\bar{10} = \bar{3}$ (car $10 - 3 = 7$), etc.
+\end{exbox}
+
+\begin{intuitionbox}[Lien avec le chapitre Arithmétique et la crypto]
+$\Z/n\Z$ relie directement ce chapitre à l'arithmétique modulaire étudiée au chapitre 4. Les classes de congruence modulo $n$ sont l'environnement naturel de RSA ($\Z/n\Z$ avec $n = pq$), du petit théorème de Fermat ($a^{p-1} \equiv 1 \pmod{p}$), et du logarithme discret (Diffie-Hellman, ElGamal).
+
+Dans la vie courante : les minutes sont modulo 60, les heures modulo 24, les jours de la semaine modulo 7.
+\end{intuitionbox}
+
+
+% ─── SYNTHÈSE ───
+\section{Synthèse personnelle --- Ensembles et Applications}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Les ensembles comme langage universel.} Chaque objet mathématique de ce cahier est un ensemble ou vit dans un ensemble : $\N$, $\Z$, $\Q$, $\R$, $\C$. Les opérations (union, intersection, complémentaire) sont les traductions ensemblistes des connecteurs logiques du chapitre 1.
+
+\textbf{2. La bijection comme concept central.} Une bijection garantit une correspondance parfaite entre deux ensembles. En crypto, un algorithme de chiffrement est bijectif (sinon on ne peut pas déchiffrer). Le cardinal permet de quantifier cette correspondance : $\mathrm{Card}\, E = \mathrm{Card}\, F \iff$ il existe une bijection $E \to F$.
+
+\textbf{3. Le dénombrement alimente la cryptographie.} Le nombre de clés possibles ($|\text{espace de clés}|$) détermine la résistance au brute-force. Le coefficient binomial $\binom{n}{k}$ et la factorielle $n!$ sont les outils de base pour évaluer cette taille.
+
+\textbf{4. $\Z/n\Z$ boucle la boucle.} Les relations d'équivalence et les classes de congruence, construites ici à partir de zéro, sont exactement les structures utilisées dans le chapitre 4 (Arithmétique) pour le théorème de Fermat et RSA. Ce chapitre fournit la fondation abstraite, le chapitre 4 l'application concrète.
+\end{intuitionbox}
+
+
 % ═══════════════════════════════════════
 %   CONCLUSION GÉNÉRALE
 % ═══════════════════════════════════════
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
 
-Ce cahier de recherche couvre quatre piliers fondamentaux qui forment un tout cohérent :
+Ce cahier de recherche couvre cinq piliers fondamentaux qui forment un tout cohérent :
 
 \begin{enumerate}[leftmargin=2cm]
   \item La \textbf{logique} fournit le langage et les méthodes de preuve --- c'est le <<~système d'exploitation~>> sur lequel tout le reste tourne.
   \item Les \textbf{nombres complexes} étendent le terrain de jeu algébrique et géométrique, fournissant des outils puissants (notation exponentielle, racines de l'unité) qui simplifient radicalement certains problèmes.
   \item Les \textbf{suites numériques} introduisent l'infini en analyse --- la notion de limite, formalisée par la logique du chapitre 1, est le concept central de toute l'analyse mathématique.
   \item L'\textbf{arithmétique} fournit les briques calculatoires de la cryptographie --- divisibilité, primalité, congruences et Fermat s'assemblent directement dans les protocoles de sécurité comme RSA.
+  \item Les \textbf{ensembles et applications} posent les fondations abstraites : notions d'ensemble, d'application, d'injection/surjection/bijection, dénombrement et relations d'équivalence. Ce chapitre fournit le cadre structurel de $\Z/n\Z$ qui sous-tend toute l'arithmétique modulaire.
 \end{enumerate}
 
 \begin{intuitionbox}[Vision d'ensemble]
-Le fil conducteur entre ces quatre chapitres est la \textbf{rigueur progressive} : on part d'un langage formel (logique), on construit des objets (complexes, entiers), puis on étudie leur comportement (suites, divisibilité). Chaque couche s'appuie sur les précédentes.
+Le fil conducteur entre ces cinq chapitres est la \textbf{rigueur progressive} : on part d'un langage formel (logique), on construit des objets (complexes, entiers, ensembles), puis on étudie leur comportement (suites, divisibilité, applications). Chaque couche s'appuie sur les précédentes.
 
-L'arithmétique boucle la boucle en reliant les mathématiques pures à mon domaine de spécialisation : la cybersécurité. Les mêmes structures --- récurrence, absurde, contraposée --- servent à prouver l'unicité de la décomposition en facteurs premiers comme à montrer la convergence d'une suite.
+Le chapitre sur les ensembles fait le pont entre la logique (les lois de De Morgan ensemblistes sont les lois de De Morgan logiques) et l'arithmétique (la construction de $\Z/n\Z$ via les relations d'équivalence). L'arithmétique boucle la boucle en reliant les mathématiques pures à mon domaine de spécialisation : la cybersécurité.
 
-Ce cahier n'est pas un point d'arrivée mais un point de départ. Les mêmes structures --- limites, complétude, congruences --- se retrouveront dans l'étude des fonctions continues, des séries, de l'algèbre modulaire et de la cryptographie avancée.
+Ce cahier n'est pas un point d'arrivée mais un point de départ. Les mêmes structures --- limites, complétude, congruences, bijections --- se retrouveront dans l'étude des fonctions continues, des séries, de l'algèbre modulaire et de la cryptographie avancée.
 \end{intuitionbox}
 
 
@@ -1691,6 +2266,31 @@ Relation PGCD-PPCM & $\text{pgcd}(a,b) \times \text{ppcm}(a,b) = |ab|$ \\
 Lemme d'Euclide & $p$ premier, $p \mid ab \Rightarrow p \mid a$ ou $p \mid b$ \\
 Petit Fermat & $p$ premier $\Rightarrow a^p \equiv a \pmod{p}$ \\
 Fermat (inversible) & $p \nmid a \Rightarrow a^{p-1} \equiv 1 \pmod{p}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Ensembles et Applications}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+De Morgan (ensembles) & $\complement(A \cap B) = \complement A \cup \complement B$ \\
+De Morgan (ensembles) & $\complement(A \cup B) = \complement A \cap \complement B$ \\
+Inclusion-exclusion & $\mathrm{Card}(A \cup B) = \mathrm{Card}\, A + \mathrm{Card}\, B - \mathrm{Card}(A \cap B)$ \\
+Nombre d'applications & $E \to F$ : $p^n$ \; ($n = \mathrm{Card}\, E$, $p = \mathrm{Card}\, F$) \\
+Nombre d'injections & $p(p-1)\cdots(p-n+1)$ \\
+Nombre de bijections & $n!$ \\
+$\mathrm{Card}\, \mathcal{P}(E)$ & $2^n$ \\
+Coefficient binomial & $\binom{n}{k} = \frac{n!}{k!(n-k)!}$ \\
+Pascal & $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$ \\
+Binôme de Newton & $(a+b)^n = \sum_{k=0}^{n} \binom{n}{k} a^{n-k} b^k$ \\
+Même cardinal & Injective $\iff$ surjective $\iff$ bijective \\
+Réciproque composée & $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$ \\
+$\Z/n\Z$ & $a \equiv b \pmod{n} \iff n \mid (a-b)$, \; $n$ classes \\
 \hline
 \end{tabular}
 \end{center}

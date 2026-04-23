@@ -204,6 +204,9 @@
 \DeclareMathOperator{\re}{Re}
 \DeclareMathOperator{\im}{Im}
 \DeclareMathOperator{\argop}{arg}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Ima}{Im}
+\newcommand{\abs}[1]{\left|#1\right|}
 
 % ═══════════════════════════════════════
 %   HYPERREF CONFIG
@@ -241,7 +244,11 @@
 
 \vspace{0.3cm}
 
-{\large\sffamily\color{darkgray} Logique \(\cdot\) Nombres Complexes \(\cdot\) Suites Numériques \(\cdot\) Arithmétique}
+{\large\sffamily\color{darkgray} Logique \(\cdot\) Nombres Complexes \(\cdot\) Suites \(\cdot\) Arithmétique \(\cdot\) Ensembles}
+
+\vspace{0.15cm}
+
+{\large\sffamily\color{darkgray} Fonctions continues \(\cdot\) Dérivées \(\cdot\) Groupes}
 
 \vspace{1cm}
 
@@ -293,7 +300,7 @@
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
-Ce cahier de recherche documente mon apprentissage approfondi de trois piliers fondamentaux des mathématiques : la \textbf{logique et les raisonnements}, les \textbf{nombres complexes}, et les \textbf{suites numériques}. Il ne s'agit pas d'une simple recopie de cours, mais d'une reconstruction personnelle des concepts, enrichie de mes propres reformulations, intuitions et démonstrations détaillées.
+Ce cahier de recherche documente mon apprentissage approfondi de huit piliers fondamentaux des mathématiques : la \textbf{logique et les raisonnements}, les \textbf{nombres complexes}, les \textbf{suites numériques}, l'\textbf{arithmétique}, les \textbf{ensembles et applications}, les \textbf{limites et fonctions continues}, la \textbf{dérivée d'une fonction}, et les \textbf{groupes}. Il ne s'agit pas d'une simple recopie de cours, mais d'une reconstruction personnelle des concepts, enrichie de mes propres reformulations, intuitions et démonstrations détaillées.
 
 \begin{intuitionbox}[Démarche]
 Ma méthode d'apprentissage repose sur un principe directeur : pour chaque concept, je cherche la \emph{règle génératrice} sous-jacente plutôt que de mémoriser le résultat en surface. La question que je me pose systématiquement est :
@@ -2166,28 +2173,799 @@ Dans la vie courante : les minutes sont modulo 60, les heures modulo 24, les jou
 \end{intuitionbox}
 
 
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 6 : LIMITES ET FONCTIONS  ║
+% ║              CONTINUES                ║
+% ╚═══════════════════════════════════════╝
+\chapter{Limites et Fonctions Continues}
+
+\begin{intuitionbox}[Motivation]
+Les équations simples comme $ax + b = 0$ ou $ax^2 + bx + c = 0$ se résolvent par des formules explicites. Mais pour une équation aussi naturelle que $x + e^x = 0$, aucune formule n'existe. La continuité permet de prouver l'\emph{existence} d'une solution, d'en montrer l'\emph{unicité}, et de la calculer par approximation. C'est un saut conceptuel majeur : on passe de <<~trouver la solution~>> à <<~prouver qu'elle existe~>>.
+\end{intuitionbox}
+
+
+\section{Notions de fonction}
+
+\subsection{Définitions fondamentales}
+
+\begin{defbox}[--- Fonction réelle]
+Une \textbf{fonction d'une variable réelle à valeurs réelles} est une application $f : U \to \R$, où $U$ est une partie de $\R$ (en général un intervalle ou une réunion d'intervalles). On appelle $U$ le \textbf{domaine de définition} de $f$.
+
+Le \textbf{graphe} de $f$ est l'ensemble $\Gamma_f = \{(x, f(x)) \mid x \in U\} \subset \R^2$.
+\end{defbox}
+
+\subsection{Opérations sur les fonctions}
+
+Soient $f, g : U \to \R$ deux fonctions définies sur une même partie $U$ de $\R$.
+
+\begin{propbox}[--- Opérations élémentaires]
+\begin{itemize}[leftmargin=1cm]
+  \item \textbf{Somme :} $(f + g)(x) = f(x) + g(x)$
+  \item \textbf{Produit :} $(f \times g)(x) = f(x) \times g(x)$
+  \item \textbf{Multiplication scalaire :} $(\lambda \cdot f)(x) = \lambda \cdot f(x)$ pour $\lambda \in \R$
+\end{itemize}
+\end{propbox}
+
+\subsection{Fonctions majorées, minorées, bornées}
+
+\begin{defbox}[--- Bornes d'une fonction]
+Soit $f : U \to \R$.
+\begin{itemize}[leftmargin=1cm]
+  \item $f$ est \textbf{majorée} sur $U$ si $\exists M \in \R, \; \forall x \in U, \; f(x) \leqslant M$.
+  \item $f$ est \textbf{minorée} sur $U$ si $\exists m \in \R, \; \forall x \in U, \; f(x) \geqslant m$.
+  \item $f$ est \textbf{bornée} sur $U$ si $\exists M \in \R, \; \forall x \in U, \; |f(x)| \leqslant M$.
+\end{itemize}
+\end{defbox}
+
+\subsection{Monotonie, parité, périodicité}
+
+\begin{defbox}[--- Monotonie]
+Soit $f : U \to \R$.
+\begin{itemize}[leftmargin=1cm]
+  \item $f$ est \textbf{croissante} si $\forall x, y \in U, \; x \leqslant y \implies f(x) \leqslant f(y)$.
+  \item $f$ est \textbf{strictement croissante} si $\forall x, y \in U, \; x < y \implies f(x) < f(y)$.
+  \item \textbf{Décroissante} et \textbf{strictement décroissante} se définissent en inversant les inégalités sur $f$.
+  \item $f$ est \textbf{monotone} si elle est croissante ou décroissante.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[--- Parité et périodicité]
+Soit $I$ un intervalle symétrique par rapport à $0$.
+\begin{itemize}[leftmargin=1cm]
+  \item $f$ est \textbf{paire} si $\forall x \in I, \; f(-x) = f(x)$ (symétrie par rapport à l'axe des ordonnées).
+  \item $f$ est \textbf{impaire} si $\forall x \in I, \; f(-x) = -f(x)$ (symétrie par rapport à l'origine).
+  \item $f : \R \to \R$ est \textbf{périodique de période} $T > 0$ si $\forall x \in \R, \; f(x + T) = f(x)$.
+\end{itemize}
+\end{defbox}
+
+\begin{exbox}[Fonctions classiques]
+$x \mapsto x^{2n}$ est paire, $x \mapsto x^{2n+1}$ est impaire. $\cos$ est paire, $\sin$ est impaire. $\sin$ et $\cos$ sont $2\pi$-périodiques, $\tan$ est $\pi$-périodique.
+\end{exbox}
+
+
+\section{Limites}
+
+\subsection{Limite en un point}
+
+\begin{defbox}[--- Limite finie en un point]
+Soit $f : I \to \R$ définie sur un intervalle $I$, $x_0 \in \R$ un point de $I$ ou une extrémité de $I$, et $\ell \in \R$. On dit que $f$ a pour \textbf{limite} $\ell$ en $x_0$ si :
+\[\forall \varepsilon > 0, \; \exists \delta > 0, \; \forall x \in I, \quad |x - x_0| < \delta \implies |f(x) - \ell| < \varepsilon\]
+On note $\displaystyle\lim_{x \to x_0} f(x) = \ell$.
+\end{defbox}
+
+\begin{intuitionbox}[Structure $\varepsilon$-$\delta$]
+La structure est la même que pour les suites (chapitre 3), mais adaptée aux fonctions. Pour les suites : <<~à partir d'un certain rang $N$~>>. Pour les fonctions : <<~dans un voisinage de taille $\delta$~>>. L'ordre des quantificateurs est crucial : $\delta$ dépend de $\varepsilon$, jamais l'inverse.
+\end{intuitionbox}
+
+\begin{defbox}[--- Limites infinies et en l'infini]
+\begin{itemize}[leftmargin=1cm]
+  \item $\displaystyle\lim_{x \to x_0} f(x) = +\infty$ si $\forall A > 0, \; \exists \delta > 0, \; \forall x \in I, \; |x - x_0| < \delta \implies f(x) > A$.
+  \item $\displaystyle\lim_{x \to +\infty} f(x) = \ell$ si $\forall \varepsilon > 0, \; \exists B > 0, \; \forall x \in I, \; x > B \implies |f(x) - \ell| < \varepsilon$.
+  \item $\displaystyle\lim_{x \to +\infty} f(x) = +\infty$ si $\forall A > 0, \; \exists B > 0, \; \forall x \in I, \; x > B \implies f(x) > A$.
+\end{itemize}
+\end{defbox}
+
+\subsection{Limites à gauche et à droite}
+
+\begin{defbox}[--- Limites latérales]
+Soit $f$ définie sur $]a, x_0[ \cup ]x_0, b[$.
+\begin{itemize}[leftmargin=1cm]
+  \item \textbf{Limite à droite :} $\displaystyle\lim_{x_0^+} f = \lim_{\substack{x \to x_0 \\ x > x_0}} f(x)$, soit $\forall \varepsilon > 0, \; \exists \delta > 0, \; x_0 < x < x_0 + \delta \implies |f(x) - \ell| < \varepsilon$.
+  \item \textbf{Limite à gauche :} $\displaystyle\lim_{x_0^-} f = \lim_{\substack{x \to x_0 \\ x < x_0}} f(x)$, définie de manière analogue.
+\end{itemize}
+Si $f$ admet une limite en $x_0$, alors les limites à gauche et à droite coïncident. Réciproquement, si les limites latérales existent, sont égales et valent $f(x_0)$, alors $f$ a une limite en $x_0$.
+\end{defbox}
+
+\begin{exbox}[Partie entière]
+La fonction partie entière $E$ au point $x = 2$ : $\lim_{2^+} E = 2$ (car $E(x) = 2$ pour $x \in ]2, 3[$) et $\lim_{2^-} E = 1$ (car $E(x) = 1$ pour $x \in [1, 2[$). Les limites latérales étant différentes, $E$ n'a pas de limite en $2$.
+\end{exbox}
+
+\subsection{Propriétés des limites}
+
+\begin{propbox}[--- Unicité de la limite]
+Si une fonction admet une limite, alors cette limite est unique.
+\end{propbox}
+
+\begin{propbox}[--- Opérations sur les limites]
+Si $\displaystyle\lim_{x_0} f = \ell \in \R$ et $\displaystyle\lim_{x_0} g = \ell' \in \R$, alors :
+\begin{itemize}[leftmargin=1cm]
+  \item $\displaystyle\lim_{x_0} (\lambda \cdot f) = \lambda \cdot \ell$ \quad pour tout $\lambda \in \R$
+  \item $\displaystyle\lim_{x_0} (f + g) = \ell + \ell'$
+  \item $\displaystyle\lim_{x_0} (f \times g) = \ell \times \ell'$
+  \item Si $\ell \neq 0$, alors $\displaystyle\lim_{x_0} \frac{1}{f} = \frac{1}{\ell}$
+\end{itemize}
+\end{propbox}
+
+\begin{propbox}[--- Composition des limites]
+Si $\displaystyle\lim_{x_0} f = \ell$ et $\displaystyle\lim_{\ell} g = \ell'$, alors $\displaystyle\lim_{x_0} g \circ f = \ell'$.
+\end{propbox}
+
+\begin{rembox}[Formes indéterminées]
+Certaines combinaisons ne permettent pas de conclure directement. Les formes indéterminées sont : $+\infty - \infty$, $0 \times \infty$, $\frac{\infty}{\infty}$, $\frac{0}{0}$, $1^{\infty}$, $\infty^0$.
+\end{rembox}
+
+\begin{thmbox}[--- Théorème des gendarmes (fonctions)]
+Si $f \leqslant g \leqslant h$ et $\displaystyle\lim_{x_0} f = \lim_{x_0} h = \ell \in \R$, alors $g$ admet une limite en $x_0$ et $\displaystyle\lim_{x_0} g = \ell$.
+\end{thmbox}
+
+
+\section{Continuité en un point}
+
+\subsection{Définition}
+
+\begin{defbox}[--- Continuité en un point]
+Soit $I$ un intervalle et $f : I \to \R$. On dit que $f$ est \textbf{continue en} $x_0 \in I$ si :
+\[\forall \varepsilon > 0, \; \exists \delta > 0, \; \forall x \in I, \quad |x - x_0| < \delta \implies |f(x) - f(x_0)| < \varepsilon\]
+c'est-à-dire si $f$ admet une limite en $x_0$ et cette limite vaut $f(x_0)$.
+
+$f$ est \textbf{continue sur $I$} si elle est continue en tout point de $I$.
+\end{defbox}
+
+\begin{intuitionbox}[Interprétation visuelle]
+Une fonction est continue sur un intervalle si on peut tracer son graphe <<~sans lever le crayon~>>. La discontinuité se manifeste par un saut dans le graphe. La continuité dit que des perturbations infiniment petites de l'entrée produisent des perturbations infiniment petites de la sortie.
+\end{intuitionbox}
+
+\begin{exbox}[Fonctions continues classiques]
+Les fonctions suivantes sont continues sur leur domaine de définition : les constantes, $x \mapsto \sqrt{x}$ sur $[0, +\infty[$, $\sin$, $\cos$, $|x|$, $\exp$, $\ln$ sur $]0, +\infty[$. La fonction partie entière $E$ n'est pas continue aux points entiers.
+\end{exbox}
+
+\subsection{Propriétés}
+
+\begin{lemme}
+Soit $f : I \to \R$ continue en $x_0$ avec $f(x_0) \neq 0$. Alors il existe $\delta > 0$ tel que $\forall x \in ]x_0 - \delta, x_0 + \delta[, \; f(x) \neq 0$.
+\end{lemme}
+
+\begin{proofbox}
+Supposons $f(x_0) > 0$. Par continuité avec $\varepsilon = f(x_0)/2 > 0$, il existe $\delta > 0$ tel que $|x - x_0| < \delta \implies f(x) > f(x_0) - f(x_0)/2 = f(x_0)/2 > 0$. Donc $f(x) \neq 0$ dans $]x_0 - \delta, x_0 + \delta[$. Le cas $f(x_0) < 0$ est analogue.
+\end{proofbox}
+
+\begin{propbox}[--- Stabilité par opérations]
+Si $f$ et $g$ sont continues en $x_0$, alors $\lambda f$, $f + g$, $f \times g$ sont continues en $x_0$, et $1/f$ est continue en $x_0$ si $f(x_0) \neq 0$.
+\end{propbox}
+
+\begin{propbox}[--- Stabilité par composition]
+Si $f$ est continue en $x_0$ et $g$ est continue en $f(x_0)$, alors $g \circ f$ est continue en $x_0$.
+\end{propbox}
+
+\begin{exbox}[Conséquences]
+Les polynômes sont continus sur $\R$ (sommes et produits de fonctions continues). Les fractions rationnelles $P(x)/Q(x)$ sont continues partout où $Q(x) \neq 0$.
+\end{exbox}
+
+\subsection{Prolongement par continuité}
+
+\begin{defbox}[--- Prolongement par continuité]
+Soit $f : I \setminus \{x_0\} \to \R$. Si $f$ admet une limite finie $\ell = \lim_{x_0} f$, on définit le \textbf{prolongement par continuité} $\tilde{f} : I \to \R$ par $\tilde{f}(x) = f(x)$ si $x \neq x_0$ et $\tilde{f}(x_0) = \ell$. Alors $\tilde{f}$ est continue en $x_0$.
+\end{defbox}
+
+\begin{exbox}
+$f(x) = x \sin(1/x)$ sur $\R^*$ : comme $|f(x)| \leqslant |x| \to 0$, on prolonge par $\tilde{f}(0) = 0$.
+\end{exbox}
+
+\subsection{Suites et continuité}
+
+\begin{propbox}[--- Caractérisation séquentielle de la continuité]
+$f$ est continue en $x_0$ si et seulement si : pour toute suite $(u_n)$ convergeant vers $x_0$, la suite $(f(u_n))$ converge vers $f(x_0)$.
+\end{propbox}
+
+\begin{intuitionbox}[Application aux suites récurrentes]
+Si $f$ est continue et $u_n \to \ell$, alors $f(\ell) = \ell$ : les limites de suites récurrentes $u_{n+1} = f(u_n)$ sont des \textbf{points fixes} de $f$. On utilise intensivement cette propriété étudiée au chapitre 3.
+\end{intuitionbox}
+
+
+\section{Continuité sur un intervalle}
+
+\subsection{Théorème des valeurs intermédiaires}
+
+\begin{thmbox}[--- Théorème des valeurs intermédiaires (TVI)]
+Soit $f : [a, b] \to \R$ une fonction continue sur un segment. Pour tout réel $y$ compris entre $f(a)$ et $f(b)$, il existe $c \in [a, b]$ tel que $f(c) = y$.
+\end{thmbox}
+
+\begin{proofbox}
+(Cas $f(a) < f(b)$.) Soit $y \in [f(a), f(b)]$. On pose $A = \{x \in [a, b] \mid f(x) \leqslant y\}$. Cet ensemble est non vide ($a \in A$) et majoré par $b$, donc $c = \sup A$ existe.
+
+\textbf{Étape 1 :} $f(c) \leqslant y$. Il existe $(u_n)$ dans $A$ avec $u_n \to c$. Par continuité $f(u_n) \to f(c)$, et comme $f(u_n) \leqslant y$, on a $f(c) \leqslant y$.
+
+\textbf{Étape 2 :} $f(c) \geqslant y$. Si $c = b$, alors $f(b) \geqslant y$ directement. Sinon, pour $x \in ]c, b]$, $x \notin A$ donc $f(x) > y$. Par continuité à droite, $f(c) \geqslant y$.
+
+Conclusion : $f(c) = y$.
+\end{proofbox}
+
+\begin{corollaire}
+Si $f : [a, b] \to \R$ est continue et $f(a) \cdot f(b) < 0$, alors il existe $c \in ]a, b[$ tel que $f(c) = 0$.
+\end{corollaire}
+
+\begin{exbox}[Tout polynôme de degré impair a une racine réelle]
+Soit $P(x) = a_n x^n + \cdots + a_0$ avec $n$ impair et $a_n > 0$. Alors $\lim_{-\infty} P = -\infty$ et $\lim_{+\infty} P = +\infty$, donc il existe $a, b$ avec $P(a) < 0 < P(b)$. Par le TVI, $P$ s'annule.
+\end{exbox}
+
+\begin{corollaire}
+Si $f : I \to \R$ est continue sur un intervalle $I$, alors $f(I)$ est un intervalle.
+\end{corollaire}
+
+\subsection{Fonctions continues sur un segment}
+
+\begin{thmbox}[--- Image d'un segment]
+Si $f : [a, b] \to \R$ est continue, alors il existe $m, M \in \R$ tels que $f([a, b]) = [m, M]$.
+
+Autrement dit : $f$ est bornée et atteint ses bornes (elle admet un minimum $m$ et un maximum $M$).
+\end{thmbox}
+
+\begin{intuitionbox}[Importance pour l'optimisation]
+Ce théorème garantit qu'une fonction continue sur un segment admet toujours un minimum et un maximum. C'est la base théorique de tout problème d'optimisation sur un domaine borné fermé.
+\end{intuitionbox}
+
+
+\section{Fonctions monotones et bijections}
+
+\begin{thmbox}[--- Théorème de la bijection]
+Soit $f : I \to \R$ continue et strictement monotone sur un intervalle $I$. Alors :
+\begin{enumerate}[leftmargin=1cm]
+  \item $f$ est une bijection de $I$ dans $J = f(I)$.
+  \item La bijection réciproque $f^{-1} : J \to I$ est continue et strictement monotone de même sens de variation que $f$.
+\end{enumerate}
+\end{thmbox}
+
+\begin{proofbox}[Idée de la preuve]
+\textbf{Injectivité :} si $f$ est strictement monotone et $f(x) = f(x')$, alors $x < x'$ donnerait $f(x) \neq f(x')$ (contradiction), et de même $x > x'$, donc $x = x'$.
+
+\textbf{Surjectivité sur $J$ :} par le TVI, $f(I)$ est un intervalle, et c'est exactement $J$.
+
+\textbf{Continuité de $f^{-1}$ :} on fixe $y_0 \in J$, $x_0 = f^{-1}(y_0)$, $\varepsilon > 0$. Comme $f$ est strictement croissante, on choisit $\delta > 0$ tel que $f(x_0 - \varepsilon) < y_0 - \delta$ et $f(x_0 + \varepsilon) > y_0 + \delta$. Alors $|y - y_0| < \delta \implies |f^{-1}(y) - x_0| < \varepsilon$.
+\end{proofbox}
+
+\begin{exbox}[Fonction racine $n$-ième]
+$f : [0, +\infty[ \to [0, +\infty[$ définie par $f(x) = x^n$ est continue et strictement croissante, avec $\lim_{+\infty} f = +\infty$. Par le théorème de la bijection, $f$ est bijective et sa réciproque $f^{-1}(x) = x^{1/n} = \sqrt[n]{x}$ est continue et strictement croissante.
+\end{exbox}
+
+\begin{intuitionbox}[Lien avec le chapitre Ensembles]
+Le théorème de la bijection fait le lien entre l'analyse (continuité) et l'algèbre (bijection) étudiée au chapitre 5. La stricte monotonie garantit l'injectivité, le TVI garantit la surjectivité. En cryptographie, la bijectivité d'une fonction de chiffrement est essentielle pour pouvoir déchiffrer.
+\end{intuitionbox}
+
+
+% ─── SYNTHÈSE ───
+\section{Synthèse personnelle --- Limites et Continuité}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Le $\varepsilon$-$\delta$ généralise le $\varepsilon$-$N$ des suites.} La définition de limite pour les fonctions est la version continue de celle des suites. Le rang $N$ est remplacé par un voisinage $\delta$.
+
+\textbf{2. Le TVI est un théorème d'existence.} Il ne donne pas la valeur de la solution mais prouve qu'elle existe. C'est la philosophie de l'analyse : prouver l'existence avant de chercher la valeur.
+
+\textbf{3. Continuité $+$ monotonie $=$ bijection.} Cette combinaison est extrêmement puissante et réapparaît constamment. En crypto, on a besoin de fonctions bijectives (chiffrement/déchiffrement), et la monotonie stricte est un moyen simple de la garantir.
+
+\textbf{4. Les suites récurrentes bouclent.} La caractérisation séquentielle de la continuité relie directement ce chapitre au chapitre 3 (suites) : $f$ continue et $u_n \to \ell \implies f(\ell) = \ell$.
+\end{intuitionbox}
+
+
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 7 : DÉRIVÉE D'UNE         ║
+% ║              FONCTION                 ║
+% ╚═══════════════════════════════════════╝
+\chapter{Dérivée d'une Fonction}
+
+\begin{intuitionbox}[Motivation]
+La continuité nous dit que $f(x) \approx f(x_0)$ pour $x$ proche de $x_0$ (approximation constante). La dérivée fait mieux : elle donne $f(x) \approx f(x_0) + f'(x_0)(x - x_0)$ (approximation affine par la tangente). Par exemple, $\sqrt{1{,}01} \approx 1 + \frac{0{,}01}{2} = 1{,}005$, ce qui est extrêmement précis.
+\end{intuitionbox}
+
+
+\section{Dérivée}
+
+\subsection{Dérivée en un point}
+
+\begin{defbox}[--- Dérivabilité]
+Soit $I$ un intervalle ouvert, $f : I \to \R$ et $x_0 \in I$. La fonction $f$ est \textbf{dérivable en $x_0$} si le taux d'accroissement admet une limite finie :
+\[f'(x_0) = \lim_{x \to x_0} \frac{f(x) - f(x_0)}{x - x_0}\]
+Ce nombre $f'(x_0)$ est le \textbf{nombre dérivé} de $f$ en $x_0$. $f$ est \textbf{dérivable sur $I$} si elle l'est en tout point de $I$.
+\end{defbox}
+
+\begin{exbox}
+$f(x) = x^2$ : $\displaystyle\frac{x^2 - x_0^2}{x - x_0} = \frac{(x - x_0)(x + x_0)}{x - x_0} = x + x_0 \xrightarrow{x \to x_0} 2x_0$. Donc $f'(x) = 2x$.
+\end{exbox}
+
+\begin{exbox}[Dérivée de $\sin$]
+On utilise $\frac{\sin x}{x} \to 1$ quand $x \to 0$ et la formule $\sin p - \sin q = 2\sin\frac{p-q}{2}\cos\frac{p+q}{2}$. Le taux d'accroissement se réécrit :
+\[\frac{\sin x - \sin x_0}{x - x_0} = \frac{\sin\frac{x-x_0}{2}}{\frac{x-x_0}{2}} \cdot \cos\frac{x+x_0}{2} \xrightarrow{x \to x_0} 1 \cdot \cos x_0\]
+Donc $(\sin)' = \cos$.
+\end{exbox}
+
+\subsection{Tangente}
+
+L'équation de la tangente au graphe de $f$ au point $(x_0, f(x_0))$ est :
+\[y = f'(x_0)(x - x_0) + f(x_0)\]
+
+\subsection{Écritures équivalentes}
+
+\begin{propbox}[--- Reformulations de la dérivabilité]
+$f$ est dérivable en $x_0$ si et seulement si :
+\begin{itemize}[leftmargin=1cm]
+  \item $\displaystyle\lim_{h \to 0} \frac{f(x_0 + h) - f(x_0)}{h}$ existe et est finie.
+  \item Il existe $\ell \in \R$ et $\varepsilon : I \to \R$ avec $\varepsilon(x) \to 0$ quand $x \to x_0$ tels que : $f(x) = f(x_0) + (x - x_0)\ell + (x - x_0)\varepsilon(x)$.
+\end{itemize}
+\end{propbox}
+
+\begin{propbox}[--- Dérivabilité implique continuité]
+Si $f$ est dérivable en $x_0$, alors $f$ est continue en $x_0$.
+
+\medskip
+\textbf{Attention :} la réciproque est fausse. Exemple : $f(x) = |x|$ est continue en $0$ mais pas dérivable en $0$ (le taux d'accroissement vaut $+1$ à droite et $-1$ à gauche).
+\end{propbox}
+
+\begin{proofbox}
+Si $f$ est dérivable en $x_0$, on écrit $f(x) = f(x_0) + (x - x_0)\ell + (x - x_0)\varepsilon(x)$, où $(x-x_0)\ell \to 0$ et $(x-x_0)\varepsilon(x) \to 0$ quand $x \to x_0$. Donc $f(x) \to f(x_0)$.
+\end{proofbox}
+
+
+\section{Calcul des dérivées}
+
+\subsection{Opérations}
+
+\begin{propbox}[--- Dérivées et opérations]
+Pour $f, g$ dérivables sur $I$ :
+\begin{itemize}[leftmargin=1cm]
+  \item $(f + g)' = f' + g'$ \quad et \quad $(\lambda f)' = \lambda f'$
+  \item $(f \times g)' = f'g + fg'$
+  \item $\displaystyle\left(\frac{1}{f}\right)' = -\frac{f'}{f^2}$ \quad (si $f \neq 0$)
+  \item $\displaystyle\left(\frac{f}{g}\right)' = \frac{f'g - fg'}{g^2}$ \quad (si $g \neq 0$)
+\end{itemize}
+\end{propbox}
+
+\subsection{Tableau des dérivées usuelles}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l||l|l|}
+\hline
+\textbf{Fonction} & \textbf{Dérivée} & \textbf{Composée} & \textbf{Dérivée} \\
+\hline
+$x^n$ & $nx^{n-1}$ & $u^n$ & $nu'u^{n-1}$ \\
+$\frac{1}{x}$ & $-\frac{1}{x^2}$ & $\frac{1}{u}$ & $-\frac{u'}{u^2}$ \\
+$\sqrt{x}$ & $\frac{1}{2\sqrt{x}}$ & $\sqrt{u}$ & $\frac{u'}{2\sqrt{u}}$ \\
+$x^\alpha$ & $\alpha x^{\alpha-1}$ & $u^\alpha$ & $\alpha u' u^{\alpha-1}$ \\
+$e^x$ & $e^x$ & $e^u$ & $u' e^u$ \\
+$\ln x$ & $\frac{1}{x}$ & $\ln u$ & $\frac{u'}{u}$ \\
+$\cos x$ & $-\sin x$ & $\cos u$ & $-u'\sin u$ \\
+$\sin x$ & $\cos x$ & $\sin u$ & $u'\cos u$ \\
+$\tan x$ & $1 + \tan^2 x = \frac{1}{\cos^2 x}$ & $\tan u$ & $\frac{u'}{\cos^2 u}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Composition}
+
+\begin{propbox}[--- Dérivée d'une composée]
+Si $f$ est dérivable en $x$ et $g$ est dérivable en $f(x)$, alors :
+\[(g \circ f)'(x) = g'(f(x)) \cdot f'(x)\]
+\end{propbox}
+
+\begin{exbox}
+$\frac{d}{dx}\ln(1 + x^2) = \frac{2x}{1 + x^2}$, car $g(x) = \ln x$ et $f(x) = 1 + x^2$.
+\end{exbox}
+
+\begin{corollaire}[Dérivée de la bijection réciproque]
+Si $f : I \to J$ est dérivable, bijective et $f' \neq 0$ sur $I$, alors $f^{-1}$ est dérivable et :
+\[(f^{-1})'(x) = \frac{1}{f'(f^{-1}(x))}\]
+\end{corollaire}
+
+\begin{rembox}[Astuce pratique]
+On peut retrouver la formule en dérivant $f(f^{-1}(x)) = x$ : cela donne $f'(f^{-1}(x)) \cdot (f^{-1})'(x) = 1$.
+\end{rembox}
+
+\subsection{Dérivées successives et formule de Leibniz}
+
+\begin{defbox}[--- Dérivées d'ordre supérieur]
+On note $f^{(0)} = f$, $f^{(1)} = f'$, $f^{(2)} = f''$, et $f^{(n+1)} = (f^{(n)})'$. Si $f^{(n)}$ existe, $f$ est dite $n$ fois dérivable.
+\end{defbox}
+
+\begin{thmbox}[--- Formule de Leibniz]
+\[(f \cdot g)^{(n)} = \sum_{k=0}^{n} \binom{n}{k} f^{(n-k)} \cdot g^{(k)}\]
+\end{thmbox}
+
+\begin{intuitionbox}[Analogie avec Newton]
+La formule de Leibniz est l'analogue pour les dérivées de la formule du binôme de Newton pour les puissances : $(a+b)^n = \sum \binom{n}{k} a^{n-k} b^k$. Les coefficients binomiaux apparaissent dans les deux cas.
+\end{intuitionbox}
+
+
+\section{Extremum local, théorème de Rolle}
+
+\subsection{Points critiques et extremums}
+
+\begin{defbox}[--- Points critiques et extremums]
+Soit $f : I \to \R$.
+\begin{itemize}[leftmargin=1cm]
+  \item $x_0$ est un \textbf{point critique} si $f'(x_0) = 0$.
+  \item $f$ admet un \textbf{maximum local} en $x_0$ s'il existe un voisinage $J$ de $x_0$ tel que $\forall x \in I \cap J, \; f(x) \leqslant f(x_0)$.
+  \item \textbf{Minimum local} : même définition avec $f(x) \geqslant f(x_0)$.
+\end{itemize}
+\end{defbox}
+
+\begin{thmbox}[--- Condition nécessaire d'extremum]
+Si $I$ est ouvert, $f : I \to \R$ est dérivable et $f$ admet un extremum local en $x_0$, alors $f'(x_0) = 0$.
+\end{thmbox}
+
+\begin{proofbox}
+Supposons $x_0$ maximum local. Pour $x < x_0$ : $\frac{f(x) - f(x_0)}{x - x_0} \geqslant 0$ donc $\lim_{x \to x_0^-} \geqslant 0$. Pour $x > x_0$ : $\frac{f(x) - f(x_0)}{x - x_0} \leqslant 0$ donc $\lim_{x \to x_0^+} \leqslant 0$. Comme $f$ est dérivable, les deux limites sont égales à $f'(x_0)$, d'où $f'(x_0) = 0$.
+\end{proofbox}
+
+\begin{rembox}[Réciproque fausse]
+$f(x) = x^3$ vérifie $f'(0) = 0$ mais $x_0 = 0$ n'est ni maximum ni minimum local.
+\end{rembox}
+
+\subsection{Théorème de Rolle}
+
+\begin{thmbox}[--- Théorème de Rolle]
+Soit $f : [a, b] \to \R$ telle que :
+\begin{itemize}[leftmargin=1cm]
+  \item $f$ est continue sur $[a, b]$,
+  \item $f$ est dérivable sur $]a, b[$,
+  \item $f(a) = f(b)$.
+\end{itemize}
+Alors il existe $c \in ]a, b[$ tel que $f'(c) = 0$.
+\end{thmbox}
+
+\begin{proofbox}
+Si $f$ est constante, tout $c$ convient. Sinon, il existe $x_0$ avec $f(x_0) \neq f(a)$. Supposons $f(x_0) > f(a)$. Par le théorème des bornes atteintes (chapitre 6), $f$ atteint son maximum en un point $c \in [a, b]$. Comme $f(c) \geqslant f(x_0) > f(a) = f(b)$, on a $c \neq a$ et $c \neq b$, donc $c \in ]a, b[$. En ce point, $f$ admet un maximum local et est dérivable, donc $f'(c) = 0$.
+\end{proofbox}
+
+
+\section{Théorème des accroissements finis}
+
+\begin{thmbox}[--- Théorème des accroissements finis (TAF)]
+Soit $f : [a, b] \to \R$ continue sur $[a, b]$ et dérivable sur $]a, b[$. Il existe $c \in ]a, b[$ tel que :
+\[f(b) - f(a) = f'(c)(b - a)\]
+\end{thmbox}
+
+\begin{proofbox}
+On pose $\ell = \frac{f(b) - f(a)}{b - a}$ et $g(x) = f(x) - \ell(x - a)$. Alors $g(a) = f(a)$ et $g(b) = f(a)$, donc par Rolle il existe $c \in ]a, b[$ tel que $g'(c) = 0$, i.e. $f'(c) = \ell = \frac{f(b) - f(a)}{b - a}$.
+\end{proofbox}
+
+\begin{intuitionbox}[Interprétation géométrique]
+Le TAF dit qu'il existe un point où la tangente est parallèle à la corde reliant les extrémités. C'est <<~Rolle rendu oblique~>> : on ramène le cas général à $f(a) = f(b)$ en soustrayant la droite.
+\end{intuitionbox}
+
+\subsection{Signe de la dérivée et variations}
+
+\begin{corollaire}[Lien dérivée-monotonie]
+Soit $f : [a, b] \to \R$ continue sur $[a, b]$ et dérivable sur $]a, b[$.
+\begin{itemize}[leftmargin=1cm]
+  \item $f' \geqslant 0$ sur $]a, b[$ $\iff$ $f$ est croissante.
+  \item $f' \leqslant 0$ sur $]a, b[$ $\iff$ $f$ est décroissante.
+  \item $f' = 0$ sur $]a, b[$ $\iff$ $f$ est constante.
+  \item $f' > 0$ sur $]a, b[$ $\implies$ $f$ est strictement croissante.
+\end{itemize}
+\end{corollaire}
+
+\subsection{Inégalité des accroissements finis}
+
+\begin{corollaire}[Inégalité des accroissements finis]
+Si $f : I \to \R$ est dérivable et $|f'(x)| \leqslant M$ pour tout $x \in I$, alors :
+\[\forall x, y \in I, \quad |f(x) - f(y)| \leqslant M|x - y|\]
+\end{corollaire}
+
+\begin{exbox}
+Pour $f(x) = \sin x$, $|f'(x)| = |\cos x| \leqslant 1$, donc $|\sin x - \sin y| \leqslant |x - y|$ pour tout $x, y$. En particulier $|\sin x| \leqslant |x|$.
+\end{exbox}
+
+\subsection{Règle de l'Hospital}
+
+\begin{corollaire}[Règle de l'Hospital]
+Soient $f, g : I \to \R$ dérivables, $x_0 \in I$, $f(x_0) = g(x_0) = 0$ et $g'(x) \neq 0$ pour $x \neq x_0$. Si $\displaystyle\lim_{x \to x_0} \frac{f'(x)}{g'(x)} = \ell$, alors $\displaystyle\lim_{x \to x_0} \frac{f(x)}{g(x)} = \ell$.
+\end{corollaire}
+
+\begin{exbox}
+$\displaystyle\lim_{x \to 1} \frac{\ln(x^2 + x - 1)}{\ln x}$ : $f(1) = g(1) = 0$, $\frac{f'(x)}{g'(x)} = \frac{2x+1}{x^2+x-1} \cdot x = \frac{2x^2 + x}{x^2 + x - 1} \to 3$ quand $x \to 1$.
+\end{exbox}
+
+
+% ─── SYNTHÈSE ───
+\section{Synthèse personnelle --- Dérivées}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Hiérarchie d'approximation.} Continuité $\to$ approximation constante. Dérivabilité $\to$ approximation affine (tangente). Dérivées successives $\to$ approximation polynomiale (Taylor, à venir).
+
+\textbf{2. Dérivabilité $\implies$ continuité, pas l'inverse.} C'est une implication stricte ($|x|$ est le contre-exemple canonique). La dérivabilité est une propriété plus forte.
+
+\textbf{3. Le TAF est le couteau suisse de l'analyse.} Il permet de passer d'informations locales ($f'$) à des informations globales ($f(b) - f(a)$). Tous les corollaires (monotonie, inégalité, Hospital) en découlent.
+
+\textbf{4. Leibniz et Newton, même combat.} La formule de Leibniz pour $(fg)^{(n)}$ et le binôme de Newton pour $(a+b)^n$ partagent les mêmes coefficients binomiaux --- c'est le chapitre 5 (dénombrement) qui réapparaît en analyse.
+\end{intuitionbox}
+
+
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 8 : GROUPES               ║
+% ╚═══════════════════════════════════════╝
+\chapter{Groupes}
+
+\begin{intuitionbox}[Motivation --- de Galois à la cryptographie]
+Galois a introduit la notion de groupe à 17 ans pour résoudre un problème vieux de plusieurs siècles : existe-t-il des formules de résolution par radicaux pour les équations de degré $\geqslant 5$ ? La réponse est non en général. Les groupes sont à la base des structures algébriques (anneaux, corps, espaces vectoriels) et sont omniprésents en arithmétique, géométrie et \emph{cryptographie} (groupes cycliques pour Diffie-Hellman, courbes elliptiques, etc.).
+\end{intuitionbox}
+
+
+\section{Définition d'un groupe}
+
+\begin{defbox}[--- Groupe]
+Un \textbf{groupe} $(G, \star)$ est un ensemble $G$ muni d'une opération $\star$ vérifiant :
+\begin{enumerate}[leftmargin=1cm]
+  \item \textbf{Loi interne :} $\forall x, y \in G, \; x \star y \in G$.
+  \item \textbf{Associativité :} $\forall x, y, z \in G, \; (x \star y) \star z = x \star (y \star z)$.
+  \item \textbf{Élément neutre :} $\exists e \in G, \; \forall x \in G, \; x \star e = e \star x = x$.
+  \item \textbf{Inverse :} $\forall x \in G, \; \exists x^{-1} \in G, \; x \star x^{-1} = x^{-1} \star x = e$.
+\end{enumerate}
+Si de plus $\forall x, y \in G, \; x \star y = y \star x$, le groupe est \textbf{commutatif} (ou \textbf{abélien}).
+\end{defbox}
+
+\begin{rembox}[Unicité]
+L'élément neutre est unique : si $e$ et $e'$ sont neutres, $e' = e' \star e = e$. L'inverse de $x$ est unique : si $x'$ et $x''$ vérifient (4), alors $x'' = e \star x'' = (x' \star x) \star x'' = x' \star (x \star x'') = x' \star e = x'$.
+\end{rembox}
+
+\subsection{Exemples fondamentaux}
+
+\begin{exbox}[Groupes classiques]
+\begin{itemize}[leftmargin=1cm]
+  \item $(\R^*, \times)$ : groupe commutatif. Neutre $= 1$, inverse de $x$ est $\frac{1}{x}$. On exclut $0$ car il n'a pas d'inverse.
+  \item $(\Z, +)$ : groupe commutatif. Neutre $= 0$, inverse de $x$ est $-x$ (l'<<~opposé~>>).
+  \item $(\Q, +)$, $(\R, +)$, $(\C, +)$, $(\Q^*, \times)$, $(\C^*, \times)$ : groupes commutatifs.
+  \item L'ensemble $\mathcal{R}$ des rotations du plan de centre $O$, muni de $\circ$ : groupe commutatif. Neutre $=$ rotation d'angle $0$, inverse de $R_\theta$ est $R_{-\theta}$.
+  \item L'ensemble des isométries du plan muni de $\circ$ : groupe \textbf{non} commutatif.
+\end{itemize}
+\end{exbox}
+
+\begin{exbox}[Non-groupes]
+$(\Z^*, \times)$ n'est pas un groupe : $2$ n'a pas d'inverse entier ($1/2 \notin \Z$). $(\N, +)$ n'est pas un groupe : $3$ n'a pas d'opposé dans $\N$.
+\end{exbox}
+
+\subsection{Puissances}
+
+Pour $x \in G$ et $n \in \Z$ : $x^n = \underbrace{x \star \cdots \star x}_{n}$ si $n > 0$, $x^0 = e$, $x^{-n} = \underbrace{x^{-1} \star \cdots \star x^{-1}}_{n}$. Règles : $x^m \star x^n = x^{m+n}$, $(x^m)^n = x^{mn}$, $(x \star y)^{-1} = y^{-1} \star x^{-1}$ (attention à l'ordre !). Si $G$ est commutatif : $(x \star y)^n = x^n \star y^n$.
+
+\subsection{Exemple des matrices $2 \times 2$}
+
+\begin{defbox}[--- Produit et déterminant]
+Pour $M = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$ et $M' = \begin{pmatrix} a' & b' \\ c' & d' \end{pmatrix}$ :
+\[M \times M' = \begin{pmatrix} aa'+bc' & ab'+bd' \\ ca'+dc' & cb'+dd' \end{pmatrix}, \qquad \det M = ad - bc.\]
+\end{defbox}
+
+\begin{propbox}[--- Le groupe $\mathrm{GL}_2$]
+L'ensemble des matrices $2 \times 2$ de déterminant non nul, muni de $\times$, forme un groupe non commutatif noté $(\mathrm{GL}_2, \times)$. L'élément neutre est $I = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$ et l'inverse de $M$ est $M^{-1} = \frac{1}{ad-bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}$.
+
+Propriété clé : $\det(M \times M') = \det M \cdot \det M'$.
+\end{propbox}
+
+
+\section{Sous-groupes}
+
+\begin{defbox}[--- Sous-groupe]
+Soit $(G, \star)$ un groupe. Une partie $H \subset G$ est un \textbf{sous-groupe} de $G$ si :
+\begin{itemize}[leftmargin=1cm]
+  \item $e \in H$,
+  \item $\forall x, y \in H, \; x \star y \in H$ (stabilité),
+  \item $\forall x \in H, \; x^{-1} \in H$ (stabilité par inverse).
+\end{itemize}
+\end{defbox}
+
+\begin{rembox}[Critère rapide]
+$H$ est un sous-groupe de $G$ si : $H \neq \emptyset$ et $\forall x, y \in H, \; x \star y^{-1} \in H$.
+\end{rembox}
+
+\begin{exbox}[Exemples de sous-groupes]
+\begin{itemize}[leftmargin=1cm]
+  \item $(\R^*_+, \times)$ est un sous-groupe de $(\R^*, \times)$.
+  \item $(\mathbb{U}, \times)$ où $\mathbb{U} = \{z \in \C \mid |z| = 1\}$ est un sous-groupe de $(\C^*, \times)$.
+  \item $(\Z, +)$ est un sous-groupe de $(\R, +)$.
+  \item $\{e\}$ et $G$ sont les sous-groupes triviaux.
+\end{itemize}
+\end{exbox}
+
+\subsection{Sous-groupes de $\Z$}
+
+\begin{propbox}[--- Classification des sous-groupes de $(\Z, +)$]
+Les sous-groupes de $(\Z, +)$ sont exactement les $n\Z = \{kn \mid k \in \Z\}$ pour $n \in \Z$.
+\end{propbox}
+
+\begin{proofbox}
+\textbf{Sens direct :} $n\Z$ est un sous-groupe car $0 \in n\Z$, $kn + k'n = (k+k')n \in n\Z$, et $-kn = (-k)n \in n\Z$.
+
+\textbf{Réciproque :} Soit $H$ un sous-groupe de $(\Z, +)$. Si $H = \{0\}$, c'est $0\Z$. Sinon, soit $n = \min\{h > 0 \mid h \in H\}$. On a $n\Z \subset H$. Pour $h \in H$, la division euclidienne donne $h = kn + r$ avec $0 \leqslant r < n$. Comme $h \in H$ et $kn \in H$, on a $r = h - kn \in H$. Par minimalité de $n$, $r = 0$, donc $h = kn \in n\Z$.
+\end{proofbox}
+
+\begin{intuitionbox}[Lien avec l'arithmétique]
+Ce résultat est à mettre en parallèle direct avec le chapitre 4 : les sous-groupes de $\Z$ sont les ensembles de multiples, et le PGCD de deux entiers $a, b$ est le plus petit élément positif du sous-groupe engendré par $\{a, b\}$, c'est-à-dire $\mathrm{pgcd}(a,b)\Z = a\Z + b\Z$.
+\end{intuitionbox}
+
+
+\section{Morphismes de groupes}
+
+\begin{defbox}[--- Morphisme de groupes]
+Soient $(G, \star)$ et $(G', \diamond)$ deux groupes. Une application $f : G \to G'$ est un \textbf{morphisme de groupes} si :
+\[\forall x, x' \in G, \quad f(x \star x') = f(x) \diamond f(x')\]
+\end{defbox}
+
+\begin{exbox}[L'exponentielle]
+$f : (\R, +) \to (\R^*_+, \times)$ définie par $f(x) = \exp(x)$ est un morphisme car $\exp(x + x') = \exp(x) \times \exp(x')$.
+\end{exbox}
+
+\begin{propbox}[--- Propriétés d'un morphisme]
+Soit $f : G \to G'$ un morphisme. Alors :
+\begin{itemize}[leftmargin=1cm]
+  \item $f(e_G) = e_{G'}$
+  \item $\forall x \in G, \; f(x^{-1}) = (f(x))^{-1}$
+\end{itemize}
+\end{propbox}
+
+\begin{propbox}[--- Composition et réciproque]
+La composée de deux morphismes est un morphisme. Si $f$ est un morphisme bijectif, alors $f^{-1}$ est aussi un morphisme.
+\end{propbox}
+
+\begin{defbox}[--- Isomorphisme]
+Un morphisme bijectif est un \textbf{isomorphisme}. Deux groupes sont \textbf{isomorphes} s'il existe un isomorphisme entre eux.
+\end{defbox}
+
+\begin{exbox}
+$\exp : (\R, +) \to (\R^*_+, \times)$ est un isomorphisme, de réciproque $\ln$. La formule $\ln(x \cdot x') = \ln x + \ln x'$ traduit le fait que $\ln$ est un morphisme de $(\R^*_+, \times)$ vers $(\R, +)$.
+\end{exbox}
+
+\subsection{Noyau et image}
+
+\begin{defbox}[--- Noyau et image]
+Soit $f : G \to G'$ un morphisme.
+\begin{itemize}[leftmargin=1cm]
+  \item Le \textbf{noyau} : $\Ker f = \{x \in G \mid f(x) = e_{G'}\}$ (sous-groupe de $G$).
+  \item L'\textbf{image} : $\Ima f = \{f(x) \mid x \in G\}$ (sous-groupe de $G'$).
+\end{itemize}
+\end{defbox}
+
+\begin{propbox}[--- Injectivité et noyau]
+$f$ est injective $\iff$ $\Ker f = \{e_G\}$.
+\end{propbox}
+
+\begin{proofbox}
+$(\Rightarrow)$ Si $f$ est injective et $f(x) = e_{G'} = f(e_G)$, alors $x = e_G$.
+
+$(\Leftarrow)$ Si $\Ker f = \{e_G\}$ et $f(x) = f(x')$, alors $f(x \star x'^{-1}) = f(x) \diamond f(x')^{-1} = e_{G'}$, donc $x \star x'^{-1} \in \Ker f = \{e_G\}$, d'où $x = x'$.
+\end{proofbox}
+
+\begin{exbox}[Exemples de noyaux et images]
+\begin{itemize}[leftmargin=1cm]
+  \item $f : \Z \to \Z$, $f(k) = 3k$ : $\Ker f = \{0\}$ (injective), $\Ima f = 3\Z$.
+  \item $f : \R \to \mathbb{U}$, $f(t) = e^{it}$ : $\Ker f = 2\pi\Z$ (non injective), $\Ima f = \mathbb{U}$ (surjective).
+  \item $\det : \mathrm{GL}_2 \to \R^*$ : morphisme surjectif, non injectif.
+\end{itemize}
+\end{exbox}
+
+
+\section{Le groupe $\Z/n\Z$}
+
+\begin{propbox}[--- $(\Z/n\Z, +)$ est un groupe commutatif]
+L'addition $\bar{p} + \bar{q} = \overline{p + q}$ est bien définie (indépendante des représentants). Le neutre est $\bar{0}$, l'opposé de $\bar{k}$ est $\overline{-k} = \overline{n - k}$.
+\end{propbox}
+
+\begin{intuitionbox}[Lien avec le chapitre 5]
+On a déjà construit $\Z/n\Z$ dans le chapitre <<~Ensembles~>> via les classes d'équivalence. Ici on lui donne sa structure de \emph{groupe}, ce qui enrichit considérablement l'objet.
+\end{intuitionbox}
+
+\subsection{Groupes cycliques}
+
+\begin{defbox}[--- Groupe cyclique]
+Un groupe $(G, \star)$ est \textbf{cyclique} s'il existe $a \in G$ tel que tout élément de $G$ s'écrit $a^k$ pour un certain $k \in \Z$. On dit que $G$ est \textbf{engendré} par $a$.
+\end{defbox}
+
+$(\Z/n\Z, +)$ est cyclique, engendré par $\bar{1}$ : tout $\bar{k} = \underbrace{\bar{1} + \cdots + \bar{1}}_{k}$.
+
+\begin{thmbox}[--- Unicité des groupes cycliques finis]
+Si $(G, \star)$ est un groupe cyclique de cardinal $n$, alors $(G, \star)$ est isomorphe à $(\Z/n\Z, +)$.
+\end{thmbox}
+
+\begin{proofbox}[Idée]
+Si $G = \{e, a, a^2, \ldots, a^{n-1}\}$ avec $a^n = e$, l'application $f : \Z/n\Z \to G$ définie par $f(\bar{k}) = a^k$ est un isomorphisme : elle est bien définie (car $a^n = e$), c'est un morphisme ($f(\bar{k} + \bar{k'}) = a^{k+k'} = a^k \star a^{k'}$), et elle est bijective (surjective par construction, injective car les deux ensembles ont le même cardinal).
+\end{proofbox}
+
+\begin{intuitionbox}[Importance en crypto]
+Les groupes cycliques sont au c\oe ur de la cryptographie à clé publique. Le protocole Diffie-Hellman repose sur l'exponentiation dans un groupe cyclique $(\Z/p\Z)^*$ : calculer $g^a$ est facile, retrouver $a$ à partir de $g^a$ (logarithme discret) est supposé difficile. Le théorème ci-dessus dit que tous les groupes cycliques de même taille sont <<~les mêmes~>>, ce qui simplifie l'analyse de sécurité.
+\end{intuitionbox}
+
+
+\section{Le groupe des permutations $\mathcal{S}_n$}
+
+\begin{propbox}[--- $(\mathcal{S}_n, \circ)$ est un groupe]
+L'ensemble des bijections de $\{1, 2, \ldots, n\}$ dans lui-même, muni de la composition, est un groupe de cardinal $n!$. Une telle bijection s'appelle une \textbf{permutation}.
+\end{propbox}
+
+\subsection{Notation et calculs}
+
+Une permutation $f$ se note $\begin{pmatrix} 1 & 2 & \cdots & n \\ f(1) & f(2) & \cdots & f(n) \end{pmatrix}$.
+
+La composition $g \circ f$ s'obtient en appliquant d'abord $f$ puis $g$. L'inverse s'obtient en échangeant les deux lignes et en réordonnant.
+
+\begin{exbox}[Le groupe $\mathcal{S}_3$]
+$\mathcal{S}_3$ a $3! = 6$ éléments : l'identité, trois transpositions $\tau_1, \tau_2, \tau_3$, et deux cycles $\sigma = \begin{pmatrix} 1 & 2 & 3 \\ 2 & 3 & 1 \end{pmatrix}$ et $\sigma^{-1}$.
+
+$\mathcal{S}_3$ n'est \textbf{pas} commutatif : $\tau_1 \circ \sigma = \tau_2 \neq \tau_3 = \sigma \circ \tau_1$. Plus généralement, $\mathcal{S}_n$ n'est pas commutatif pour $n \geqslant 3$.
+\end{exbox}
+
+\subsection{Isométries du triangle et $\mathcal{S}_3$}
+
+\begin{propbox}
+L'ensemble des isométries d'un triangle équilatéral (identité, 3 réflexions, 2 rotations), muni de la composition, forme un groupe isomorphe à $(\mathcal{S}_3, \circ)$.
+\end{propbox}
+
+\subsection{Décomposition en cycles}
+
+\begin{defbox}[--- Cycle et transposition]
+Un \textbf{cycle} est une permutation qui fixe certains éléments et dont les autres sont obtenus par itération : $j \mapsto \sigma(j) \mapsto \sigma^2(j) \mapsto \cdots$. On le note $(j_1 \; j_2 \; \cdots \; j_r)$. La \textbf{longueur} du cycle est $r$. Un cycle de longueur $2$ est une \textbf{transposition}.
+\end{defbox}
+
+\begin{thmbox}[--- Décomposition en cycles]
+Toute permutation de $\mathcal{S}_n$ se décompose de façon unique en composition de cycles à supports disjoints.
+\end{thmbox}
+
+\begin{exbox}
+$f = \begin{pmatrix} 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\ 5 & 2 & 1 & 8 & 3 & 7 & 6 & 4 \end{pmatrix} = (1\;5\;3) \circ (4\;8) \circ (6\;7)$.
+
+Les cycles à supports disjoints commutent : $(1\;5\;3) \circ (4\;8) = (4\;8) \circ (1\;5\;3)$.
+
+\textbf{Attention :} si les supports ne sont pas disjoints, l'ordre compte ! $(1\;2) \circ (2\;3\;4) \neq (2\;3\;4) \circ (1\;2)$.
+\end{exbox}
+
+
+% ─── SYNTHÈSE ───
+\section{Synthèse personnelle --- Groupes}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Les groupes unifient l'algèbre et la géométrie.} Les isométries du triangle forment le même groupe que $\mathcal{S}_3$. Les rotations du plan forment un groupe isomorphe à $(\R/2\pi\Z, +)$. La structure de groupe capture l'essence commune de situations apparemment différentes.
+
+\textbf{2. Sous-groupes de $\Z$ et arithmétique.} Les sous-groupes de $(\Z, +)$ sont les $n\Z$, et le sous-groupe engendré par $\{a, b\}$ est $\mathrm{pgcd}(a,b)\Z$. C'est une reformulation algébrique du théorème de Bézout (chapitre 4).
+
+\textbf{3. $\Z/n\Z$ est un groupe cyclique.} Le chapitre 5 l'a construit comme ensemble de classes, le chapitre 4 l'a utilisé pour l'arithmétique modulaire, et maintenant on lui donne sa structure de groupe. C'est le même objet vu sous trois angles.
+
+\textbf{4. Morphismes et crypto.} L'exponentielle $\exp : (\R, +) \to (\R^*_+, \times)$ est un isomorphisme. En crypto, l'exponentiation modulaire $g^x \mod p$ est un morphisme de $(\Z, +)$ vers $(\Z/p\Z)^*$ --- et la difficulté de l'inverser (logarithme discret) est la base de Diffie-Hellman. Le noyau de ce morphisme encode la périodicité (l'ordre de $g$).
+
+\textbf{5. Les permutations et le chiffrement.} Tout chiffrement par substitution est une permutation. Le groupe $\mathcal{S}_n$ est donc le cadre naturel pour analyser ces chiffrements, et la décomposition en cycles donne la structure interne de chaque permutation.
+\end{intuitionbox}
+
+
 % ═══════════════════════════════════════
 %   CONCLUSION GÉNÉRALE
 % ═══════════════════════════════════════
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
 
-Ce cahier de recherche couvre cinq piliers fondamentaux qui forment un tout cohérent :
+Ce cahier de recherche couvre huit piliers fondamentaux qui forment un tout cohérent :
 
 \begin{enumerate}[leftmargin=2cm]
   \item La \textbf{logique} fournit le langage et les méthodes de preuve --- c'est le <<~système d'exploitation~>> sur lequel tout le reste tourne.
   \item Les \textbf{nombres complexes} étendent le terrain de jeu algébrique et géométrique, fournissant des outils puissants (notation exponentielle, racines de l'unité) qui simplifient radicalement certains problèmes.
   \item Les \textbf{suites numériques} introduisent l'infini en analyse --- la notion de limite, formalisée par la logique du chapitre 1, est le concept central de toute l'analyse mathématique.
   \item L'\textbf{arithmétique} fournit les briques calculatoires de la cryptographie --- divisibilité, primalité, congruences et Fermat s'assemblent directement dans les protocoles de sécurité comme RSA.
-  \item Les \textbf{ensembles et applications} posent les fondations abstraites : notions d'ensemble, d'application, d'injection/surjection/bijection, dénombrement et relations d'équivalence. Ce chapitre fournit le cadre structurel de $\Z/n\Z$ qui sous-tend toute l'arithmétique modulaire.
+  \item Les \textbf{ensembles et applications} posent les fondations abstraites : notions d'ensemble, d'application, d'injection/surjection/bijection, dénombrement et relations d'équivalence.
+  \item Les \textbf{limites et fonctions continues} étendent les suites au domaine des fonctions --- le théorème des valeurs intermédiaires et le théorème de la bijection sont les outils clés pour prouver l'existence de solutions.
+  \item La \textbf{dérivée} affine l'approximation : tangente, théorème de Rolle, accroissements finis et règle de l'Hospital forment la boîte à outils de l'analyse différentielle.
+  \item Les \textbf{groupes} unifient l'algèbre abstraite --- sous-groupes, morphismes, groupes cycliques ($\Z/n\Z$) et permutations ($\mathcal{S}_n$) relient directement l'arithmétique modulaire à la cryptographie.
 \end{enumerate}
 
 \begin{intuitionbox}[Vision d'ensemble]
-Le fil conducteur entre ces cinq chapitres est la \textbf{rigueur progressive} : on part d'un langage formel (logique), on construit des objets (complexes, entiers, ensembles), puis on étudie leur comportement (suites, divisibilité, applications). Chaque couche s'appuie sur les précédentes.
+Le fil conducteur entre ces huit chapitres est la \textbf{rigueur progressive} : on part d'un langage formel (logique), on construit des objets (complexes, entiers, ensembles), on étudie leur comportement continu (suites, fonctions, dérivées), et on les organise en structures algébriques (groupes).
 
-Le chapitre sur les ensembles fait le pont entre la logique (les lois de De Morgan ensemblistes sont les lois de De Morgan logiques) et l'arithmétique (la construction de $\Z/n\Z$ via les relations d'équivalence). L'arithmétique boucle la boucle en reliant les mathématiques pures à mon domaine de spécialisation : la cybersécurité.
+L'objet $\Z/n\Z$ illustre parfaitement cette progression : construit au chapitre 5 via les relations d'équivalence, utilisé au chapitre 4 pour l'arithmétique modulaire, et doté au chapitre 8 de sa structure de groupe cyclique --- le même objet vu sous trois angles complémentaires, directement applicable en cryptographie (Diffie-Hellman, RSA, logarithme discret).
 
-Ce cahier n'est pas un point d'arrivée mais un point de départ. Les mêmes structures --- limites, complétude, congruences, bijections --- se retrouveront dans l'étude des fonctions continues, des séries, de l'algèbre modulaire et de la cryptographie avancée.
+Le théorème des valeurs intermédiaires (chapitre 6) et le théorème des accroissements finis (chapitre 7) montrent comment l'analyse passe d'informations locales à des conclusions globales --- une philosophie que l'on retrouve en crypto quand on déduit la sécurité d'un système de propriétés locales de ses composants.
 \end{intuitionbox}
 
 
@@ -2291,6 +3069,74 @@ Binôme de Newton & $(a+b)^n = \sum_{k=0}^{n} \binom{n}{k} a^{n-k} b^k$ \\
 Même cardinal & Injective $\iff$ surjective $\iff$ bijective \\
 Réciproque composée & $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$ \\
 $\Z/n\Z$ & $a \equiv b \pmod{n} \iff n \mid (a-b)$, \; $n$ classes \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Limites et Fonctions Continues}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+Limite en un point & $\forall \varepsilon > 0, \; \exists \delta > 0, \; |x - x_0| < \delta \implies |f(x) - \ell| < \varepsilon$ \\
+Continuité en $x_0$ & $\lim_{x \to x_0} f(x) = f(x_0)$ \\
+Caract. séquentielle & $f$ continue en $x_0$ $\iff$ $u_n \to x_0 \implies f(u_n) \to f(x_0)$ \\
+Opérations limites & $\lim(f+g) = \lim f + \lim g$, etc. \\
+Gendarmes & $f \leqslant g \leqslant h$, $\lim f = \lim h = \ell \implies \lim g = \ell$ \\
+TVI & $f$ continue, $f(a) \cdot f(b) < 0 \implies \exists c, \; f(c) = 0$ \\
+Image d'un segment & $f$ continue sur $[a,b] \implies f([a,b]) = [m, M]$ \\
+Th. bijection & Continue $+$ str. monotone $\implies$ bijection \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Dérivées}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+Nombre dérivé & $f'(x_0) = \lim_{x \to x_0} \frac{f(x) - f(x_0)}{x - x_0}$ \\
+Tangente & $y = f'(x_0)(x - x_0) + f(x_0)$ \\
+Produit & $(fg)' = f'g + fg'$ \\
+Quotient & $(f/g)' = (f'g - fg')/g^2$ \\
+Composée & $(g \circ f)' = (g' \circ f) \cdot f'$ \\
+Réciproque & $(f^{-1})' = 1/(f' \circ f^{-1})$ \\
+Leibniz & $(fg)^{(n)} = \sum \binom{n}{k} f^{(n-k)} g^{(k)}$ \\
+Rolle & $f(a) = f(b)$, $f$ cont./dériv. $\implies \exists c, \; f'(c) = 0$ \\
+TAF & $f(b) - f(a) = f'(c)(b-a)$ \\
+$f' \geqslant 0 \iff f$ croissante & Corollaire du TAF \\
+Accr. finis (inég.) & $|f'| \leqslant M \implies |f(x) - f(y)| \leqslant M|x-y|$ \\
+Hospital & $f(x_0) = g(x_0) = 0 \implies \lim f/g = \lim f'/g'$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Groupes}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+Groupe & Loi interne $+$ associative $+$ neutre $+$ inverse \\
+Abélien & $x \star y = y \star x$ \\
+Sous-groupe & $e \in H$, stable par $\star$ et par inverse \\
+Critère rapide & $H \neq \emptyset$ et $\forall x,y \in H, \; x \star y^{-1} \in H$ \\
+Sous-groupes de $\Z$ & Exactement les $n\Z$ \\
+Morphisme & $f(x \star x') = f(x) \diamond f(x')$ \\
+Noyau & $\Ker f = \{x \mid f(x) = e_{G'}\}$ \\
+Injectivité & $f$ injective $\iff$ $\Ker f = \{e_G\}$ \\
+$\Z/n\Z$ & Groupe cyclique de cardinal $n$ \\
+Unicité cyclique & Cyclique cardinal $n$ $\cong$ $\Z/n\Z$ \\
+$\mathcal{S}_n$ & Groupe des permutations, cardinal $n!$ \\
+Décomp. en cycles & Unique en cycles à supports disjoints \\
 \hline
 \end{tabular}
 \end{center}

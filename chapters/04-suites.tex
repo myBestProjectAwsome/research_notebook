@@ -315,6 +315,79 @@ Toujours tracer le graphe : il dit immédiatement si la suite converge et vers q
 \end{intuitionbox}
 
 
+\section{Exercices}
+
+\begin{exbox}[Exercice 1.1 --- Monotonie et bornitude]
+Étudier la monotonie et le caractère borné de la suite $(u_n)_{n \in \N}$ définie par :
+\[
+  u_n = \frac{2n-1}{n+1}
+\]
+\end{exbox}
+
+\begin{proofbox}[Solution]
+\textbf{Étape 1 : mettre $u_n$ sous une forme exploitable.} On fait apparaître $n+1$ au numérateur :
+\[
+  u_n = \frac{2n-1}{n+1} = \frac{2(n+1) - 3}{n+1} = 2 - \frac{3}{n+1}
+\]
+
+\textbf{Étape 2 : monotonie.} On calcule la différence $u_{n+1} - u_n$ :
+\[
+  u_{n+1} - u_n = \left(2 - \frac{3}{n+2}\right) - \left(2 - \frac{3}{n+1}\right) = \frac{3}{n+1} - \frac{3}{n+2} = \frac{3(n+2) - 3(n+1)}{(n+1)(n+2)} = \frac{3}{(n+1)(n+2)}
+\]
+Pour tout $n \in \N$, $(n+1)(n+2) > 0$, donc $u_{n+1} - u_n > 0$. La suite $(u_n)$ est \textbf{strictement croissante}.
+
+\textbf{Étape 3 : bornitude.}
+\begin{itemize}[leftmargin=1cm]
+  \item \textit{Minorée :} $(u_n)$ est croissante, donc $u_n \geqslant u_0 = -1$ pour tout $n$.
+  \item \textit{Majorée :} comme $n + 1 > 0$, on a $\frac{3}{n+1} > 0$, donc $u_n = 2 - \frac{3}{n+1} < 2$ pour tout $n$.
+\end{itemize}
+On obtient l'encadrement $-1 \leqslant u_n < 2$ : la suite est \textbf{bornée}.
+
+\textbf{Étape 4 : convergence et limite.} $(u_n)$ est croissante et majorée par $2$ : d'après le théorème de convergence monotone (\S 4.5.1), elle converge. Sa limite se lit directement sur la forme réécrite :
+\[
+  \lim_{n \to +\infty} u_n = \lim_{n \to +\infty}\left(2 - \frac{3}{n+1}\right) = 2
+\]
+\hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Pourquoi cette écriture ?]
+Faire apparaître $n+1$ au numérateur transforme une fraction opaque en $2 - \frac{3}{n+1}$, où la monotonie, la borne et la limite sautent aux yeux : $\frac{3}{n+1}$ décroît vers $0$ en restant positif. C'est le même réflexe que pour la division euclidienne polynomiale : isoler la partie <<~constante~>> pour ne garder qu'un reste qui tend vers $0$.
+\end{intuitionbox}
+
+
+\begin{exbox}[Exercice 1.2 --- Majoration, minoration, monotonie]
+La suite $(u_n)_{n \in \N}$ est définie par :
+\[
+  u_n = \frac{(-1)^n n}{n+1}
+\]
+Est-elle majorée~? minorée~? bornée~? monotone~?
+\end{exbox}
+
+\begin{proofbox}[Solution]
+\textbf{Étape 1 : bornitude.} Pour tout $n \in \N$ :
+\[
+  |u_n| = \frac{n}{n+1} = 1 - \frac{1}{n+1} < 1
+\]
+donc $-1 < u_n < 1$ pour tout $n$. La suite est \textbf{majorée} par $1$, \textbf{minorée} par $-1$, donc \textbf{bornée}.
+
+\textbf{Étape 2 : monotonie --- calcul des premiers termes.}
+\[
+  u_0 = 0, \qquad u_1 = -\frac{1}{2}, \qquad u_2 = \frac{2}{3}, \qquad u_3 = -\frac{3}{4}
+\]
+On observe $u_1 - u_0 = -\frac{1}{2} < 0$ (la suite décroît) puis $u_2 - u_1 = \frac{7}{6} > 0$ (elle croît). Le signe de $u_{n+1} - u_n$ n'est pas constant : la suite \textbf{n'est pas monotone}.
+
+\textbf{Étape 3 : ce que cache l'alternance --- les suites extraites.} Le terme $(-1)^n$ sépare les rangs pairs et impairs :
+\[
+  u_{2n} = \frac{2n}{2n+1} = 1 - \frac{1}{2n+1} \;\longrightarrow\; 1, \qquad\qquad u_{2n+1} = \frac{-(2n+1)}{2n+2} = -1 + \frac{1}{2n+2} \;\longrightarrow\; -1
+\]
+Les deux suites extraites $(u_{2n})$ et $(u_{2n+1})$ convergent vers des limites \emph{distinctes} ($1 \neq -1$). D'après la propriété sur les suites extraites (si $(u_n)$ convergeait, toute suite extraite convergerait vers la même limite), $(u_n)$ \textbf{diverge}. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Bornée mais pas convergente]
+Cet exercice est une version <<~explicite~>> de la remarque faite plus haut sur $(-1)^n$ : bornitude et convergence sont deux propriétés indépendantes. Ici, le facteur $\frac{n}{n+1}$ pousse chaque paquet de termes vers un bord de l'intervalle $]-1,1[$, mais l'alternance de signe empêche tout rassemblement autour d'une valeur unique. Repérer deux sous-suites de limites différentes est la méthode standard pour prouver la divergence sans jamais écrire de $\varepsilon$.
+\end{intuitionbox}
+
+
 \section{Synthèse personnelle --- Suites}
 
 \begin{intuitionbox}[Connexions identifiées]

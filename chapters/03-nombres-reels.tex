@@ -1,0 +1,350 @@
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 3 : LES NOMBRES RÉELS     ║
+% ╚═══════════════════════════════════════╝
+\chapter{Les Nombres Réels}
+
+\section{Motivations et lien avec la cryptographie}
+
+Avant de parler de suites, de limites et de fonctions continues, il faut savoir \emph{de quoi} on parle : que sont au juste les nombres réels~? La question n'est pas anodine. Les Babyloniens calculaient en base 60 avec des nombres de la forme $a + \frac{b}{60} + \frac{c}{60^2} + \cdots$, autrement dit avec des nombres rationnels. Les Pythagoriciens ont découvert vers $-500$ que $\sqrt{2}$ ne s'écrit pas comme un quotient d'entiers --- un <<~scandale ontologique~>> qui a forcé les mathématiciens à étendre $\Q$.
+
+\begin{intuitionbox}[Pourquoi $\R$ pour la crypto ?]
+À première vue, la cryptographie n'a rien à voir avec $\R$ : elle se passe dans des structures \emph{discrètes} (corps finis, $\Z/n\Z$, courbes elliptiques sur $\F_p$). Pourtant, $\R$ intervient indirectement à plusieurs niveaux essentiels :
+
+\textbf{1. Les preuves de sécurité.} Quasiment toutes les preuves de sécurité utilisent des bornes probabilistes (avantage d'un adversaire $\leqslant \varepsilon$, distribution statistique <<~indistinguable~>>). Ces $\varepsilon$ sont des réels, et l'analyse réelle (limites, bornes supérieures) sous-tend toute la théorie.
+
+\textbf{2. Le raisonnement par l'absurde.} La preuve que $\sqrt{2} \notin \Q$ est \emph{le} modèle archétypal d'une preuve par contradiction. C'est exactement le schéma utilisé pour prouver la sécurité d'un schéma cryptographique : on suppose qu'un adversaire le casse, et on en déduit qu'il sait résoudre un problème réputé difficile (factorisation, log discret). La structure logique est identique.
+
+\textbf{3. La complexité asymptotique.} <<~$O(\log n)$~>>, <<~$2^{n/2}$~>> (paradoxe des anniversaires), <<~$O(n^3)$~>> : toute l'analyse des algorithmes vit dans $\R$. Comprendre la borne supérieure et la densité, c'est comprendre pourquoi un adversaire qui s'approche \emph{arbitrairement près} d'un secret n'a pas pour autant cassé le système.
+
+\textbf{4. La précision finie vs. exacte.} Comprendre la densité de $\Q$ dans $\R$ explique pourquoi en cryptographie on n'utilise \textbf{jamais} de virgule flottante --- la moindre erreur de précision catastrophe la sécurité. Tous les calculs se font en arithmétique entière exacte.
+\end{intuitionbox}
+
+
+\section{L'ensemble $\Q$ des rationnels}
+
+\subsection{Définition et écriture décimale}
+
+\begin{defbox}[--- Nombres rationnels]
+L'ensemble des rationnels est
+\[
+  \Q = \left\{\,\frac{p}{q}\;\middle|\; p \in \Z,\; q \in \N^*\,\right\}.
+\]
+Les \textbf{nombres décimaux} sont les rationnels de la forme $\frac{a}{10^n}$ avec $a \in \Z$, $n \in \N$.
+\end{defbox}
+
+\begin{propbox}[--- Caractérisation par le développement décimal]
+Un réel est rationnel si et seulement s'il admet un développement décimal \textbf{périodique ou fini}.
+\end{propbox}
+
+\begin{methodbox}[Reconstruction d'un rationnel à partir d'un développement périodique]
+Pour $x = 12{,}342\,\overline{021}$ (la barre indique la période de longueur $4$ commençant deux chiffres après la virgule) :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item Multiplier par $10^k$ pour amener la période juste après la virgule : ici $100\,x = 1234{,}\overline{2021}$.
+  \item Multiplier encore par $10^\ell$ (longueur de la période) pour décaler d'une période complète : $10\,000 \times 100\,x = 12\,342\,021{,}\overline{2021}$.
+  \item Soustraire les deux lignes : les parties décimales s'annulent et on obtient un entier.
+  \item Diviser pour isoler $x$.
+\end{enumerate}
+Ici : $999\,900\,x = 12\,340\,787$, donc $x = \frac{12\,340\,787}{999\,900} \in \Q$.
+\end{methodbox}
+
+\subsection{Irrationalité de $\sqrt{2}$}
+
+\begin{thmbox}[--- $\sqrt{2}$ n'est pas rationnel]
+$\sqrt{2} \notin \Q$.
+\end{thmbox}
+
+\begin{proofbox}[Démonstration classique (par parité)]
+Par l'absurde, supposons $\sqrt{2} = \frac{p}{q}$ avec $p \in \Z$, $q \in \N^*$ et $\text{pgcd}(p, q) = 1$ (fraction irréductible). En élevant au carré :
+\[
+  2 q^2 = p^2.
+\]
+Le membre de gauche est pair, donc $p^2$ est pair, donc $p$ est pair (car si $p$ était impair, $p^2$ le serait aussi). Écrivons $p = 2 p'$. En substituant : $2 q^2 = 4 p'^2$, soit $q^2 = 2 p'^2$. Le même raisonnement montre que $q$ est pair.
+
+Donc $2 \mid p$ et $2 \mid q$, ce qui contredit $\text{pgcd}(p, q) = 1$. \hfill$\square$
+\end{proofbox}
+
+\begin{proofbox}[Démonstration alternative (par descente infinie)]
+Par l'absurde, supposons $\sqrt{2} = \frac{p}{q}$, donc $q\sqrt{2} = p \in \N$. Considérons :
+\[
+  \mathcal{N} = \{ n \in \N^* \mid n\sqrt{2} \in \N \}.
+\]
+$\mathcal{N}$ est non vide ($q \in \mathcal{N}$), donc admet un plus petit élément $n_0 = \min \mathcal{N}$.
+
+Posons $n_1 = n_0 \sqrt{2} - n_0 = n_0 (\sqrt{2} - 1)$. Comme $1 < \sqrt{2} < 2$, on a $0 < n_1 < n_0$.
+De plus :
+\[
+  n_1 \sqrt{2} = (n_0 \sqrt{2} - n_0)\sqrt{2} = 2 n_0 - n_0 \sqrt{2} \in \N.
+\]
+Donc $n_1 \in \mathcal{N}$ et $n_1 < n_0$ : contradiction avec la minimalité de $n_0$. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Le pattern <<~descente infinie~>>]
+La seconde démonstration utilise le \textbf{principe de descente infinie} de Fermat : on suppose une solution, on en construit une strictement plus petite, on contredit le fait que $\N$ est bien ordonné. C'est le même principe qui justifie la terminaison de l'algorithme d'Euclide (chapitre Arithmétique) et celle de la division euclidienne. Le \emph{bon ordre} de $\N$ est l'outil sous-jacent.
+\end{intuitionbox}
+
+\begin{exbox}[$\sqrt{10} \notin \Q$]
+Même schéma : si $\sqrt{10} = p/q$ irréductible, alors $10 q^2 = p^2$, donc $5 \mid p^2$, donc $5 \mid p$ (car $5$ est premier --- lemme d'Euclide). Écrivons $p = 5 p'$ : on a $10 q^2 = 25 p'^2$, soit $2 q^2 = 5 p'^2$. Donc $5 \mid 2 q^2$, et comme $\text{pgcd}(2, 5) = 1$, $5 \mid q^2$ donc $5 \mid q$. Contradiction avec $\text{pgcd}(p, q) = 1$.
+\end{exbox}
+
+
+\section{Propriétés axiomatiques de $\R$}
+
+L'ensemble $\R$ se construit (coupures de Dedekind, suites de Cauchy) mais en pratique on l'utilise via ses \emph{propriétés caractéristiques}. Ces propriétés sont au nombre de quatre.
+
+\subsection{(R1) Corps commutatif}
+
+\begin{propbox}[--- Structure de corps]
+$(\R, +, \times)$ est un \textbf{corps commutatif} : $+$ et $\times$ sont commutatives, associatives, distributives, $0$ est neutre pour $+$, $1$ pour $\times$, tout réel admet un opposé, tout réel non nul admet un inverse.
+\end{propbox}
+
+\subsection{(R2) Ordre total}
+
+\begin{defbox}[--- Relation d'ordre]
+Une relation $\mathcal{R}$ sur un ensemble $E$ est une \textbf{relation d'ordre} si elle est :
+\begin{itemize}[leftmargin=1cm]
+  \item \textbf{réflexive} : $\forall x,\; x \mathcal{R} x$ ;
+  \item \textbf{antisymétrique} : $(x \mathcal{R} y \text{ et } y \mathcal{R} x) \Rightarrow x = y$ ;
+  \item \textbf{transitive} : $(x \mathcal{R} y \text{ et } y \mathcal{R} z) \Rightarrow x \mathcal{R} z$.
+\end{itemize}
+L'ordre est \textbf{total} si pour tous $x, y$, on a $x \mathcal{R} y$ ou $y \mathcal{R} x$.
+\end{defbox}
+
+\begin{propbox}[--- $\leqslant$ est un ordre total sur $\R$]
+La relation $\leqslant$ est un ordre total sur $\R$. De plus, elle est compatible avec les opérations :
+\begin{itemize}[leftmargin=1cm]
+  \item $a \leqslant b$ et $c \leqslant d$ $\Rightarrow$ $a + c \leqslant b + d$.
+  \item $a \leqslant b$ et $c \geqslant 0$ $\Rightarrow$ $ac \leqslant bc$.
+  \item $a \leqslant b$ et $c \leqslant 0$ $\Rightarrow$ $ac \geqslant bc$ (renversement).
+\end{itemize}
+\end{propbox}
+
+\subsection{(R3) Propriété d'Archimède}
+
+\begin{thmbox}[--- Propriété d'Archimède]
+$\R$ est \textbf{archimédien} :
+\[
+  \forall x \in \R,\; \exists n \in \N,\; n > x.
+\]
+\end{thmbox}
+
+\begin{intuitionbox}[Pourquoi cette propriété est centrale]
+La propriété d'Archimède dit \emph{<<~il n'existe pas de réel infiniment grand par rapport à $\N$~>>}. C'est la condition qui rend la partie entière bien définie, qui permet de <<~graduer~>> $\R$ par les entiers, et c'est elle qui interdit l'existence d'\emph{infinitésimaux} dans $\R$ (à l'inverse des nombres hyperréels de l'analyse non standard).
+
+En analyse, c'est elle qui justifie que, pour tout $\varepsilon > 0$, on peut trouver $n$ tel que $\frac{1}{n} < \varepsilon$ : le coup d'envoi de toutes les preuves $\varepsilon$-$N$ pour les suites.
+\end{intuitionbox}
+
+\begin{propbox}[--- Partie entière]
+Pour tout $x \in \R$, il existe un unique entier relatif $E(x) \in \Z$ tel que :
+\[
+  E(x) \leqslant x < E(x) + 1.
+\]
+On note aussi $\lfloor x \rfloor$.
+\end{propbox}
+
+\begin{proofbox}[Existence (cas $x \geqslant 0$)]
+Par Archimède, il existe $n \in \N$ tel que $n > x$. L'ensemble $K = \{ k \in \N \mid k \leqslant x \}$ est non vide ($0 \in K$) et fini (car $k < n$ pour $k \in K$). Soit $k_{\max} = \max K$. Alors $k_{\max} \leqslant x$ (car $k_{\max} \in K$) et $k_{\max} + 1 > x$ (car $k_{\max} + 1 \notin K$). On pose $E(x) = k_{\max}$.
+
+\textit{Unicité.} Si $k$ et $\ell$ vérifient la propriété, $k - 1 < \ell < k + 1$, donc le seul entier strictement entre $k-1$ et $k+1$ est $k$, soit $\ell = k$. \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Encadrements]
+\begin{itemize}[leftmargin=1cm]
+  \item $E(2{,}853) = 2$, $E(\pi) = 3$, $E(-3{,}5) = -4$ (attention au signe !).
+  \item Encadrement de $\sqrt{10}$ : $3^2 = 9 < 10 < 16 = 4^2$, donc $3 < \sqrt{10} < 4$ et $E(\sqrt{10}) = 3$.
+  \item Encadrement de $1{,}1^{1/12}$ : $1^{12} = 1 < 1{,}1 < 2^{12}$, donc en passant à la racine $12$-ième : $1 < 1{,}1^{1/12} < 2$, et $E(1{,}1^{1/12}) = 1$.
+\end{itemize}
+\end{exbox}
+
+\subsection{Valeur absolue}
+
+\begin{defbox}[--- Valeur absolue]
+\[
+  |x| = \begin{cases} x & \text{si } x \geqslant 0 \\ -x & \text{si } x < 0 \end{cases}
+\]
+\end{defbox}
+
+\begin{propbox}[--- Propriétés de la valeur absolue]
+\begin{enumerate}[leftmargin=1cm]
+  \item $|x| \geqslant 0$ ; $|-x| = |x|$ ; $|x| > 0 \iff x \neq 0$.
+  \item $\sqrt{x^2} = |x|$.
+  \item $|xy| = |x| \cdot |y|$.
+  \item \textbf{Inégalité triangulaire :} $|x + y| \leqslant |x| + |y|$.
+  \item \textbf{Seconde inégalité triangulaire :} $\bigl||x| - |y|\bigr| \leqslant |x - y|$.
+\end{enumerate}
+\end{propbox}
+
+\begin{proofbox}[Inégalité triangulaire]
+On a $-|x| \leqslant x \leqslant |x|$ et $-|y| \leqslant y \leqslant |y|$. En sommant : $-(|x|+|y|) \leqslant x+y \leqslant |x|+|y|$, soit $|x+y| \leqslant |x|+|y|$.
+
+Pour la seconde : $x = (x-y) + y$ donne $|x| \leqslant |x-y| + |y|$, soit $|x| - |y| \leqslant |x-y|$. En échangeant les rôles : $|y| - |x| \leqslant |x-y|$. Donc $\bigl||x|-|y|\bigr| \leqslant |x-y|$. \hfill$\square$
+\end{proofbox}
+
+\begin{rembox}[Distance]
+$|x - y|$ représente la \textbf{distance} entre $x$ et $y$ sur la droite numérique. C'est ce qui permet de définir une notion de <<~proximité~>>, indispensable pour les limites. L'inégalité triangulaire pour la distance se lit : aller de $x$ à $z$ est plus court que de passer par $y$.
+
+Caractérisation utile : $|x - a| < r \iff a - r < x < a + r \iff x \in \,]a-r, a+r[$.
+\end{rembox}
+
+
+\section{Densité de $\Q$ et $\R \setminus \Q$ dans $\R$}
+
+\subsection{Intervalles}
+
+\begin{defbox}[--- Intervalle]
+Un \textbf{intervalle} de $\R$ est un sous-ensemble $I$ tel que :
+\[
+  \forall a, b \in I,\; \forall x \in \R,\; (a \leqslant x \leqslant b \Rightarrow x \in I).
+\]
+Un \textbf{intervalle ouvert} est de la forme $]a, b[ = \{ x \in \R \mid a < x < b \}$.
+\end{defbox}
+
+\subsection{Le théorème de densité}
+
+\begin{thmbox}[--- Densité]
+\begin{enumerate}[leftmargin=1cm]
+  \item $\Q$ est \textbf{dense} dans $\R$ : tout intervalle ouvert non vide de $\R$ contient une infinité de rationnels.
+  \item $\R \setminus \Q$ est aussi dense dans $\R$ : tout intervalle ouvert non vide de $\R$ contient une infinité d'irrationnels.
+\end{enumerate}
+\end{thmbox}
+
+\begin{proofbox}[Étape 1 : un rationnel dans tout intervalle ouvert]
+On veut montrer que pour tous $a < b$ réels, il existe $r = \frac{p}{q} \in \Q$ avec $a < r < b$. Cela revient à trouver $q \in \N^*$ et $p \in \Z$ tels que $qa < p < qb$, autrement dit à trouver $q$ tel que l'intervalle $]qa, qb[$ contienne un entier. Il suffit que sa longueur $q(b-a)$ dépasse strictement $1$, soit $q > \frac{1}{b-a}$.
+
+Par Archimède, un tel $q$ existe. On pose alors $p = E(qa) + 1$. Alors $p - 1 \leqslant qa < p$, donc $a < \frac{p}{q}$. De plus, $\frac{p}{q} - \frac{1}{q} \leqslant a$, soit $\frac{p}{q} \leqslant a + \frac{1}{q} < a + (b-a) = b$. Donc $\frac{p}{q} \in \,]a, b[$. \hfill$\square$
+\end{proofbox}
+
+\begin{proofbox}[Étape 2 : un irrationnel dans tout intervalle ouvert]
+On applique l'étape~1 à l'intervalle $]a - \sqrt{2}, b - \sqrt{2}[$ : il existe $r \in \Q$ avec $a - \sqrt{2} < r < b - \sqrt{2}$, donc $r + \sqrt{2} \in \,]a, b[$. Or $r + \sqrt{2}$ est irrationnel : sinon, $\sqrt{2} = (r + \sqrt{2}) - r$ serait rationnel (somme de deux rationnels), contradiction. \hfill$\square$
+\end{proofbox}
+
+\begin{proofbox}[Étape 3 : une infinité]
+Subdivisons $]a, b[$ en $N$ sous-intervalles ouverts disjoints de longueur $\frac{b-a}{N}$. Par les deux étapes précédentes, chacun contient un rationnel et un irrationnel : il y en a donc au moins $N$ de chaque dans $]a, b[$. Comme $N$ est arbitraire, il y en a une infinité. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Densité $\neq$ cardinalité]
+$\Q$ et $\R \setminus \Q$ sont \emph{tous deux} denses dans $\R$, ce qui peut sembler étrange : entre deux rationnels il y a toujours un irrationnel, et réciproquement. Mais ces deux ensembles ne sont pas <<~équivalents~>> pour autant : $\Q$ est \textbf{dénombrable} (en bijection avec $\N$), tandis que $\R \setminus \Q$ ne l'est pas (Cantor). Il y a donc <<~bien plus~>> d'irrationnels que de rationnels, alors qu'ils sont géométriquement entrelacés.
+
+Cette distinction densité/cardinalité est exactement celle qui apparaît en cryptographie : un espace de clés peut être dense (toute valeur est <<~possible~>>) sans être assez grand pour résister à une recherche exhaustive. Densité $\neq$ taille.
+\end{intuitionbox}
+
+
+\section{Borne supérieure}
+
+C'est ici que $\R$ se distingue radicalement de $\Q$.
+
+\subsection{Maximum, minimum, majorants, minorants}
+
+\begin{defbox}[--- Plus grand / plus petit élément]
+Soit $A \subset \R$ non vide. $\alpha \in \R$ est le \textbf{plus grand élément} de $A$ (noté $\max A$) si :
+\[
+  \alpha \in A \quad \text{et} \quad \forall x \in A,\; x \leqslant \alpha.
+\]
+$\min A$ se définit symétriquement.
+\end{defbox}
+
+\begin{exbox}[Existence non garantie]
+\begin{itemize}[leftmargin=1cm]
+  \item $\max [a, b] = b$, $\min [a, b] = a$.
+  \item $]a, b[$ n'a ni plus grand ni plus petit élément.
+  \item $[0, 1[$ a $\min = 0$ mais pas de maximum.
+  \item $A = \left\{1 - \frac{1}{n} \mid n \in \N^* \right\}$ a $\min = 0$ mais pas de maximum (les éléments s'accumulent vers $1$ sans jamais l'atteindre).
+\end{itemize}
+\end{exbox}
+
+\begin{defbox}[--- Majorant, minorant]
+$M \in \R$ est un \textbf{majorant} de $A$ si $\forall x \in A,\; x \leqslant M$.
+$m \in \R$ est un \textbf{minorant} de $A$ si $\forall x \in A,\; x \geqslant m$.
+$A$ est \textbf{majorée} (resp. \textbf{minorée}) si elle admet au moins un majorant (resp. minorant). Elle est \textbf{bornée} si majorée \emph{et} minorée.
+\end{defbox}
+
+\subsection{Borne supérieure}
+
+\begin{defbox}[--- Borne supérieure / inférieure]
+Soit $A \subset \R$ non vide.
+\begin{itemize}[leftmargin=1cm]
+  \item $\sup A$ : le \textbf{plus petit des majorants} de $A$, s'il existe.
+  \item $\inf A$ : le \textbf{plus grand des minorants} de $A$, s'il existe.
+\end{itemize}
+\end{defbox}
+
+\subsection{(R4) Le théorème fondamental}
+
+\begin{thmbox}[--- Existence de la borne supérieure]
+Toute partie de $\R$ \textbf{non vide et majorée} admet une borne supérieure.
+Toute partie de $\R$ non vide et minorée admet une borne inférieure.
+\end{thmbox}
+
+\begin{intuitionbox}[Le saut de $\Q$ à $\R$]
+\textbf{Cette propriété est fausse dans $\Q$ !} L'ensemble $A = \{ x \in \Q \mid x^2 < 2 \}$ est non vide et majoré dans $\Q$ (par $2$ par exemple), mais n'a pas de borne supérieure dans $\Q$ : son sup naturel serait $\sqrt{2}$, qui n'est pas rationnel.
+
+C'est précisément la propriété (R4) qui caractérise $\R$ par rapport à $\Q$ : on l'appelle parfois la \textbf{propriété de la borne supérieure} ou \textbf{complétude} de $\R$. Elle dit que $\R$ <<~n'a pas de trous~>>.
+
+C'est cette complétude qui garantit, en analyse, que :
+\begin{itemize}[leftmargin=1cm]
+  \item toute suite croissante majorée converge ;
+  \item toute fonction continue sur un segment atteint ses bornes ;
+  \item le théorème des valeurs intermédiaires fonctionne.
+\end{itemize}
+Sans (R4), pas d'analyse réelle.
+\end{intuitionbox}
+
+\subsection{Caractérisation par les $\varepsilon$}
+
+\begin{propbox}[--- Caractérisation $\varepsilon$ de la borne supérieure]
+Soit $A \subset \R$ non vide majorée. Alors $\alpha = \sup A$ est l'unique réel vérifiant :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item[(i)] $\forall x \in A,\; x \leqslant \alpha$ \quad ($\alpha$ est un majorant).
+  \item[(ii)] $\forall y < \alpha,\; \exists x \in A,\; y < x$ \quad (rien de plus petit que $\alpha$ ne majore $A$).
+\end{enumerate}
+\end{propbox}
+
+\begin{methodbox}[Comment montrer $\sup A = \alpha$]
+\textbf{Deux choses à vérifier :}
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $\alpha$ majore $A$ : $\forall x \in A,\; x \leqslant \alpha$.
+  \item Pour tout $\varepsilon > 0$, on peut trouver $x \in A$ avec $x > \alpha - \varepsilon$ (équivalent à (ii)).
+\end{enumerate}
+La condition (2) se reformule encore : il existe une suite $(x_n)$ d'éléments de $A$ telle que $x_n \to \alpha$ (caractérisation séquentielle).
+\end{methodbox}
+
+\begin{exbox}[Application : $A = \{ 1 - \tfrac{1}{n} \mid n \in \N^* \}$]
+Montrons que $\sup A = 1$ par la caractérisation.
+\begin{enumerate}[leftmargin=1.5cm]
+  \item[(i)] Pour tout $n$, $1 - \frac{1}{n} \leqslant 1$. Donc $1$ est un majorant.
+  \item[(ii)] Soit $y < 1$. On cherche $n$ tel que $1 - \frac{1}{n} > y$, soit $\frac{1}{n} < 1 - y$, soit $n > \frac{1}{1-y}$. Par Archimède, un tel $n$ existe. Donc $x = 1 - \frac{1}{n} \in A$ vérifie $x > y$.
+\end{enumerate}
+Donc $\sup A = 1$. Notons que $1 \notin A$ : la borne supérieure n'est pas atteinte. \emph{C'est tout l'intérêt de la notion par rapport à $\max$.}
+\end{exbox}
+
+\begin{propbox}[--- Caractérisation séquentielle]
+Soit $A \subset \R$ non vide majorée. $\alpha = \sup A$ si et seulement si :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item[(i)] $\alpha$ est un majorant de $A$.
+  \item[(ii)] Il existe une suite $(x_n)$ d'éléments de $A$ qui converge vers $\alpha$.
+\end{enumerate}
+\end{propbox}
+
+
+\section{Synthèse : les quatre piliers de $\R$}
+
+\begin{intuitionbox}[Connexions identifiées]
+
+\textbf{1. Les quatre propriétés axiomatiques.} $\R$ se caractérise par :
+\begin{itemize}[leftmargin=1cm]
+  \item (R1) Corps commutatif (algèbre).
+  \item (R2) Ordre total compatible (ordre).
+  \item (R3) Archimédien (interaction avec $\N$).
+  \item (R4) Toute partie non vide majorée a une borne sup (complétude).
+\end{itemize}
+$\Q$ vérifie (R1), (R2), (R3) mais \emph{pas} (R4). C'est la propriété (R4) qui fait de $\R$ le bon cadre pour l'analyse.
+
+\textbf{2. Densité $\neq$ complétude.} $\Q$ est dense dans $\R$ mais pas complet ; cela illustre que la densité est une propriété <<~topologique faible~>>. La complétude est une propriété beaucoup plus forte qui exige l'\emph{existence} de certains éléments limites.
+
+\textbf{3. La preuve par contradiction comme paradigme.} La preuve que $\sqrt{2} \notin \Q$ est le modèle générique : pour montrer $P$, on suppose $\neg P$, on en déduit une contradiction. C'est le moteur des preuves de sécurité crypto (réduction au pire cas).
+
+\textbf{4. Le passage de $\max$ à $\sup$.} Quand un maximum n'existe pas (ouvert, ensemble borné non fermé), la borne supérieure le remplace en gardant les propriétés essentielles. C'est la même philosophie qui mène plus tard aux <<~limites~>> (Suites, chap. suivant) : capturer un comportement <<~asymptotique~>> sans qu'il soit atteint.
+
+\textbf{5. Lien avec les chapitres suivants.} Tout l'édifice de l'analyse à venir (suites, fonctions continues, dérivées) repose sur (R4). Le théorème de la limite monotone (suites), le TVI et le théorème des bornes (fonctions continues) sont \emph{des conséquences directes} de la propriété de la borne supérieure.
+\end{intuitionbox}
+
+

@@ -1,0 +1,453 @@
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 4 : ARITHMÉTIQUE          ║
+% ╚═══════════════════════════════════════╝
+\chapter{Arithmétique}
+
+\section{Motivations et lien avec la cryptographie}
+
+L'arithmétique est le socle de la cryptographie moderne. Le chiffrement RSA, que j'étudie en cours de CHIFR1, repose directement sur les notions de ce chapitre :
+\begin{itemize}[leftmargin=1cm]
+  \item On choisit deux nombres premiers $p$ et $q$ gardés secrets, et on pose $n = p \times q$.
+  \item La clé secrète se calcule via l'algorithme d'Euclide et les coefficients de Bézout.
+  \item Le chiffrement opère modulo $n$.
+  \item Le déchiffrement repose sur le petit théorème de Fermat.
+\end{itemize}
+
+\begin{intuitionbox}[Arithmétique = fondation de la cybersécurité]
+Ce chapitre n'est pas un exercice abstrait pour moi : chaque notion a une application directe dans mon domaine de spécialisation. La difficulté de factoriser $n = pq$ (quand $p$ et $q$ ont des centaines de chiffres) est \emph{le} problème de sécurité qui protège les communications mondiales. Comprendre l'arithmétique en profondeur, c'est comprendre pourquoi RSA fonctionne --- et quelles sont ses limites face aux algorithmes quantiques (Shor).
+\end{intuitionbox}
+
+
+\section{Division euclidienne et divisibilité}
+
+\begin{defbox}[--- Divisibilité]
+Soient $a, b \in \Z$. On dit que $b$ \textbf{divise} $a$, noté $b \mid a$, s'il existe $q \in \Z$ tel que $a = bq$.
+
+\medskip
+Propriétés immédiates :
+\begin{itemize}[leftmargin=1cm]
+  \item $\forall a \in \Z$, $a \mid 0$ et $1 \mid a$.
+  \item $a \mid 1 \Rightarrow a = \pm 1$.
+  \item $(a \mid b \text{ et } b \mid a) \Rightarrow b = \pm a$.
+  \item $(a \mid b \text{ et } b \mid c) \Rightarrow a \mid c$ \quad (transitivité).
+  \item $(a \mid b \text{ et } a \mid c) \Rightarrow a \mid (b + c)$ \quad (stabilité par combinaison linéaire).
+\end{itemize}
+\end{defbox}
+
+\begin{thmbox}[--- Division euclidienne]
+Soit $a \in \Z$ et $b \in \N \setminus \{0\}$. Il existe un \textbf{unique} couple $(q, r) \in \Z^2$ tel que :
+\[
+  a = bq + r \qquad \text{avec } 0 \leqslant r < b
+\]
+$q$ est le \textbf{quotient} et $r$ le \textbf{reste}. On a $r = 0$ si et seulement si $b \mid a$.
+\end{thmbox}
+
+\begin{proofbox}
+\textit{Existence.} Supposons $a \geqslant 0$. Soit $\mathcal{N} = \{n \in \N \mid bn \leqslant a\}$. Cet ensemble est non vide ($0 \in \mathcal{N}$) et fini (car $n \leqslant a$ pour $n \in \mathcal{N}$). Soit $q = \max \mathcal{N}$. Alors $bq \leqslant a$ et $b(q+1) > a$, donc $0 \leqslant a - bq < b$. On pose $r = a - bq$.
+
+\textit{Unicité.} Supposons $a = bq + r = bq' + r'$ avec $0 \leqslant r, r' < b$. Alors $b(q - q') = r' - r$, et $|r' - r| < b$ impose $-b < b(q - q') < b$, soit $|q - q'| < 1$. Comme $q - q' \in \Z$, on a $q = q'$ puis $r = r'$. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[L'unicité comme outil]
+L'unicité du couple $(q, r)$ est cruciale en pratique : elle garantit que le reste d'une division est \emph{bien défini}, ce qui permet de parler sans ambiguïté de <<~$a$ modulo $b$~>>. Sans l'unicité, les congruences n'auraient pas de sens.
+\end{intuitionbox}
+
+
+\section{PGCD et algorithme d'Euclide}
+
+\begin{defbox}[--- PGCD]
+Soient $a, b \in \Z$, non tous deux nuls. Le \textbf{plus grand diviseur commun} de $a$ et $b$, noté $\text{pgcd}(a, b)$, est le plus grand entier qui divise à la fois $a$ et $b$.
+\end{defbox}
+
+\subsection{L'algorithme d'Euclide}
+
+\begin{lemme}
+Soient $a, b \in \N^*$. Si $a = bq + r$ (division euclidienne), alors $\text{pgcd}(a, b) = \text{pgcd}(b, r)$.
+\end{lemme}
+
+\begin{proofbox}
+Il suffit de montrer que les diviseurs communs de $(a, b)$ sont exactement les diviseurs communs de $(b, r)$.
+\begin{itemize}[leftmargin=1cm]
+  \item Si $d \mid a$ et $d \mid b$, alors $d \mid bq$, donc $d \mid a - bq = r$.
+  \item Si $d \mid b$ et $d \mid r$, alors $d \mid bq + r = a$.
+\end{itemize}
+Les ensembles de diviseurs communs sont identiques, donc leurs maxima aussi. \hfill$\square$
+\end{proofbox}
+
+\begin{methodbox}[Algorithme d'Euclide]
+Pour calculer $\text{pgcd}(a, b)$ avec $a \geqslant b > 0$, on effectue des divisions euclidiennes successives :
+\begin{align*}
+  a &= bq_1 + r_1 &\quad &\text{pgcd}(a,b) = \text{pgcd}(b, r_1) \\
+  b &= r_1 q_2 + r_2 &\quad &= \text{pgcd}(r_1, r_2) \\
+  r_1 &= r_2 q_3 + r_3 &\quad &= \text{pgcd}(r_2, r_3) \\
+  &\;\;\vdots \\
+  r_{k-1} &= r_k \cdot q_{k+1} + 0 &\quad &= r_k
+\end{align*}
+L'algorithme termine car $b > r_1 > r_2 > \cdots \geqslant 0$ (suite décroissante d'entiers positifs). Le \textbf{dernier reste non nul} est le pgcd.
+\end{methodbox}
+
+\begin{exbox}[Calcul de $\text{pgcd}(9945, 3003)$]
+\begin{align*}
+  9945 &= 3003 \times 3 + 936 \\
+  3003 &= 936 \times 3 + 195 \\
+  936 &= 195 \times 4 + 156 \\
+  195 &= 156 \times 1 + 39 \\
+  156 &= 39 \times 4 + 0
+\end{align*}
+Donc $\text{pgcd}(9945, 3003) = 39$.
+\end{exbox}
+
+\begin{intuitionbox}[Pourquoi l'algorithme d'Euclide est remarquable]
+C'est l'un des plus anciens algorithmes connus (environ 300 av. J.-C.) et il reste l'un des plus efficaces. Sa complexité est $O(\log(\min(a,b)))$ divisions --- logarithmique ! C'est cette efficacité qui rend le calcul des clés RSA praticable même avec des nombres de 2048 bits.
+
+Le principe est toujours le même : \emph{réduire} le problème à un problème plus petit de même nature, jusqu'à un cas trivial. C'est un pattern récurrent en algorithmique (diviser pour régner).
+\end{intuitionbox}
+
+\subsection{Nombres premiers entre eux}
+
+\begin{defbox}[--- Premiers entre eux]
+Deux entiers $a, b$ sont \textbf{premiers entre eux} si $\text{pgcd}(a, b) = 1$.
+\end{defbox}
+
+\begin{exbox}
+Pour tout $a \in \Z$, $a$ et $a + 1$ sont premiers entre eux. En effet, si $d$ divise $a$ et $a+1$, alors $d$ divise $(a+1) - a = 1$, donc $d = \pm 1$.
+\end{exbox}
+
+
+\section{Théorème de Bézout}
+
+\begin{thmbox}[--- Théorème de Bézout]
+Soient $a, b \in \Z$. Il existe des entiers $u, v \in \Z$ tels que :
+\[
+  au + bv = \text{pgcd}(a, b)
+\]
+Les entiers $u, v$ sont appelés \textbf{coefficients de Bézout}. Ils ne sont pas uniques.
+\end{thmbox}
+
+\begin{methodbox}[Remontée de l'algorithme d'Euclide]
+Les coefficients de Bézout s'obtiennent en <<~remontant~>> l'algorithme d'Euclide, de bas en haut :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item On part de la dernière ligne où le reste est non nul : $\text{pgcd} = r_k$.
+  \item On exprime $r_k$ en fonction de $r_{k-1}$ et $r_{k-2}$ (ligne précédente).
+  \item On substitue progressivement chaque reste par son expression issue de la ligne au-dessus.
+  \item On arrive à une expression $au + bv = \text{pgcd}(a,b)$.
+\end{enumerate}
+\textbf{Vérifier systématiquement} le résultat en substituant les valeurs !
+\end{methodbox}
+
+\begin{exbox}[Coefficients de Bézout pour $\text{pgcd}(600, 124) = 4$]
+\begin{align*}
+  600 &= 124 \times 4 + 104 \\
+  124 &= 104 \times 1 + 20 \\
+  104 &= 20 \times 5 + 4 \\
+  20 &= 4 \times 5 + 0
+\end{align*}
+Remontée :
+\begin{align*}
+  4 &= 104 - 20 \times 5 \\
+    &= 104 - (124 - 104 \times 1) \times 5 = 104 \times 6 - 124 \times 5 \\
+    &= (600 - 124 \times 4) \times 6 - 124 \times 5 = 600 \times 6 + 124 \times (-29)
+\end{align*}
+Vérification : $600 \times 6 + 124 \times (-29) = 3600 - 3596 = 4$. \checkmark
+\end{exbox}
+
+\subsection{Corollaires fondamentaux}
+
+\begin{corollaire}[Caractérisation des premiers entre eux]
+$a$ et $b$ sont premiers entre eux si et seulement si il existe $u, v \in \Z$ tels que $au + bv = 1$.
+\end{corollaire}
+
+\begin{proofbox}
+$(\Rightarrow)$ : conséquence directe de Bézout avec $\text{pgcd}(a,b) = 1$.
+
+$(\Leftarrow)$ : si $au + bv = 1$, comme $\text{pgcd}(a,b) \mid a$ et $\text{pgcd}(a,b) \mid b$, on a $\text{pgcd}(a,b) \mid au + bv = 1$, donc $\text{pgcd}(a,b) = 1$. \hfill$\square$
+\end{proofbox}
+
+\begin{rembox}[Attention au piège]
+Si $au + bv = d$, cela n'implique \emph{pas} que $d = \text{pgcd}(a,b)$. On sait seulement que $\text{pgcd}(a,b) \mid d$.
+
+Exemple : $12 \times 1 + 8 \times 3 = 36$, mais $\text{pgcd}(12, 8) = 4 \neq 36$.
+\end{rembox}
+
+\begin{thmbox}[--- Lemme de Gauss]
+Soient $a, b, c \in \Z$. Si $a \mid bc$ et $\text{pgcd}(a, b) = 1$, alors $a \mid c$.
+\end{thmbox}
+
+\begin{proofbox}
+Comme $\text{pgcd}(a,b) = 1$, il existe $u, v$ tels que $au + bv = 1$. En multipliant par $c$ : $acu + bcv = c$. Or $a \mid acu$ et $a \mid bcv$ (par hypothèse $a \mid bc$), donc $a \mid c$. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Le lemme de Gauss comme outil de transfert]
+Le lemme de Gauss dit : si $a$ divise un produit $bc$ mais n'a <<~rien en commun~>> avec $b$ (premiers entre eux), alors toute la divisibilité est <<~portée~>> par $c$. C'est un outil de transfert.
+
+Ce lemme est omniprésent : il intervient dans la preuve d'irrationalité de $\sqrt{p}$, dans l'unicité de la décomposition en facteurs premiers, et dans la résolution des équations diophantiennes.
+\end{intuitionbox}
+
+
+\subsection{Équations diophantiennes $ax + by = c$}
+
+\begin{propbox}[--- Existence et structure des solutions]
+L'équation $ax + by = c$ (avec $a, b, c \in \Z$) possède des solutions $(x, y) \in \Z^2$ si et seulement si $\text{pgcd}(a, b) \mid c$.
+
+Si $(x_0, y_0)$ est une solution particulière, alors \textbf{toutes} les solutions sont :
+\[
+  (x, y) = \left(x_0 + \frac{b}{\text{pgcd}(a,b)} k,\;\; y_0 - \frac{a}{\text{pgcd}(a,b)} k\right), \qquad k \in \Z
+\]
+\end{propbox}
+
+\begin{methodbox}[Résolution d'une équation diophantienne]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Existence :} calculer $d = \text{pgcd}(a,b)$ par Euclide. Vérifier que $d \mid c$.
+  \item \textbf{Solution particulière :} remonter Euclide pour trouver $u, v$ tels que $au + bv = d$. Multiplier par $c/d$.
+  \item \textbf{Solutions générales :} soustraire solution particulière et solution générale, simplifier par $d$, appliquer Gauss.
+\end{enumerate}
+\end{methodbox}
+
+\begin{exbox}[Résolution de $161x + 368y = 115$]
+\textit{Étape 1 :} $\text{pgcd}(161, 368)$. On a $368 = 161 \times 2 + 46$, puis $161 = 46 \times 3 + 23$, puis $46 = 23 \times 2$. Donc $\text{pgcd} = 23$. Comme $23 \mid 115$ ($115 = 5 \times 23$), il y a des solutions.
+
+\textit{Étape 2 :} Remontée : $23 = 161 - 46 \times 3 = 161 - (368 - 161 \times 2) \times 3 = 161 \times 7 + 368 \times (-3)$. En multipliant par 5 : $161 \times 35 + 368 \times (-15) = 115$. Solution particulière : $(x_0, y_0) = (35, -15)$.
+
+\textit{Étape 3 :} Si $(x, y)$ est solution, $161(x - 35) + 368(y + 15) = 0$, soit $7(x - 35) = -16(y + 15)$ après division par 23. Par Gauss ($\text{pgcd}(7, 16) = 1$), $7 \mid y + 15$, donc $y = -15 + 7k$ et $x = 35 - 16k$.
+
+\textbf{Solutions :} $(x, y) = (35 - 16k,\; -15 + 7k)$, $k \in \Z$.
+\end{exbox}
+
+
+\subsection{PPCM}
+
+\begin{defbox}[--- PPCM]
+Le \textbf{ppcm}$(a, b)$ est le plus petit entier $> 0$ divisible par $a$ et par $b$.
+\end{defbox}
+
+\begin{propbox}[--- Relation PGCD-PPCM]
+Pour $a, b$ entiers non tous deux nuls :
+\[
+  \text{pgcd}(a, b) \times \text{ppcm}(a, b) = |ab|
+\]
+\end{propbox}
+
+\begin{intuitionbox}[Dualité PGCD/PPCM]
+Le pgcd prend le \emph{minimum} des exposants dans la décomposition en facteurs premiers, le ppcm prend le \emph{maximum}. Leur produit redonne le produit original car $\min(\alpha, \beta) + \max(\alpha, \beta) = \alpha + \beta$ pour chaque exposant.
+\end{intuitionbox}
+
+
+\section{Nombres premiers}
+
+\begin{defbox}[--- Nombre premier]
+Un nombre premier $p$ est un entier $\geqslant 2$ dont les seuls diviseurs positifs sont $1$ et $p$.
+\end{defbox}
+
+\subsection{Infinité des nombres premiers}
+
+\begin{lemme}
+Tout entier $n \geqslant 2$ admet un diviseur qui est un nombre premier.
+\end{lemme}
+
+\begin{proofbox}
+Soit $\mathcal{D} = \{k \geqslant 2 \mid k \mid n\}$. L'ensemble $\mathcal{D}$ est non vide ($n \in \mathcal{D}$). Soit $p = \min \mathcal{D}$. Si $p$ n'est pas premier, il admet un diviseur $q$ avec $1 < q < p$, mais alors $q \mid n$ donc $q \in \mathcal{D}$ avec $q < p$ : contradiction avec $p = \min \mathcal{D}$. Donc $p$ est premier. \hfill$\square$
+\end{proofbox}
+
+\begin{thmbox}[--- Infinité des nombres premiers (Euclide)]
+Il existe une infinité de nombres premiers.
+\end{thmbox}
+
+\begin{proofbox}
+Par l'absurde. Supposons qu'il n'y ait qu'un nombre fini de nombres premiers $p_1, p_2, \ldots, p_n$. Posons $N = p_1 \times p_2 \times \cdots \times p_n + 1$.
+
+Par le lemme précédent, $N$ admet un diviseur premier $p$. Donc $p$ est l'un des $p_i$, et $p \mid p_1 \cdots p_n$. Comme $p \mid N$, on a $p \mid N - p_1 \cdots p_n = 1$, donc $p = 1$ : contradiction. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[L'élégance de cette preuve]
+La preuve d'Euclide est un modèle de raisonnement par l'absurde : elle construit explicitement un nombre qui contredit l'hypothèse. Attention : $N = p_1 \cdots p_n + 1$ n'est pas nécessairement premier lui-même, mais il \emph{admet} un diviseur premier qui n'est aucun des $p_i$.
+\end{intuitionbox}
+
+\subsection{Lemme d'Euclide et irrationalité}
+
+\begin{propbox}[--- Lemme d'Euclide]
+Soit $p$ un nombre premier. Si $p \mid ab$, alors $p \mid a$ ou $p \mid b$.
+\end{propbox}
+
+\begin{proofbox}
+Si $p \nmid a$, alors $\text{pgcd}(p, a) = 1$ (car les seuls diviseurs de $p$ sont $1$ et $p$). Par le lemme de Gauss, $p \mid b$. \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Application : $\sqrt{p}$ est irrationnel pour $p$ premier]
+Par l'absurde : $\sqrt{p} = \frac{a}{b}$ avec $\text{pgcd}(a, b) = 1$. Alors $pb^2 = a^2$, donc $p \mid a^2$. Par le lemme d'Euclide, $p \mid a$, soit $a = pa'$. Alors $b^2 = pa'^2$, donc $p \mid b^2$, donc $p \mid b$. Mais alors $p \mid a$ et $p \mid b$ : contradiction avec $\text{pgcd}(a,b) = 1$.
+\end{exbox}
+
+\subsection{Décomposition en facteurs premiers}
+
+\begin{thmbox}[--- Théorème fondamental de l'arithmétique]
+Tout entier $n \geqslant 2$ s'écrit de manière unique (à l'ordre près) :
+\[
+  n = p_1^{\alpha_1} \times p_2^{\alpha_2} \times \cdots \times p_r^{\alpha_r}
+\]
+avec $p_1 < p_2 < \cdots < p_r$ premiers et $\alpha_i \geqslant 1$.
+\end{thmbox}
+
+\begin{proofbox}
+\textit{Existence} (par récurrence forte sur $n$). Pour $n = 2$, c'est immédiat. Pour $n \geqslant 3$, si $n$ est premier, c'est fini. Sinon, soit $p_1$ le plus petit diviseur premier de $n$. Alors $n' = n/p_1 < n$ admet une décomposition par hypothèse de récurrence, et $n = p_1 \times n'$ aussi.
+
+\textit{Unicité} (par récurrence sur $\sigma = \sum \alpha_i$). Si $\sigma = 1$, alors $n = p_1$ est premier, c'est unique. Si $\sigma \geqslant 2$, supposons deux décompositions $n = p_1^{\alpha_1} \cdots p_r^{\alpha_r} = q_1^{\beta_1} \cdots q_s^{\beta_s}$. Si $p_1 < q_1$, alors $p_1$ divise $n$ mais ne divise aucun $q_j^{\beta_j}$ (par le lemme d'Euclide itéré) : contradiction. De même si $p_1 > q_1$. Donc $p_1 = q_1$, et on applique la récurrence à $n/p_1$. \hfill$\square$
+\end{proofbox}
+
+\begin{methodbox}[PGCD et PPCM via la décomposition]
+Pour $a = \prod p_i^{\alpha_i}$ et $b = \prod p_i^{\beta_i}$ (en complétant par des exposants nuls) :
+\[
+  \text{pgcd}(a,b) = \prod p_i^{\min(\alpha_i, \beta_i)}, \qquad \text{ppcm}(a,b) = \prod p_i^{\max(\alpha_i, \beta_i)}
+\]
+\end{methodbox}
+
+\begin{exbox}
+$504 = 2^3 \times 3^2 \times 7$ et $300 = 2^2 \times 3 \times 5^2$. Donc :
+\[
+  \text{pgcd}(504, 300) = 2^2 \times 3^1 = 12, \qquad \text{ppcm}(504, 300) = 2^3 \times 3^2 \times 5^2 \times 7 = 12\,600
+\]
+Vérification : $12 \times 12\,600 = 151\,200 = 504 \times 300$. \checkmark
+\end{exbox}
+
+\begin{intuitionbox}[Pourquoi 1 n'est pas premier]
+C'est un choix de convention, mais il est \emph{motivé} par l'unicité de la décomposition. Si 1 était premier, on pourrait écrire $6 = 2 \times 3 = 1 \times 2 \times 3 = 1^{42} \times 2 \times 3$, et l'unicité serait perdue.
+\end{intuitionbox}
+
+
+\section{Congruences}
+
+\begin{defbox}[--- Congruence]
+Soit $n \geqslant 2$. On dit que $a$ est \textbf{congru à $b$ modulo $n$}, noté $a \equiv b \pmod{n}$, si $n \mid (b - a)$.
+
+Formulation équivalente : $a \equiv b \pmod{n} \;\Leftrightarrow\; \exists k \in \Z,\; a = b + kn$.
+\end{defbox}
+
+\begin{propbox}[--- Propriétés des congruences]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Relation d'équivalence :} réflexivité, symétrie, transitivité.
+  \item \textbf{Compatibilité avec $+$ :} si $a \equiv b$ et $c \equiv d \pmod{n}$, alors $a + c \equiv b + d \pmod{n}$.
+  \item \textbf{Compatibilité avec $\times$ :} si $a \equiv b$ et $c \equiv d \pmod{n}$, alors $ac \equiv bd \pmod{n}$.
+  \item \textbf{Puissances :} si $a \equiv b \pmod{n}$, alors $a^k \equiv b^k \pmod{n}$ pour tout $k \geqslant 0$.
+\end{enumerate}
+\end{propbox}
+
+\begin{proofbox}[Démonstration de la compatibilité multiplicative]
+$a = b + kn$ et $c = d + \ell n$. Alors $ac = (b + kn)(d + \ell n) = bd + (b\ell + dk + k\ell n)n = bd + mn$ avec $m \in \Z$. Donc $ac \equiv bd \pmod{n}$. \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Critère de divisibilité par 9]
+$N$ est divisible par 9 si et seulement si la somme de ses chiffres l'est.
+
+\textit{Preuve :} comme $10 \equiv 1 \pmod{9}$, on a $10^k \equiv 1 \pmod{9}$ pour tout $k$. Donc si $N = a_k 10^k + \cdots + a_1 \cdot 10 + a_0$ :
+\[
+  N \equiv a_k + a_{k-1} + \cdots + a_1 + a_0 \pmod{9}
+\]
+\end{exbox}
+
+\begin{intuitionbox}[Les congruences comme <<~lunettes~>>]
+Travailler modulo $n$, c'est regarder les entiers à travers des <<~lunettes~>> qui ne voient que le reste de la division par $n$. Toute l'information sur les multiples de $n$ disparaît. Cette réduction est exactement ce qui rend les calculs de cryptage praticables : on travaille avec des nombres de taille bornée (modulo $n$) même si les exposants sont gigantesques.
+\end{intuitionbox}
+
+\subsection{Exponentiation modulaire efficace}
+
+\begin{methodbox}[Exponentiation rapide (square-and-multiply)]
+Pour calculer $a^m \pmod{n}$ :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item Écrire $m$ en binaire : $m = 2^{e_1} + 2^{e_2} + \cdots$
+  \item Calculer $a^{2^k} \pmod{n}$ par élévations au carré successives.
+  \item Multiplier les termes correspondants modulo $n$.
+\end{enumerate}
+Complexité : $O(\log m)$ multiplications modulaires.
+\end{methodbox}
+
+\begin{exbox}[Calcul de $2^{21} \pmod{37}$]
+$21 = 16 + 4 + 1$, donc $2^{21} = 2^{16} \cdot 2^4 \cdot 2^1$.
+
+Calcul par carrés successifs :
+\begin{align*}
+  2^1 &\equiv 2, \quad 2^2 \equiv 4, \quad 2^4 \equiv 16, \quad 2^8 \equiv 16^2 = 256 \equiv 34 \equiv -3 \pmod{37} \\
+  2^{16} &\equiv (-3)^2 = 9 \pmod{37}
+\end{align*}
+Conclusion : $2^{21} \equiv 9 \times 16 \times 2 = 288 \equiv 288 - 7 \times 37 = 288 - 259 = 29 \pmod{37}$.
+\end{exbox}
+
+
+\subsection{Équation $ax \equiv b \pmod{n}$}
+
+\begin{propbox}[--- Résolution]
+L'équation $ax \equiv b \pmod{n}$ possède des solutions si et seulement si $\text{pgcd}(a, n) \mid b$.
+
+Les solutions forment $\text{pgcd}(a, n)$ classes distinctes modulo $n$.
+\end{propbox}
+
+\begin{intuitionbox}[Lien avec les équations diophantiennes]
+L'équation $ax \equiv b \pmod{n}$ est exactement $ax - kn = b$ (d'inconnues $x, k \in \Z$). C'est une équation diophantienne ! On la résout avec exactement les mêmes outils : Euclide, Bézout, Gauss.
+\end{intuitionbox}
+
+
+\section{Petit théorème de Fermat}
+
+\begin{thmbox}[--- Petit théorème de Fermat]
+Si $p$ est un nombre premier et $a \in \Z$, alors :
+\[
+  a^p \equiv a \pmod{p}
+\]
+Si de plus $p \nmid a$, alors $a^{p-1} \equiv 1 \pmod{p}$.
+\end{thmbox}
+
+\begin{lemme}
+Pour $p$ premier et $1 \leqslant k \leqslant p-1$ : $p \;\Big|\; \binom{p}{k}$.
+\end{lemme}
+
+\begin{proofbox}[Démonstration du lemme]
+$\binom{p}{k} = \frac{p!}{k!(p-k)!}$, donc $p! = k!(p-k)!\binom{p}{k}$. Ainsi $p \mid k!(p-k)!\binom{p}{k}$. Or $p$ ne divise ni $k!$ ni $(p-k)!$ (car tous les facteurs sont $< p$). Par le lemme d'Euclide (itéré), $p \mid \binom{p}{k}$. \hfill$\square$
+\end{proofbox}
+
+\begin{proofbox}[Démonstration du petit théorème de Fermat]
+Par récurrence sur $a \geqslant 0$.
+
+\textit{Initialisation :} $0^p = 0 \equiv 0 \pmod{p}$. \checkmark
+
+\textit{Hérédité :} supposons $a^p \equiv a \pmod{p}$. Par le binôme de Newton :
+\[
+  (a+1)^p = a^p + \binom{p}{1}a^{p-1} + \binom{p}{2}a^{p-2} + \cdots + \binom{p}{p-1}a + 1
+\]
+Par le lemme, tous les termes intermédiaires sont divisibles par $p$, donc :
+\[
+  (a+1)^p \equiv a^p + 1 \equiv a + 1 \pmod{p}
+\]
+par hypothèse de récurrence. \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Application : $14^{3141} \pmod{17}$]
+$17$ est premier et $17 \nmid 14$, donc $14^{16} \equiv 1 \pmod{17}$.
+
+Division euclidienne : $3141 = 16 \times 196 + 5$. Donc :
+\[
+  14^{3141} = (14^{16})^{196} \times 14^5 \equiv 1^{196} \times 14^5 \equiv 14^5 \pmod{17}
+\]
+Or $14 \equiv -3 \pmod{17}$, donc $14^2 \equiv 9$, $14^3 \equiv -27 \equiv 7$, $14^5 = 14^2 \times 14^3 \equiv 9 \times 7 = 63 \equiv 12 \pmod{17}$.
+
+\textbf{Conclusion :} $14^{3141} \equiv 12 \pmod{17}$.
+\end{exbox}
+
+\begin{intuitionbox}[Fermat au c\oe ur de RSA]
+Le petit théorème de Fermat (et sa généralisation, le théorème d'Euler : $a^{\varphi(n)} \equiv 1 \pmod{n}$) est la raison pour laquelle le déchiffrement RSA fonctionne. Quand on chiffre un message $m$ par $c = m^e \pmod{n}$ et qu'on déchiffre par $m = c^d \pmod{n}$, la cohérence $m^{ed} \equiv m \pmod{n}$ repose sur Fermat via l'indicatrice d'Euler.
+
+C'est le lien direct entre ce théorème <<~abstrait~>> et la confidentialité de chaque transaction en ligne.
+\end{intuitionbox}
+
+
+\section{Synthèse personnelle --- Arithmétique}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Tout converge vers la cryptographie.} Divisibilité, Euclide, Bézout, congruences, Fermat : ces cinq briques s'assemblent exactement dans RSA. La clé publique $(n, e)$ utilise les nombres premiers ; la clé privée $d$ utilise Bézout ($ed \equiv 1 \pmod{\varphi(n)}$) ; le chiffrement utilise les congruences ; le déchiffrement utilise Fermat.
+
+\textbf{2. Le lemme de Gauss comme pivot.} Ce lemme apparaît partout : preuve d'irrationalité, unicité de la décomposition, résolution des équations diophantiennes. C'est le résultat le plus transversal du chapitre.
+
+\textbf{3. Pattern algorithmique récurrent.} L'algorithme d'Euclide illustre le principe de \emph{réduction} : remplacer un problème par un problème strictement plus petit de même nature. C'est le même pattern que la dichotomie (Bolzano-Weierstrass, chapitre 3), le crible d'Eratosthène, et plus généralement tout algorithme de type <<~diviser pour régner~>>.
+
+\textbf{4. Connexion avec les suites.} L'algorithme d'Euclide produit une suite $(r_k)$ strictement décroissante d'entiers positifs : elle converge nécessairement (vers 0) en un nombre fini d'étapes. C'est un argument de terminaison qui utilise la même logique que les théorèmes de convergence monotone du chapitre 3.
+
+\textbf{5. L'exponentiation rapide.} Le <<~square-and-multiply~>> est $O(\log m)$ : c'est ce qui rend le calcul de $a^m \pmod{n}$ praticable avec des exposants de 2048 bits. Sans cette technique, RSA serait inutilisable.
+\end{intuitionbox}
+
+

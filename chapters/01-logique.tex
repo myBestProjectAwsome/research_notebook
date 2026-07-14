@@ -1,0 +1,252 @@
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 1 : LOGIQUE               ║
+% ╚═══════════════════════════════════════╝
+\chapter{Logique et Raisonnements}
+
+\section{Pourquoi la logique est fondamentale}
+
+Les mathématiques reposent sur un langage précis là où la langue naturelle est ambiguë. Le mot <<~ou~>> en français peut être exclusif (<<~fromage ou dessert~>>) ou inclusif (<<~les as ou les c\oe urs~>>). La logique formelle lève cette ambiguïté.
+
+\begin{intuitionbox}[Lien avec la cybersécurité]
+En cybersécurité, la logique formelle est omniprésente : les règles de pare-feu, les politiques de contrôle d'accès, et même les requêtes SQL reposent sur des opérations booléennes. Comprendre \texttt{AND}, \texttt{OR}, \texttt{NOT} en logique, c'est comprendre les fondements de la sécurité informatique.
+\end{intuitionbox}
+
+\section{Assertions et connecteurs logiques}
+
+\begin{defbox}[--- Assertion]
+Une \textbf{assertion} (ou proposition logique) est un énoncé qui est soit \textbf{vrai}, soit \textbf{faux}, mais jamais les deux simultanément.
+\end{defbox}
+
+\subsection{Les connecteurs fondamentaux}
+
+À partir de deux assertions $P$ et $Q$, on construit de nouvelles assertions :
+
+\begin{defbox}[--- Connecteurs logiques]
+\begin{itemize}[leftmargin=1.5cm]
+  \item \textbf{Conjonction} : <<~$P$ et $Q$~>> est vraie si et seulement si $P$ est vraie \emph{et} $Q$ est vraie.
+  \item \textbf{Disjonction} : <<~$P$ ou $Q$~>> est vraie si \emph{au moins} l'une des deux est vraie.
+  \item \textbf{Négation} : <<~non $P$~>> est vraie si $P$ est fausse, et réciproquement.
+\end{itemize}
+\end{defbox}
+
+\subsection{Tables de vérité}
+
+\begin{center}
+\begin{tikzpicture}[
+  every node/.style={font=\small\sffamily},
+  table/.style={
+    matrix of nodes,
+    row sep=-\pgflinewidth,
+    column sep=-\pgflinewidth,
+    nodes={draw, minimum width=1.2cm, minimum height=0.7cm, anchor=center},
+    row 1/.style={nodes={fill=deepblue, text=white, font=\small\sffamily\bfseries}},
+    column 1/.style={nodes={fill=lightblue}},
+  }
+]
+
+% ET
+\matrix[table] (et) at (0,0) {
+  $P \wedge Q$ & V & F \\
+  V & V & F \\
+  F & F & F \\
+};
+\node[above=0.3cm, font=\sffamily\bfseries\color{deepblue}] at (et.north) {ET ($\wedge$)};
+
+% OU
+\matrix[table] (ou) at (5,0) {
+  $P \vee Q$ & V & F \\
+  V & V & V \\
+  F & V & F \\
+};
+\node[above=0.3cm, font=\sffamily\bfseries\color{deepblue}] at (ou.north) {OU ($\vee$)};
+
+% NON
+\matrix[table] (non) at (10,0) {
+  $P$ & non $P$ \\
+  V & F \\
+  F & V \\
+};
+\node[above=0.3cm, font=\sffamily\bfseries\color{deepblue}] at (non.north) {NON ($\neg$)};
+
+\end{tikzpicture}
+\end{center}
+
+\subsection{L'implication}
+
+\begin{defbox}[--- Implication]
+L'implication $P \Rightarrow Q$ est définie comme l'assertion <<~$(\text{non } P) \text{ ou } Q$~>>. Autrement dit :
+
+\medskip
+$P \Rightarrow Q$ est \textbf{fausse} uniquement lorsque $P$ est vraie et $Q$ est fausse.
+
+\medskip
+En particulier, si $P$ est fausse, alors $P \Rightarrow Q$ est \textbf{toujours vraie}, quel que soit $Q$.
+\end{defbox}
+
+\begin{intuitionbox}[Comprendre le <<~faux implique tout~>>]
+Ce point est contre-intuitif. L'astuce : l'implication $P \Rightarrow Q$ est une \emph{promesse}. Si je dis <<~s'il pleut, je prends un parapluie~>>, la promesse n'est brisée que dans un cas : il pleut et je n'ai pas de parapluie. S'il ne pleut pas, je n'ai rien promis, donc la promesse est respectée dans tous les cas. C'est exactement la ligne <<~F $\Rightarrow$ \dots = V~>> de la table de vérité.
+\end{intuitionbox}
+
+\subsection{L'équivalence}
+
+\begin{defbox}[--- Équivalence]
+L'équivalence $P \Leftrightarrow Q$ est l'assertion <<~$(P \Rightarrow Q)$ et $(Q \Rightarrow P)$~>>.
+
+Elle est vraie lorsque $P$ et $Q$ ont la même valeur de vérité (toutes deux vraies ou toutes deux fausses).
+\end{defbox}
+
+\subsection{Lois fondamentales}
+
+\begin{propbox}[--- Lois de De Morgan et distributivité]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $\text{non}(P \text{ et } Q) \;\Leftrightarrow\; (\text{non } P) \text{ ou } (\text{non } Q)$
+  \item $\text{non}(P \text{ ou } Q) \;\Leftrightarrow\; (\text{non } P) \text{ et } (\text{non } Q)$
+  \item $P \text{ et } (Q \text{ ou } R) \;\Leftrightarrow\; (P \text{ et } Q) \text{ ou } (P \text{ et } R)$
+  \item $(P \Rightarrow Q) \;\Leftrightarrow\; (\text{non } Q \Rightarrow \text{non } P)$ \quad \textit{(contraposée)}
+\end{enumerate}
+\end{propbox}
+
+\begin{proofbox}
+Pour la loi de De Morgan (1), on vérifie par table de vérité que les deux colonnes sont identiques pour toutes les combinaisons de valeurs de $P$ et $Q$ :
+
+\smallskip
+\begin{center}
+\begin{tabular}{cc|c|c}
+$P$ & $Q$ & $\text{non}(P \wedge Q)$ & $(\neg P) \vee (\neg Q)$ \\
+\hline
+V & V & F & F \\
+V & F & V & V \\
+F & V & V & V \\
+F & F & V & V \\
+\end{tabular}
+\end{center}
+\smallskip
+
+Les deux colonnes sont identiques, donc les assertions sont logiquement équivalentes. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Pattern structurel des lois de De Morgan]
+La règle génératrice est simple : la négation <<~traverse~>> un connecteur en le transformant en son dual :
+\begin{itemize}[leftmargin=1cm]
+  \item $\text{non}(\text{et}) \longrightarrow \text{ou}$
+  \item $\text{non}(\text{ou}) \longrightarrow \text{et}$
+\end{itemize}
+C'est la même structure que $\overline{A \cap B} = \overline{A} \cup \overline{B}$ en théorie des ensembles.
+\end{intuitionbox}
+
+
+\section{Quantificateurs}
+
+\begin{defbox}[--- Quantificateurs]
+\begin{itemize}[leftmargin=1.5cm]
+  \item \textbf{Universel} : $\forall x \in E,\; P(x)$ est vraie si $P(x)$ est vraie pour \emph{tout} élément $x$ de $E$.
+  \item \textbf{Existentiel} : $\exists x \in E,\; P(x)$ est vraie s'il existe \emph{au moins un} $x$ dans $E$ tel que $P(x)$ soit vraie.
+\end{itemize}
+\end{defbox}
+
+\subsection{Négation des quantificateurs}
+
+\begin{propbox}[--- Règles de négation]
+\[
+  \text{non}\bigl(\forall x \in E,\; P(x)\bigr) \;\Leftrightarrow\; \exists x \in E,\; \text{non } P(x)
+\]
+\[
+  \text{non}\bigl(\exists x \in E,\; P(x)\bigr) \;\Leftrightarrow\; \forall x \in E,\; \text{non } P(x)
+\]
+\end{propbox}
+
+\begin{intuitionbox}[Algorithme de négation]
+Pour nier une phrase logique, on applique mécaniquement :
+\begin{enumerate}[leftmargin=1cm]
+  \item $\forall \longleftrightarrow \exists$ (on échange les quantificateurs)
+  \item On nie la proposition finale
+  \item Les inégalités strictes deviennent larges et vice versa
+\end{enumerate}
+\textbf{Exemple :} La négation de $\forall \varepsilon > 0,\; \exists N \in \N,\; \forall n \geqslant N,\; |u_n - \ell| \leqslant \varepsilon$ est :
+\[
+  \exists \varepsilon > 0,\; \forall N \in \N,\; \exists n \geqslant N,\; |u_n - \ell| > \varepsilon
+\]
+C'est exactement <<~la suite ne converge pas vers $\ell$~>>.
+\end{intuitionbox}
+
+\subsection{L'ordre des quantificateurs compte}
+
+\begin{exbox}[Permutation interdite]
+Les deux assertions suivantes sont \textbf{différentes} :
+\begin{align*}
+  &\forall x \in \R,\; \exists y \in \R,\; x + y > 0 \quad \text{(\textbf{vraie} : prendre $y = |x| + 1$)} \\
+  &\exists y \in \R,\; \forall x \in \R,\; x + y > 0 \quad \text{(\textbf{fausse} : aucun $y$ fixé ne convient pour tout $x$)}
+\end{align*}
+Dans la première, $y$ \emph{dépend} de $x$. Dans la seconde, $y$ doit être \emph{universel}.
+\end{exbox}
+
+
+\section{Méthodes de raisonnement}
+
+\subsection{Raisonnement direct}
+
+Pour montrer $P \Rightarrow Q$ : on suppose $P$ vraie et on montre $Q$.
+
+\begin{exbox}
+\textbf{Montrer que si $a, b \in \Q$ alors $a + b \in \Q$.}
+
+On écrit $a = \frac{p}{q}$ et $b = \frac{p'}{q'}$ avec $p, p' \in \Z$ et $q, q' \in \N^*$. Alors :
+\[
+  a + b = \frac{pq' + qp'}{qq'} \in \Q
+\]
+car $pq' + qp' \in \Z$ et $qq' \in \N^*$. \hfill$\square$
+\end{exbox}
+
+\subsection{Raisonnement par contraposée}
+
+On exploite l'équivalence : $(P \Rightarrow Q) \;\Leftrightarrow\; (\text{non } Q \Rightarrow \text{non } P)$.
+
+\begin{exbox}
+\textbf{Montrer que si $n^2$ est pair alors $n$ est pair.}
+
+\textit{Contraposée :} on montre que si $n$ est impair alors $n^2$ est impair. Si $n = 2k+1$, alors $n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1$, qui est bien impair. \hfill$\square$
+\end{exbox}
+
+\subsection{Raisonnement par l'absurde}
+
+On suppose $P$ vraie et $Q$ fausse simultanément, puis on dérive une contradiction.
+
+\begin{exbox}
+\textbf{Montrer :} si $a, b \geqslant 0$ et $\frac{a}{1+b} = \frac{b}{1+a}$, alors $a = b$.
+
+Supposons $a \neq b$. De $a(1+a) = b(1+b)$, on tire $a^2 - b^2 = b - a$, soit $(a-b)(a+b) = -(a-b)$. Comme $a \neq b$, on simplifie : $a + b = -1$. Contradiction car $a, b \geqslant 0$. \hfill$\square$
+\end{exbox}
+
+\subsection{Récurrence}
+
+\begin{methodbox}[Raisonnement par récurrence]
+Pour montrer $P(n)$ pour tout $n \geqslant n_0$ :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Initialisation :} vérifier $P(n_0)$.
+  \item \textbf{Hérédité :} fixer $n \geqslant n_0$, supposer $P(n)$ vraie (\textit{hypothèse de récurrence}), montrer $P(n+1)$.
+  \item \textbf{Conclusion :} par le principe de récurrence, $P(n)$ est vraie pour tout $n \geqslant n_0$.
+\end{enumerate}
+\end{methodbox}
+
+\begin{exbox}
+\textbf{Montrer que $2^n \geqslant n$ pour tout $n \in \N$.}
+
+\textit{Initialisation :} $2^0 = 1 \geqslant 0$. \checkmark
+
+\textit{Hérédité :} supposons $2^n \geqslant n$. Alors $2^{n+1} = 2 \cdot 2^n \geqslant 2n \geqslant n + 1$ (car $n \geqslant 1$).
+
+Pour $n = 0$ : $2^1 = 2 \geqslant 1$. \checkmark \hfill$\square$
+\end{exbox}
+
+
+\section{Synthèse personnelle --- Logique}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. La logique comme fondation unificatrice.} Tout le reste des mathématiques (suites, complexes, analyse, algèbre) s'appuie sur ce langage. La définition $\varepsilon$-$N$ de la limite d'une suite, la caractérisation d'un point fixe --- tout cela n'est que de la logique appliquée.
+
+\textbf{2. Lien avec la programmation.} Les lois de De Morgan apparaissent directement dans l'optimisation de conditions booléennes en code. Le raisonnement par récurrence est l'analogue mathématique de la preuve de correction d'un algorithme récursif.
+
+\textbf{3. Pattern de la contraposée.} Quand une implication directe semble difficile (car la conclusion donne peu de prise), essayer la contraposée. C'est un réflexe que j'ai intégré : <<~si la conclusion est plus simple à nier que l'hypothèse n'est à exploiter, prendre la contraposée~>>.
+\end{intuitionbox}
+
+

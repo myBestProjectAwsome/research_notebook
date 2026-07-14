@@ -1,0 +1,250 @@
+% ═══════════════════════════════════════
+%   ANNEXE : FORMULAIRE SYNTHÉTIQUE
+% ═══════════════════════════════════════
+\appendix
+\chapter{Formulaire synthétique}
+
+\section{Logique}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Loi} & \textbf{Formule} \\
+\hline
+Double négation & $\text{non}(\text{non } P) \Leftrightarrow P$ \\
+De Morgan (et) & $\text{non}(P \wedge Q) \Leftrightarrow (\neg P) \vee (\neg Q)$ \\
+De Morgan (ou) & $\text{non}(P \vee Q) \Leftrightarrow (\neg P) \wedge (\neg Q)$ \\
+Contraposée & $(P \Rightarrow Q) \Leftrightarrow (\neg Q \Rightarrow \neg P)$ \\
+Négation $\forall$ & $\neg(\forall x, P(x)) \Leftrightarrow \exists x, \neg P(x)$ \\
+Négation $\exists$ & $\neg(\exists x, P(x)) \Leftrightarrow \forall x, \neg P(x)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Nombres complexes}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+Module & $|z| = \sqrt{z\bar{z}} = \sqrt{a^2 + b^2}$ \\
+Inverse & $\frac{1}{z} = \frac{\bar{z}}{|z|^2}$ \\
+Inégalité triangulaire & $|z + z'| \leqslant |z| + |z'|$ \\
+Forme exponentielle & $z = |z| e^{i\theta}$ \\
+Moivre & $(e^{i\theta})^n = e^{in\theta}$ \\
+Euler & $\cos\theta = \frac{e^{i\theta}+e^{-i\theta}}{2}$, \; $\sin\theta = \frac{e^{i\theta}-e^{-i\theta}}{2i}$ \\
+Racines $n$-ièmes & $\omega_k = \rho^{1/n} e^{i(\theta + 2k\pi)/n}$ \\
+Somme géométrique & $\sum_{k=0}^n z^k = \frac{1-z^{n+1}}{1-z}$ \; ($z \neq 1$) \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Suites}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+Convergence & $\forall \varepsilon > 0,\; \exists N,\; n \geqslant N \Rightarrow |u_n - \ell| \leqslant \varepsilon$ \\
+Convergente $\Rightarrow$ bornée & Réciproque fausse \\
+Gendarmes & $u_n \leqslant v_n \leqslant w_n$, $\lim u_n = \lim w_n = \ell \Rightarrow \lim v_n = \ell$ \\
+Monotone bornée & Croissante majorée $\Rightarrow$ convergente \\
+Adjacentes & $u_n \nearrow$, $v_n \searrow$, $\lim(v_n - u_n) = 0 \Rightarrow$ même limite \\
+Critère du rapport & $|u_{n+1}/u_n| < \ell < 1 \Rightarrow \lim u_n = 0$ \\
+Bolzano-Weierstrass & Bornée $\Rightarrow$ sous-suite convergente \\
+Point fixe & $f$ continue, $u_n \to \ell \Rightarrow f(\ell) = \ell$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Arithmétique}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+Division euclidienne & $a = bq + r$, \; $0 \leqslant r < b$ (unique) \\
+Algorithme d'Euclide & $\text{pgcd}(a,b) = \text{pgcd}(b, r)$ où $a = bq + r$ \\
+Bézout & $\exists u,v \in \Z,\; au + bv = \text{pgcd}(a,b)$ \\
+Premiers entre eux & $\text{pgcd}(a,b) = 1 \Leftrightarrow \exists u,v,\; au+bv=1$ \\
+Lemme de Gauss & $a \mid bc$ et $\text{pgcd}(a,b)=1 \Rightarrow a \mid c$ \\
+Relation PGCD-PPCM & $\text{pgcd}(a,b) \times \text{ppcm}(a,b) = |ab|$ \\
+Lemme d'Euclide & $p$ premier, $p \mid ab \Rightarrow p \mid a$ ou $p \mid b$ \\
+Petit Fermat & $p$ premier $\Rightarrow a^p \equiv a \pmod{p}$ \\
+Fermat (inversible) & $p \nmid a \Rightarrow a^{p-1} \equiv 1 \pmod{p}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Ensembles et Applications}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+De Morgan (ensembles) & $\complement(A \cap B) = \complement A \cup \complement B$ \\
+De Morgan (ensembles) & $\complement(A \cup B) = \complement A \cap \complement B$ \\
+Inclusion-exclusion & $\mathrm{Card}(A \cup B) = \mathrm{Card}\, A + \mathrm{Card}\, B - \mathrm{Card}(A \cap B)$ \\
+Nombre d'applications & $E \to F$ : $p^n$ \; ($n = \mathrm{Card}\, E$, $p = \mathrm{Card}\, F$) \\
+Nombre d'injections & $p(p-1)\cdots(p-n+1)$ \\
+Nombre de bijections & $n!$ \\
+$\mathrm{Card}\, \mathcal{P}(E)$ & $2^n$ \\
+Coefficient binomial & $\binom{n}{k} = \frac{n!}{k!(n-k)!}$ \\
+Pascal & $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$ \\
+Binôme de Newton & $(a+b)^n = \sum_{k=0}^{n} \binom{n}{k} a^{n-k} b^k$ \\
+Même cardinal & Injective $\iff$ surjective $\iff$ bijective \\
+Réciproque composée & $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$ \\
+$\Z/n\Z$ & $a \equiv b \pmod{n} \iff n \mid (a-b)$, \; $n$ classes \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Limites et Fonctions Continues}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+Limite en un point & $\forall \varepsilon > 0, \; \exists \delta > 0, \; |x - x_0| < \delta \implies |f(x) - \ell| < \varepsilon$ \\
+Continuité en $x_0$ & $\lim_{x \to x_0} f(x) = f(x_0)$ \\
+Caract. séquentielle & $f$ continue en $x_0$ $\iff$ $u_n \to x_0 \implies f(u_n) \to f(x_0)$ \\
+Opérations limites & $\lim(f+g) = \lim f + \lim g$, etc. \\
+Gendarmes & $f \leqslant g \leqslant h$, $\lim f = \lim h = \ell \implies \lim g = \ell$ \\
+TVI & $f$ continue, $f(a) \cdot f(b) < 0 \implies \exists c, \; f(c) = 0$ \\
+Image d'un segment & $f$ continue sur $[a,b] \implies f([a,b]) = [m, M]$ \\
+Th. bijection & Continue $+$ str. monotone $\implies$ bijection \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Dérivées}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+Nombre dérivé & $f'(x_0) = \lim_{x \to x_0} \frac{f(x) - f(x_0)}{x - x_0}$ \\
+Tangente & $y = f'(x_0)(x - x_0) + f(x_0)$ \\
+Produit & $(fg)' = f'g + fg'$ \\
+Quotient & $(f/g)' = (f'g - fg')/g^2$ \\
+Composée & $(g \circ f)' = (g' \circ f) \cdot f'$ \\
+Réciproque & $(f^{-1})' = 1/(f' \circ f^{-1})$ \\
+Leibniz & $(fg)^{(n)} = \sum \binom{n}{k} f^{(n-k)} g^{(k)}$ \\
+Rolle & $f(a) = f(b)$, $f$ cont./dériv. $\implies \exists c, \; f'(c) = 0$ \\
+TAF & $f(b) - f(a) = f'(c)(b-a)$ \\
+$f' \geqslant 0 \iff f$ croissante & Corollaire du TAF \\
+Accr. finis (inég.) & $|f'| \leqslant M \implies |f(x) - f(y)| \leqslant M|x-y|$ \\
+Hospital & $f(x_0) = g(x_0) = 0 \implies \lim f/g = \lim f'/g'$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Groupes}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+Groupe & Loi interne $+$ associative $+$ neutre $+$ inverse \\
+Abélien & $x \star y = y \star x$ \\
+Sous-groupe & $e \in H$, stable par $\star$ et par inverse \\
+Critère rapide & $H \neq \emptyset$ et $\forall x,y \in H, \; x \star y^{-1} \in H$ \\
+Sous-groupes de $\Z$ & Exactement les $n\Z$ \\
+Morphisme & $f(x \star x') = f(x) \diamond f(x')$ \\
+Noyau & $\Ker f = \{x \mid f(x) = e_{G'}\}$ \\
+Injectivité & $f$ injective $\iff$ $\Ker f = \{e_G\}$ \\
+$\Z/n\Z$ & Groupe cyclique de cardinal $n$ \\
+Unicité cyclique & Cyclique cardinal $n$ $\cong$ $\Z/n\Z$ \\
+$\mathcal{S}_n$ & Groupe des permutations, cardinal $n!$ \\
+Décomp. en cycles & Unique en cycles à supports disjoints \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Nombres Réels}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+Rationnels & $\Q = \{p/q \mid p \in \Z,\; q \in \N^*\}$ \\
+Caract. décimale & Rationnel $\iff$ développement périodique ou fini \\
+$\sqrt{2} \notin \Q$ & Preuve par parité ou descente infinie \\
+(R1) Corps & $(\R, +, \times)$ corps commutatif \\
+(R2) Ordre total & $\leqslant$ réflexive, antisymétrique, transitive, totale \\
+(R3) Archimède & $\forall x \in \R,\; \exists n \in \N,\; n > x$ \\
+Partie entière & Unique $E(x) \in \Z$ tel que $E(x) \leqslant x < E(x) + 1$ \\
+Valeur absolue & $\sqrt{x^2} = |x|$, $|xy| = |x||y|$ \\
+Inégalité triangulaire & $|x + y| \leqslant |x| + |y|$ \\
+Seconde inég. triang. & $\bigl||x| - |y|\bigr| \leqslant |x - y|$ \\
+Densité de $\Q$ & Tout $]a, b[$ contient une infinité de rationnels \\
+Densité de $\R \setminus \Q$ & Tout $]a, b[$ contient une infinité d'irrationnels \\
+(R4) Borne sup & Toute partie non vide majorée admet une borne sup \\
+Caract. $\sup A = \alpha$ & (i) $\alpha$ majore $A$, (ii) $\forall y < \alpha,\; \exists x \in A,\; y < x$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Polynômes}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Notion} & \textbf{Formule / Propriété} \\
+\hline
+Degré du produit & $\deg(P \times Q) = \deg P + \deg Q$ \\
+Degré somme & $\deg(P + Q) \leqslant \max(\deg P, \deg Q)$ \\
+Division euclidienne & $A = BQ + R$, \; $\deg R < \deg B$ (unique) \\
+$\text{pgcd}(A, B)$ & Polynôme unitaire de plus grand degré divisant $A$ et $B$ \\
+Algorithme d'Euclide & $\text{pgcd}(A, B) = \text{pgcd}(B, R)$ si $A = BQ + R$ \\
+Bézout & $\exists U, V,\; AU + BV = \text{pgcd}(A, B)$ \\
+Premiers entre eux & $\text{pgcd}(A, B) = 1 \iff \exists U, V,\; AU + BV = 1$ \\
+Lemme de Gauss & $A \mid BC$ et $\text{pgcd}(A, B) = 1 \Rightarrow A \mid C$ \\
+Racine & $P(\alpha) = 0 \iff (X - \alpha) \mid P$ \\
+Multiplicité $k$ & $P(\alpha) = \cdots = P^{(k-1)}(\alpha) = 0$, $P^{(k)}(\alpha) \neq 0$ \\
+d'Alembert--Gauss & Tout $P \in \C[X]$ de degré $\geqslant 1$ a une racine dans $\C$ \\
+Cas général & $P \in \K[X]$ de degré $n$ a au plus $n$ racines dans $\K$ \\
+Irréductible & $P$ non constant, seuls diviseurs : constantes ou $\lambda P$ \\
+Lemme d'Euclide pol. & $P$ irr. et $P \mid AB \Rightarrow P \mid A$ ou $P \mid B$ \\
+Irréd. de $\C[X]$ & Exactement les polynômes de degré $1$ \\
+Irréd. de $\R[X]$ & Degré $1$, ou degré $2$ avec $\Delta < 0$ \\
+Factorisation & $A = \lambda P_1^{k_1} \cdots P_r^{k_r}$ unique (ordre près) \\
+Élément simple sur $\C$ & $\frac{a}{(X - \alpha)^i}$ \\
+Élément simple sur $\R$ & $\frac{a}{(X - \alpha)^i}$ ou $\frac{aX + b}{(X^2 + \alpha X + \beta)^i}$ \\
+Coeff. <<~du haut~>> & $a_{j,k_j} = [(X - \alpha_j)^{k_j} P/Q]_{X = \alpha_j}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Synthèse : ponts entre chapitres}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Pont} & \textbf{Manifestation} \\
+\hline
+$\Q \to \R$ & Complétude (R4) ; densité ; bornes \\
+$\Z \leftrightarrow \K[X]$ & Division eucl., Bézout, Gauss, factorisation \\
+Premier $\leftrightarrow$ Irréductible & Lemme d'Euclide ; corps quotients \\
+$\Z/p\Z = \F_p$ & $p$ premier ; corps fini de cardinal $p$ \\
+$\F_2[X]/(P) = \F_{2^n}$ & $P$ irr. de degré $n$ ; AES utilise $n = 8$ \\
+Racines $n$-ièmes de l'unité & $X^n - 1$ ; cyclotomiques ; LFSR ; codes BCH \\
+Interpolation & $k$ points $\Rightarrow$ unique poly. de degré $< k$ ; Shamir \\
+Division eucl. dans $\F_2[X]$ & CRC : reste = code de contrôle \\
+\hline
+\end{tabular}
+\end{center}
+

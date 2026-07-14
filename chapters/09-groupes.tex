@@ -1,0 +1,252 @@
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 8 : GROUPES               ║
+% ╚═══════════════════════════════════════╝
+\chapter{Groupes}
+
+\begin{intuitionbox}[Motivation --- de Galois à la cryptographie]
+Galois a introduit la notion de groupe à 17 ans pour résoudre un problème vieux de plusieurs siècles : existe-t-il des formules de résolution par radicaux pour les équations de degré $\geqslant 5$ ? La réponse est non en général. Les groupes sont à la base des structures algébriques (anneaux, corps, espaces vectoriels) et sont omniprésents en arithmétique, géométrie et \emph{cryptographie} (groupes cycliques pour Diffie-Hellman, courbes elliptiques, etc.).
+\end{intuitionbox}
+
+
+\section{Définition d'un groupe}
+
+\begin{defbox}[--- Groupe]
+Un \textbf{groupe} $(G, \star)$ est un ensemble $G$ muni d'une opération $\star$ vérifiant :
+\begin{enumerate}[leftmargin=1cm]
+  \item \textbf{Loi interne :} $\forall x, y \in G, \; x \star y \in G$.
+  \item \textbf{Associativité :} $\forall x, y, z \in G, \; (x \star y) \star z = x \star (y \star z)$.
+  \item \textbf{Élément neutre :} $\exists e \in G, \; \forall x \in G, \; x \star e = e \star x = x$.
+  \item \textbf{Inverse :} $\forall x \in G, \; \exists x^{-1} \in G, \; x \star x^{-1} = x^{-1} \star x = e$.
+\end{enumerate}
+Si de plus $\forall x, y \in G, \; x \star y = y \star x$, le groupe est \textbf{commutatif} (ou \textbf{abélien}).
+\end{defbox}
+
+\begin{rembox}[Unicité]
+L'élément neutre est unique : si $e$ et $e'$ sont neutres, $e' = e' \star e = e$. L'inverse de $x$ est unique : si $x'$ et $x''$ vérifient (4), alors $x'' = e \star x'' = (x' \star x) \star x'' = x' \star (x \star x'') = x' \star e = x'$.
+\end{rembox}
+
+\subsection{Exemples fondamentaux}
+
+\begin{exbox}[Groupes classiques]
+\begin{itemize}[leftmargin=1cm]
+  \item $(\R^*, \times)$ : groupe commutatif. Neutre $= 1$, inverse de $x$ est $\frac{1}{x}$. On exclut $0$ car il n'a pas d'inverse.
+  \item $(\Z, +)$ : groupe commutatif. Neutre $= 0$, inverse de $x$ est $-x$ (l'<<~opposé~>>).
+  \item $(\Q, +)$, $(\R, +)$, $(\C, +)$, $(\Q^*, \times)$, $(\C^*, \times)$ : groupes commutatifs.
+  \item L'ensemble $\mathcal{R}$ des rotations du plan de centre $O$, muni de $\circ$ : groupe commutatif. Neutre $=$ rotation d'angle $0$, inverse de $R_\theta$ est $R_{-\theta}$.
+  \item L'ensemble des isométries du plan muni de $\circ$ : groupe \textbf{non} commutatif.
+\end{itemize}
+\end{exbox}
+
+\begin{exbox}[Non-groupes]
+$(\Z^*, \times)$ n'est pas un groupe : $2$ n'a pas d'inverse entier ($1/2 \notin \Z$). $(\N, +)$ n'est pas un groupe : $3$ n'a pas d'opposé dans $\N$.
+\end{exbox}
+
+\subsection{Puissances}
+
+Pour $x \in G$ et $n \in \Z$ : $x^n = \underbrace{x \star \cdots \star x}_{n}$ si $n > 0$, $x^0 = e$, $x^{-n} = \underbrace{x^{-1} \star \cdots \star x^{-1}}_{n}$. Règles : $x^m \star x^n = x^{m+n}$, $(x^m)^n = x^{mn}$, $(x \star y)^{-1} = y^{-1} \star x^{-1}$ (attention à l'ordre !). Si $G$ est commutatif : $(x \star y)^n = x^n \star y^n$.
+
+\subsection{Exemple des matrices $2 \times 2$}
+
+\begin{defbox}[--- Produit et déterminant]
+Pour $M = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$ et $M' = \begin{pmatrix} a' & b' \\ c' & d' \end{pmatrix}$ :
+\[M \times M' = \begin{pmatrix} aa'+bc' & ab'+bd' \\ ca'+dc' & cb'+dd' \end{pmatrix}, \qquad \det M = ad - bc.\]
+\end{defbox}
+
+\begin{propbox}[--- Le groupe $\mathrm{GL}_2$]
+L'ensemble des matrices $2 \times 2$ de déterminant non nul, muni de $\times$, forme un groupe non commutatif noté $(\mathrm{GL}_2, \times)$. L'élément neutre est $I = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$ et l'inverse de $M$ est $M^{-1} = \frac{1}{ad-bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}$.
+
+Propriété clé : $\det(M \times M') = \det M \cdot \det M'$.
+\end{propbox}
+
+
+\section{Sous-groupes}
+
+\begin{defbox}[--- Sous-groupe]
+Soit $(G, \star)$ un groupe. Une partie $H \subset G$ est un \textbf{sous-groupe} de $G$ si :
+\begin{itemize}[leftmargin=1cm]
+  \item $e \in H$,
+  \item $\forall x, y \in H, \; x \star y \in H$ (stabilité),
+  \item $\forall x \in H, \; x^{-1} \in H$ (stabilité par inverse).
+\end{itemize}
+\end{defbox}
+
+\begin{rembox}[Critère rapide]
+$H$ est un sous-groupe de $G$ si : $H \neq \emptyset$ et $\forall x, y \in H, \; x \star y^{-1} \in H$.
+\end{rembox}
+
+\begin{exbox}[Exemples de sous-groupes]
+\begin{itemize}[leftmargin=1cm]
+  \item $(\R^*_+, \times)$ est un sous-groupe de $(\R^*, \times)$.
+  \item $(\mathbb{U}, \times)$ où $\mathbb{U} = \{z \in \C \mid |z| = 1\}$ est un sous-groupe de $(\C^*, \times)$.
+  \item $(\Z, +)$ est un sous-groupe de $(\R, +)$.
+  \item $\{e\}$ et $G$ sont les sous-groupes triviaux.
+\end{itemize}
+\end{exbox}
+
+\subsection{Sous-groupes de $\Z$}
+
+\begin{propbox}[--- Classification des sous-groupes de $(\Z, +)$]
+Les sous-groupes de $(\Z, +)$ sont exactement les $n\Z = \{kn \mid k \in \Z\}$ pour $n \in \Z$.
+\end{propbox}
+
+\begin{proofbox}
+\textbf{Sens direct :} $n\Z$ est un sous-groupe car $0 \in n\Z$, $kn + k'n = (k+k')n \in n\Z$, et $-kn = (-k)n \in n\Z$.
+
+\textbf{Réciproque :} Soit $H$ un sous-groupe de $(\Z, +)$. Si $H = \{0\}$, c'est $0\Z$. Sinon, soit $n = \min\{h > 0 \mid h \in H\}$. On a $n\Z \subset H$. Pour $h \in H$, la division euclidienne donne $h = kn + r$ avec $0 \leqslant r < n$. Comme $h \in H$ et $kn \in H$, on a $r = h - kn \in H$. Par minimalité de $n$, $r = 0$, donc $h = kn \in n\Z$.
+\end{proofbox}
+
+\begin{intuitionbox}[Lien avec l'arithmétique]
+Ce résultat est à mettre en parallèle direct avec le chapitre 4 : les sous-groupes de $\Z$ sont les ensembles de multiples, et le PGCD de deux entiers $a, b$ est le plus petit élément positif du sous-groupe engendré par $\{a, b\}$, c'est-à-dire $\mathrm{pgcd}(a,b)\Z = a\Z + b\Z$.
+\end{intuitionbox}
+
+
+\section{Morphismes de groupes}
+
+\begin{defbox}[--- Morphisme de groupes]
+Soient $(G, \star)$ et $(G', \diamond)$ deux groupes. Une application $f : G \to G'$ est un \textbf{morphisme de groupes} si :
+\[\forall x, x' \in G, \quad f(x \star x') = f(x) \diamond f(x')\]
+\end{defbox}
+
+\begin{exbox}[L'exponentielle]
+$f : (\R, +) \to (\R^*_+, \times)$ définie par $f(x) = \exp(x)$ est un morphisme car $\exp(x + x') = \exp(x) \times \exp(x')$.
+\end{exbox}
+
+\begin{propbox}[--- Propriétés d'un morphisme]
+Soit $f : G \to G'$ un morphisme. Alors :
+\begin{itemize}[leftmargin=1cm]
+  \item $f(e_G) = e_{G'}$
+  \item $\forall x \in G, \; f(x^{-1}) = (f(x))^{-1}$
+\end{itemize}
+\end{propbox}
+
+\begin{propbox}[--- Composition et réciproque]
+La composée de deux morphismes est un morphisme. Si $f$ est un morphisme bijectif, alors $f^{-1}$ est aussi un morphisme.
+\end{propbox}
+
+\begin{defbox}[--- Isomorphisme]
+Un morphisme bijectif est un \textbf{isomorphisme}. Deux groupes sont \textbf{isomorphes} s'il existe un isomorphisme entre eux.
+\end{defbox}
+
+\begin{exbox}
+$\exp : (\R, +) \to (\R^*_+, \times)$ est un isomorphisme, de réciproque $\ln$. La formule $\ln(x \cdot x') = \ln x + \ln x'$ traduit le fait que $\ln$ est un morphisme de $(\R^*_+, \times)$ vers $(\R, +)$.
+\end{exbox}
+
+\subsection{Noyau et image}
+
+\begin{defbox}[--- Noyau et image]
+Soit $f : G \to G'$ un morphisme.
+\begin{itemize}[leftmargin=1cm]
+  \item Le \textbf{noyau} : $\Ker f = \{x \in G \mid f(x) = e_{G'}\}$ (sous-groupe de $G$).
+  \item L'\textbf{image} : $\Ima f = \{f(x) \mid x \in G\}$ (sous-groupe de $G'$).
+\end{itemize}
+\end{defbox}
+
+\begin{propbox}[--- Injectivité et noyau]
+$f$ est injective $\iff$ $\Ker f = \{e_G\}$.
+\end{propbox}
+
+\begin{proofbox}
+$(\Rightarrow)$ Si $f$ est injective et $f(x) = e_{G'} = f(e_G)$, alors $x = e_G$.
+
+$(\Leftarrow)$ Si $\Ker f = \{e_G\}$ et $f(x) = f(x')$, alors $f(x \star x'^{-1}) = f(x) \diamond f(x')^{-1} = e_{G'}$, donc $x \star x'^{-1} \in \Ker f = \{e_G\}$, d'où $x = x'$.
+\end{proofbox}
+
+\begin{exbox}[Exemples de noyaux et images]
+\begin{itemize}[leftmargin=1cm]
+  \item $f : \Z \to \Z$, $f(k) = 3k$ : $\Ker f = \{0\}$ (injective), $\Ima f = 3\Z$.
+  \item $f : \R \to \mathbb{U}$, $f(t) = e^{it}$ : $\Ker f = 2\pi\Z$ (non injective), $\Ima f = \mathbb{U}$ (surjective).
+  \item $\det : \mathrm{GL}_2 \to \R^*$ : morphisme surjectif, non injectif.
+\end{itemize}
+\end{exbox}
+
+
+\section{Le groupe $\Z/n\Z$}
+
+\begin{propbox}[--- $(\Z/n\Z, +)$ est un groupe commutatif]
+L'addition $\bar{p} + \bar{q} = \overline{p + q}$ est bien définie (indépendante des représentants). Le neutre est $\bar{0}$, l'opposé de $\bar{k}$ est $\overline{-k} = \overline{n - k}$.
+\end{propbox}
+
+\begin{intuitionbox}[Lien avec le chapitre 5]
+On a déjà construit $\Z/n\Z$ dans le chapitre <<~Ensembles~>> via les classes d'équivalence. Ici on lui donne sa structure de \emph{groupe}, ce qui enrichit considérablement l'objet.
+\end{intuitionbox}
+
+\subsection{Groupes cycliques}
+
+\begin{defbox}[--- Groupe cyclique]
+Un groupe $(G, \star)$ est \textbf{cyclique} s'il existe $a \in G$ tel que tout élément de $G$ s'écrit $a^k$ pour un certain $k \in \Z$. On dit que $G$ est \textbf{engendré} par $a$.
+\end{defbox}
+
+$(\Z/n\Z, +)$ est cyclique, engendré par $\bar{1}$ : tout $\bar{k} = \underbrace{\bar{1} + \cdots + \bar{1}}_{k}$.
+
+\begin{thmbox}[--- Unicité des groupes cycliques finis]
+Si $(G, \star)$ est un groupe cyclique de cardinal $n$, alors $(G, \star)$ est isomorphe à $(\Z/n\Z, +)$.
+\end{thmbox}
+
+\begin{proofbox}[Idée]
+Si $G = \{e, a, a^2, \ldots, a^{n-1}\}$ avec $a^n = e$, l'application $f : \Z/n\Z \to G$ définie par $f(\bar{k}) = a^k$ est un isomorphisme : elle est bien définie (car $a^n = e$), c'est un morphisme ($f(\bar{k} + \bar{k'}) = a^{k+k'} = a^k \star a^{k'}$), et elle est bijective (surjective par construction, injective car les deux ensembles ont le même cardinal).
+\end{proofbox}
+
+\begin{intuitionbox}[Importance en crypto]
+Les groupes cycliques sont au c\oe ur de la cryptographie à clé publique. Le protocole Diffie-Hellman repose sur l'exponentiation dans un groupe cyclique $(\Z/p\Z)^*$ : calculer $g^a$ est facile, retrouver $a$ à partir de $g^a$ (logarithme discret) est supposé difficile. Le théorème ci-dessus dit que tous les groupes cycliques de même taille sont <<~les mêmes~>>, ce qui simplifie l'analyse de sécurité.
+\end{intuitionbox}
+
+
+\section{Le groupe des permutations $\mathcal{S}_n$}
+
+\begin{propbox}[--- $(\mathcal{S}_n, \circ)$ est un groupe]
+L'ensemble des bijections de $\{1, 2, \ldots, n\}$ dans lui-même, muni de la composition, est un groupe de cardinal $n!$. Une telle bijection s'appelle une \textbf{permutation}.
+\end{propbox}
+
+\subsection{Notation et calculs}
+
+Une permutation $f$ se note $\begin{pmatrix} 1 & 2 & \cdots & n \\ f(1) & f(2) & \cdots & f(n) \end{pmatrix}$.
+
+La composition $g \circ f$ s'obtient en appliquant d'abord $f$ puis $g$. L'inverse s'obtient en échangeant les deux lignes et en réordonnant.
+
+\begin{exbox}[Le groupe $\mathcal{S}_3$]
+$\mathcal{S}_3$ a $3! = 6$ éléments : l'identité, trois transpositions $\tau_1, \tau_2, \tau_3$, et deux cycles $\sigma = \begin{pmatrix} 1 & 2 & 3 \\ 2 & 3 & 1 \end{pmatrix}$ et $\sigma^{-1}$.
+
+$\mathcal{S}_3$ n'est \textbf{pas} commutatif : $\tau_1 \circ \sigma = \tau_2 \neq \tau_3 = \sigma \circ \tau_1$. Plus généralement, $\mathcal{S}_n$ n'est pas commutatif pour $n \geqslant 3$.
+\end{exbox}
+
+\subsection{Isométries du triangle et $\mathcal{S}_3$}
+
+\begin{propbox}
+L'ensemble des isométries d'un triangle équilatéral (identité, 3 réflexions, 2 rotations), muni de la composition, forme un groupe isomorphe à $(\mathcal{S}_3, \circ)$.
+\end{propbox}
+
+\subsection{Décomposition en cycles}
+
+\begin{defbox}[--- Cycle et transposition]
+Un \textbf{cycle} est une permutation qui fixe certains éléments et dont les autres sont obtenus par itération : $j \mapsto \sigma(j) \mapsto \sigma^2(j) \mapsto \cdots$. On le note $(j_1 \; j_2 \; \cdots \; j_r)$. La \textbf{longueur} du cycle est $r$. Un cycle de longueur $2$ est une \textbf{transposition}.
+\end{defbox}
+
+\begin{thmbox}[--- Décomposition en cycles]
+Toute permutation de $\mathcal{S}_n$ se décompose de façon unique en composition de cycles à supports disjoints.
+\end{thmbox}
+
+\begin{exbox}
+$f = \begin{pmatrix} 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\ 5 & 2 & 1 & 8 & 3 & 7 & 6 & 4 \end{pmatrix} = (1\;5\;3) \circ (4\;8) \circ (6\;7)$.
+
+Les cycles à supports disjoints commutent : $(1\;5\;3) \circ (4\;8) = (4\;8) \circ (1\;5\;3)$.
+
+\textbf{Attention :} si les supports ne sont pas disjoints, l'ordre compte ! $(1\;2) \circ (2\;3\;4) \neq (2\;3\;4) \circ (1\;2)$.
+\end{exbox}
+
+
+% ─── SYNTHÈSE ───
+\section{Synthèse personnelle --- Groupes}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Les groupes unifient l'algèbre et la géométrie.} Les isométries du triangle forment le même groupe que $\mathcal{S}_3$. Les rotations du plan forment un groupe isomorphe à $(\R/2\pi\Z, +)$. La structure de groupe capture l'essence commune de situations apparemment différentes.
+
+\textbf{2. Sous-groupes de $\Z$ et arithmétique.} Les sous-groupes de $(\Z, +)$ sont les $n\Z$, et le sous-groupe engendré par $\{a, b\}$ est $\mathrm{pgcd}(a,b)\Z$. C'est une reformulation algébrique du théorème de Bézout (chapitre 4).
+
+\textbf{3. $\Z/n\Z$ est un groupe cyclique.} Le chapitre 5 l'a construit comme ensemble de classes, le chapitre 4 l'a utilisé pour l'arithmétique modulaire, et maintenant on lui donne sa structure de groupe. C'est le même objet vu sous trois angles.
+
+\textbf{4. Morphismes et crypto.} L'exponentielle $\exp : (\R, +) \to (\R^*_+, \times)$ est un isomorphisme. En crypto, l'exponentiation modulaire $g^x \mod p$ est un morphisme de $(\Z, +)$ vers $(\Z/p\Z)^*$ --- et la difficulté de l'inverser (logarithme discret) est la base de Diffie-Hellman. Le noyau de ce morphisme encode la périodicité (l'ordre de $g$).
+
+\textbf{5. Les permutations et le chiffrement.} Tout chiffrement par substitution est une permutation. Le groupe $\mathcal{S}_n$ est donc le cadre naturel pour analyser ces chiffrements, et la décomposition en cycles donne la structure interne de chaque permutation.
+\end{intuitionbox}
+
+

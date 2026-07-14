@@ -1,0 +1,243 @@
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 2 : NOMBRES COMPLEXES     ║
+% ╚═══════════════════════════════════════╝
+\chapter{Nombres Complexes}
+
+\section{Construction et motivations}
+
+La chaîne d'extensions $\N \subset \Z \subset \Q \subset \R \subset \C$ répond chaque fois à un besoin : résoudre une équation qui n'a pas de solution dans l'ensemble courant. Les complexes sont le \emph{bout de la chaîne} grâce au théorème de d'Alembert-Gauss.
+
+\begin{intuitionbox}[Pourquoi les complexes en cybersécurité]
+Les nombres complexes interviennent en cryptographie (transformée de Fourier rapide pour la multiplication polynomiale dans les algorithmes de chiffrement), en traitement du signal (analyse fréquentielle), et les racines de l'unité sont au c\oe ur de la NTT (\textit{Number Theoretic Transform}) utilisée dans les schémas post-quantiques comme Kyber/CRYSTALS.
+\end{intuitionbox}
+
+\section{Définitions fondamentales}
+
+\begin{defbox}[--- Nombre complexe]
+Un nombre complexe est un élément $z = a + ib$ où $a, b \in \R$ et $i^2 = -1$.
+\begin{itemize}[leftmargin=1cm]
+  \item $a = \re(z)$ est la \textbf{partie réelle},
+  \item $b = \im(z)$ est la \textbf{partie imaginaire},
+  \item L'écriture $z = a + ib$ est la \textbf{forme algébrique}.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[--- Conjugué et module]
+Pour $z = a + ib$ :
+\begin{itemize}[leftmargin=1cm]
+  \item Le \textbf{conjugué} est $\bar{z} = a - ib$ (symétrie par rapport à l'axe réel).
+  \item Le \textbf{module} est $|z| = \sqrt{a^2 + b^2} = \sqrt{z\bar{z}}$.
+\end{itemize}
+\end{defbox}
+
+\subsection{Propriétés du conjugué et du module}
+
+\begin{propbox}[--- Propriétés algébriques]
+Pour $z, z' \in \C$ :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $\overline{z + z'} = \bar{z} + \bar{z'}$, \quad $\overline{z \cdot z'} = \bar{z} \cdot \bar{z'}$, \quad $\bar{\bar{z}} = z$
+  \item $z = \bar{z} \;\Leftrightarrow\; z \in \R$
+  \item $|z|^2 = z \cdot \bar{z}$, \quad $|\bar{z}| = |z|$, \quad $|z \cdot z'| = |z| \cdot |z'|$
+  \item $|z| = 0 \;\Leftrightarrow\; z = 0$
+  \item $z + \bar{z} = 2\re(z)$, \quad $z - \bar{z} = 2i\,\im(z)$
+\end{enumerate}
+\end{propbox}
+
+\begin{intuitionbox}[Le conjugué comme <<~miroir~>>]
+Le conjugué est l'outil central pour ramener un calcul complexe à des calculs réels. L'identité $z\bar{z} = |z|^2 \in \R_+$ est la clé : multiplier par le conjugué <<~réalise~>> une expression.
+
+C'est le même mécanisme que rationaliser $\frac{1}{\sqrt{2}} = \frac{\sqrt{2}}{2}$, mais en dimension 2.
+\end{intuitionbox}
+
+
+\section{Inégalité triangulaire}
+
+\begin{thmbox}[--- Inégalité triangulaire]
+Pour tous $z, z' \in \C$ :
+\[
+  |z + z'| \leqslant |z| + |z'|
+\]
+\end{thmbox}
+
+\begin{proofbox}
+On calcule $|z + z'|^2$ :
+\begin{align*}
+  |z + z'|^2 &= (z + z')\overline{(z + z')} = (z + z')(\bar{z} + \bar{z'}) \\
+  &= z\bar{z} + z'\bar{z'} + z\bar{z'} + \overline{z\bar{z'}} \\
+  &= |z|^2 + |z'|^2 + 2\re(z\bar{z'})
+\end{align*}
+Or $\re(w) \leqslant |w|$ pour tout $w \in \C$, donc :
+\[
+  |z + z'|^2 \leqslant |z|^2 + |z'|^2 + 2|z\bar{z'}| = |z|^2 + |z'|^2 + 2|z||z'| = (|z| + |z'|)^2
+\]
+On conclut en prenant la racine carrée (les deux membres sont positifs). \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Application géométrique : identité du parallélogramme]
+Dans un parallélogramme de côtés $L = |z|$ et $\ell = |z'|$, avec diagonales $D = |z + z'|$ et $d = |z - z'|$ :
+\[
+  D^2 + d^2 = 2L^2 + 2\ell^2
+\]
+\textit{Preuve :} on développe $|z+z'|^2 + |z-z'|^2 = 2|z|^2 + 2|z'|^2$ par calcul direct.
+\end{exbox}
+
+
+\section{Racines carrées et équation du second degré}
+
+\begin{methodbox}[Calcul des racines carrées de $z = a + ib$]
+On cherche $\omega = x + iy$ tel que $\omega^2 = z$. On obtient le système :
+\[
+\begin{cases}
+  x^2 - y^2 = a \\
+  2xy = b \\
+  x^2 + y^2 = \sqrt{a^2 + b^2}
+\end{cases}
+\]
+La troisième équation (issue de $|\omega|^2 = |z|$) est l'astuce clé. On en déduit :
+\[
+  x^2 = \frac{\sqrt{a^2+b^2} + a}{2}, \qquad y^2 = \frac{\sqrt{a^2+b^2} - a}{2}
+\]
+Le signe de $b$ fixe le signe relatif de $x$ et $y$.
+\end{methodbox}
+
+\begin{propbox}[--- Équation du second degré]
+Pour $az^2 + bz + c = 0$ avec $a, b, c \in \C$, $a \neq 0$ :
+\begin{itemize}[leftmargin=1cm]
+  \item Discriminant : $\Delta = b^2 - 4ac$
+  \item Soit $\delta$ une racine carrée de $\Delta$. Les solutions sont :
+  \[
+    z_1 = \frac{-b + \delta}{2a}, \qquad z_2 = \frac{-b - \delta}{2a}
+  \]
+\end{itemize}
+\end{propbox}
+
+\begin{intuitionbox}[Pas de <<~$\sqrt{\Delta}$~>> en complexe]
+En complexe, il n'y a pas de choix canonique entre les deux racines carrées. On écrit $\delta$ (pas $\sqrt{\Delta}$) pour insister sur ce fait. C'est un piège classique d'examen.
+\end{intuitionbox}
+
+
+\section{Forme trigonométrique et exponentielle}
+
+\begin{defbox}[--- Argument et forme exponentielle]
+Pour $z \in \C^*$, il existe $\theta \in \R$ (défini modulo $2\pi$) tel que :
+\[
+  z = |z|(\cos\theta + i\sin\theta) = |z| \, e^{i\theta}
+\]
+où $\theta = \argop(z)$ est l'\textbf{argument} de $z$.
+\end{defbox}
+
+\subsection{Formule de Moivre}
+
+\begin{thmbox}[--- Formule de Moivre]
+\[
+  (\cos\theta + i\sin\theta)^n = \cos(n\theta) + i\sin(n\theta)
+\]
+En notation exponentielle : $(e^{i\theta})^n = e^{in\theta}$.
+\end{thmbox}
+
+\begin{proofbox}
+Par récurrence sur $n \geqslant 1$.
+
+\textit{Initialisation :} pour $n = 1$, c'est trivial.
+
+\textit{Hérédité :} supposons le résultat vrai au rang $n$. Alors :
+\begin{align*}
+  (\cos\theta + i\sin\theta)^{n+1} &= (\cos(n\theta) + i\sin(n\theta))(\cos\theta + i\sin\theta) \\
+  &= (\cos(n\theta)\cos\theta - \sin(n\theta)\sin\theta) + i(\cos(n\theta)\sin\theta + \sin(n\theta)\cos\theta) \\
+  &= \cos((n+1)\theta) + i\sin((n+1)\theta)
+\end{align*}
+par les formules d'addition. \hfill$\square$
+\end{proofbox}
+
+\subsection{Formules d'Euler}
+
+\begin{propbox}[--- Formules d'Euler]
+\[
+  \cos\theta = \frac{e^{i\theta} + e^{-i\theta}}{2}, \qquad \sin\theta = \frac{e^{i\theta} - e^{-i\theta}}{2i}
+\]
+\end{propbox}
+
+\subsection{Applications : développement et linéarisation}
+
+\begin{methodbox}[Développement : exprimer $\cos(n\theta)$ en puissances de $\cos\theta$, $\sin\theta$]
+On utilise la formule de Moivre : $\cos(n\theta) + i\sin(n\theta) = (\cos\theta + i\sin\theta)^n$, puis on développe par le binôme de Newton et on identifie parties réelle et imaginaire.
+\end{methodbox}
+
+\begin{exbox}[Développement de $\cos 3\theta$]
+\begin{align*}
+  \cos 3\theta + i\sin 3\theta &= (\cos\theta + i\sin\theta)^3 \\
+  &= \cos^3\theta + 3i\cos^2\theta\sin\theta - 3\cos\theta\sin^2\theta - i\sin^3\theta
+\end{align*}
+En identifiant les parties réelles : $\cos 3\theta = \cos^3\theta - 3\cos\theta\sin^2\theta$.
+\end{exbox}
+
+\begin{methodbox}[Linéarisation : exprimer $\cos^n\theta$ en termes de $\cos(k\theta)$]
+On utilise les formules d'Euler : $\cos^n\theta = \left(\frac{e^{i\theta} + e^{-i\theta}}{2}\right)^n$, on développe par le binôme, puis on regroupe les termes conjugués.
+\end{methodbox}
+
+
+\section{Racines $n$-ièmes}
+
+\begin{propbox}[--- Racines $n$-ièmes de $z$]
+Pour $z = \rho e^{i\theta}$ et $n \geqslant 1$, les $n$ racines $n$-ièmes de $z$ sont :
+\[
+  \omega_k = \rho^{1/n} \, e^{i\frac{\theta + 2k\pi}{n}}, \qquad k = 0, 1, \ldots, n-1
+\]
+\end{propbox}
+
+\begin{proofbox}
+On cherche $\omega = re^{it}$ tel que $\omega^n = z$, soit $r^n e^{int} = \rho e^{i\theta}$.
+\begin{itemize}[leftmargin=1cm]
+  \item Module : $r^n = \rho$, donc $r = \rho^{1/n}$.
+  \item Argument : $nt \equiv \theta \pmod{2\pi}$, donc $t = \frac{\theta + 2k\pi}{n}$ pour $k \in \Z$.
+\end{itemize}
+Comme $\omega_{k+n} = \omega_k$, il y a exactement $n$ valeurs distinctes. \hfill$\square$
+\end{proofbox}
+
+\begin{center}
+\begin{tikzpicture}[scale=1.8]
+  \draw[->] (-1.4,0) -- (1.6,0) node[right] {\small $\R$};
+  \draw[->] (0,-1.4) -- (0,1.6) node[above] {\small $i\R$};
+  \draw[accentblue, thin] (0,0) circle (1);
+  \foreach \k in {0,...,4} {
+    \fill[deepblue] ({cos(72*\k)},{sin(72*\k)}) circle (1.5pt);
+    \draw[deepblue, thin] (0,0) -- ({cos(72*\k)},{sin(72*\k)});
+    \node[deepblue, font=\scriptsize] at ({1.25*cos(72*\k)},{1.25*sin(72*\k)}) {$\omega_{\k}$};
+  }
+  \draw[deepred, thin] ({cos(0)},{sin(0)}) -- ({cos(72)},{sin(72)}) -- ({cos(144)},{sin(144)}) -- ({cos(216)},{sin(216)}) -- ({cos(288)},{sin(288)}) -- cycle;
+  \node[below, font=\small\sffamily\color{darkgray}] at (0,-1.6) {Racines 5\textsuperscript{e} de l'unité (pentagone régulier)};
+\end{tikzpicture}
+\end{center}
+
+\begin{intuitionbox}[Structure géométrique des racines $n$-ièmes]
+Les racines $n$-ièmes de l'unité forment un polygone régulier inscrit dans le cercle unité. Cette observation géométrique rend les calculs plus intuitifs : au lieu de retenir la formule, il suffit de savoir que l'on divise le cercle en $n$ parts égales en partant de l'angle $\theta/n$.
+
+\textbf{Application immédiate :} $\omega_0 + \omega_1 + \cdots + \omega_{n-1} = 0$ pour les racines $n$-ièmes de l'unité. C'est la somme géométrique $\frac{1 - 1}{1 - e^{2i\pi/n}} = 0$.
+\end{intuitionbox}
+
+
+\section{Géométrie complexe}
+
+\begin{propbox}[--- Équations géométriques]
+\begin{itemize}[leftmargin=1cm]
+  \item \textbf{Droite :} $\bar{\omega}z + \omega\bar{z} = k$ \quad ($\omega \in \C^*, k \in \R$)
+  \item \textbf{Cercle} de centre $\omega$, rayon $r$ : $z\bar{z} - \bar{\omega}z - \omega\bar{z} = r^2 - |\omega|^2$
+\end{itemize}
+\end{propbox}
+
+\begin{intuitionbox}[Reconnaître droite vs cercle]
+La présence ou l'absence du terme $z\bar{z}$ distingue immédiatement les deux cas : $z\bar{z} = |z|^2$ est un terme quadratique (cercle), son absence donne une équation linéaire (droite).
+\end{intuitionbox}
+
+
+\section{Synthèse personnelle --- Complexes}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Dualité algèbre/géométrie.} Le passage forme algébrique $\leftrightarrow$ forme exponentielle est au c\oe ur de tout. L'addition est naturelle en forme algébrique, la multiplication en forme exponentielle. Choisir la bonne représentation, c'est simplifier le problème.
+
+\textbf{2. La somme géométrique comme outil universel.} La formule $1 + z + z^2 + \cdots + z^n = \frac{1 - z^{n+1}}{1 - z}$ apparaît dans les complexes, les suites, et la cryptographie (polynômes cyclotomiques).
+
+\textbf{3. La racine carrée en complexe.} Le système $\{x^2 - y^2 = a,\; 2xy = b,\; x^2 + y^2 = |z|\}$ est un pattern que l'on peut appliquer mécaniquement. La troisième équation est l'astuce qui rend le système soluble.
+\end{intuitionbox}
+
+

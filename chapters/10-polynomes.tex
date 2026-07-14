@@ -1,0 +1,484 @@
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 9 : POLYNÔMES             ║
+% ╚═══════════════════════════════════════╝
+\chapter{Polynômes}
+
+\section{Motivations et lien avec la cryptographie}
+
+Si l'arithmétique de $\Z$ est le socle de RSA, l'arithmétique des polynômes est le socle de tout le reste : AES, codes correcteurs, cryptographie post-quantique. Dans ce chapitre, $\K$ désigne l'un des corps $\Q$, $\R$ ou $\C$, mais dans les applications crypto la situation typique est $\K = \F_p$ (corps fini).
+
+\begin{intuitionbox}[Polynômes = c\oe ur de la crypto moderne]
+La force de ce chapitre vient de la \emph{stricte analogie} entre l'arithmétique de $\Z$ et celle de $\K[X]$ : division euclidienne, pgcd, Bézout, lemme de Gauss, factorisation <<~en facteurs premiers~>> (= polynômes irréductibles). Tout ce que tu as appris sur les entiers se transpose directement.
+
+Mais surtout, les polynômes apparaissent partout en cybersécurité (CHIFR1) :
+
+\textbf{1. AES et $\mathrm{GF}(2^8)$.} Le chiffrement AES opère sur des octets, mais ne les voit pas comme des entiers : il les voit comme des éléments du \textbf{corps fini} $\mathrm{GF}(2^8) = \F_2[X]/(X^8 + X^4 + X^3 + X + 1)$. L'opération SubBytes calcule un inverse dans ce corps. Sans la théorie des polynômes irréductibles, AES n'existerait pas.
+
+\textbf{2. CRC (cyclic redundancy check).} Toute trame Ethernet/Wi-Fi/USB contient un CRC : c'est le reste de la division euclidienne d'un polynôme (les bits du message vus comme un polynôme sur $\F_2$) par un polynôme générateur fixé. Détection d'erreurs = théorème de division euclidienne.
+
+\textbf{3. Codes de Reed--Solomon.} Codes correcteurs utilisés sur les CD, QR codes, transmissions spatiales. Ils encodent un message comme les valeurs d'un polynôme en plusieurs points : si on perd des bits, on peut reconstruire par interpolation. Le polynôme \emph{est} le message.
+
+\textbf{4. Partage de secret de Shamir.} Pour partager un secret $s$ entre $n$ personnes telles que $k$ d'entre elles puissent le reconstruire (mais $k-1$ n'apprennent rien) : on choisit un polynôme aléatoire $P$ de degré $k-1$ avec $P(0) = s$, et on distribue $P(1), \ldots, P(n)$. La reconstruction se fait par interpolation de Lagrange. La sécurité vient du fait qu'un polynôme de degré $k-1$ n'est déterminé qu'avec $k$ points.
+
+\textbf{5. Cryptographie post-quantique.} Les schémas comme Kyber et NTRU travaillent dans $\Z_q[X]/(X^n + 1)$ --- un anneau quotient de polynômes. La sécurité repose sur la difficulté de problèmes de réseaux euclidiens dans ces anneaux.
+
+\textbf{6. LFSR (linear feedback shift registers).} Tout générateur pseudo-aléatoire en hardware est un LFSR, dont le comportement est exactement décrit par un polynôme caractéristique sur $\F_2$. La période et la qualité du flux dépendent de l'irréductibilité de ce polynôme.
+
+\textbf{7. Fonctions de hachage et pairings.} Les courbes elliptiques pour la crypto sont définies par des équations polynomiales sur $\F_p$ ; les protocoles de pairings reposent sur des polynômes en plusieurs variables.
+
+Bref : maîtriser ce chapitre, c'est mettre la main sur les briques élémentaires de la quasi-totalité de la cryptographie moderne.
+\end{intuitionbox}
+
+
+\section{Définitions}
+
+\subsection{Polynômes et opérations}
+
+\begin{defbox}[--- Polynôme]
+Un \textbf{polynôme à coefficients dans $\K$} est une expression de la forme
+\[
+  P(X) = a_n X^n + a_{n-1} X^{n-1} + \cdots + a_1 X + a_0,
+\]
+avec $n \in \N$ et $a_0, a_1, \ldots, a_n \in \K$. L'ensemble des polynômes est noté $\K[X]$.
+
+\begin{itemize}[leftmargin=1cm]
+  \item Les $a_i$ sont les \textbf{coefficients}.
+  \item Si tous les $a_i$ sont nuls, $P$ est le \textbf{polynôme nul}, noté $0$.
+  \item Le \textbf{degré} $\deg P$ est le plus grand $i$ tel que $a_i \neq 0$. Par convention, $\deg(0) = -\infty$.
+  \item Un polynôme \textbf{constant} non nul a degré $0$.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[--- Opérations]
+Soient $P = \sum a_i X^i$ et $Q = \sum b_i X^i$ dans $\K[X]$.
+\begin{itemize}[leftmargin=1cm]
+  \item \textbf{Égalité :} $P = Q \iff \forall i,\; a_i = b_i$.
+  \item \textbf{Addition :} $(P + Q)$ a pour $i$-ième coefficient $a_i + b_i$.
+  \item \textbf{Multiplication :} $(P \times Q) = \sum_k c_k X^k$ avec $c_k = \displaystyle\sum_{i + j = k} a_i b_j$.
+  \item \textbf{Multiplication scalaire :} $(\lambda \cdot P)$ a pour $i$-ième coefficient $\lambda a_i$.
+\end{itemize}
+\end{defbox}
+
+\begin{propbox}[--- Degrés]
+Pour $P, Q \in \K[X]$ :
+\begin{itemize}[leftmargin=1cm]
+  \item $\deg(P \times Q) = \deg P + \deg Q$.
+  \item $\deg(P + Q) \leqslant \max(\deg P, \deg Q)$, avec égalité si $\deg P \neq \deg Q$.
+\end{itemize}
+\end{propbox}
+
+\begin{rembox}[Cas d'inégalité stricte]
+Si $\deg P = \deg Q$, le degré de la somme peut chuter : par exemple $(X^2 + 1) + (-X^2 + 1) = 2$ est de degré $0$, alors que les deux polynômes sont de degré $2$.
+\end{rembox}
+
+\subsection{Vocabulaire}
+
+\begin{defbox}[--- Vocabulaire]
+Soit $P = a_n X^n + \cdots + a_0$ avec $a_n \neq 0$.
+\begin{itemize}[leftmargin=1cm]
+  \item Un \textbf{monôme} est un polynôme à un seul terme non nul.
+  \item Le \textbf{terme dominant} est $a_n X^n$, et $a_n$ est le \textbf{coefficient dominant}.
+  \item $P$ est \textbf{unitaire} (ou \textbf{normalisé}) si $a_n = 1$.
+\end{itemize}
+\end{defbox}
+
+\begin{exbox}[Identité remarquable utile]
+$(X - 1)(X^n + X^{n-1} + \cdots + X + 1) = X^{n+1} - 1$.
+
+Ce polynôme apparaît partout : c'est la \emph{somme géométrique} formelle. La factorisation de $X^n - 1$ sur $\C$ donne les racines $n$-ièmes de l'unité (chap.~Nombres complexes). Sur $\F_2$, ce sont les facteurs cyclotomiques utilisés dans les codes BCH et Reed--Solomon.
+\end{exbox}
+
+
+\section{Arithmétique des polynômes}
+
+\begin{intuitionbox}[Le pattern $\Z \leftrightarrow \K\lbrack X\rbrack$]
+Cette section est exactement parallèle au chapitre Arithmétique. À chaque résultat sur $\Z$ correspond un résultat sur $\K[X]$. Pose-les en parallèle dans ta tête :
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{$\Z$} & \textbf{$\K[X]$} \\
+\hline
+Division euclidienne ($r < b$) & Division euclidienne ($\deg R < \deg B$) \\
+$\text{pgcd}(a,b)$ & $\text{pgcd}(A,B)$ unitaire \\
+Algorithme d'Euclide & Algorithme d'Euclide \\
+Théorème de Bézout & Théorème de Bézout \\
+Lemme de Gauss & Lemme de Gauss \\
+Nombre premier & Polynôme irréductible \\
+Décomposition en facteurs premiers & Décomposition en facteurs irréductibles \\
+\hline
+\end{tabular}
+\end{center}
+
+C'est la même mathématique sous deux visages. La structure abstraite commune s'appelle <<~anneau principal~>> (mais ce n'est pas dans ce cours).
+\end{intuitionbox}
+
+\subsection{Division euclidienne}
+
+\begin{defbox}[--- Divisibilité]
+Soient $A, B \in \K[X]$. On dit que $B$ \textbf{divise} $A$, noté $B \mid A$, s'il existe $Q \in \K[X]$ tel que $A = BQ$. On dit aussi que $A$ est \textbf{multiple} de $B$.
+\end{defbox}
+
+\begin{thmbox}[--- Division euclidienne]
+Soient $A, B \in \K[X]$ avec $B \neq 0$. Il existe un \textbf{unique} couple $(Q, R) \in \K[X]^2$ tel que :
+\[
+  A = BQ + R \qquad \text{avec} \qquad \deg R < \deg B.
+\]
+$Q$ est le \textbf{quotient}, $R$ le \textbf{reste}. On a $R = 0 \iff B \mid A$.
+\end{thmbox}
+
+\begin{proofbox}
+\textit{Unicité.} Si $A = BQ + R = BQ' + R'$, alors $B(Q - Q') = R' - R$. Le degré de droite est $< \deg B$, celui de gauche $\geqslant \deg B$ sauf si $Q - Q' = 0$. Donc $Q = Q'$, puis $R = R'$.
+
+\textit{Existence.} Récurrence sur $\deg A$. Si $\deg A < \deg B$, on prend $Q = 0$, $R = A$. Sinon, soit $a_n X^n$ le terme dominant de $A$ et $b_m X^m$ celui de $B$ ($n \geqslant m$). On pose $A_1 = A - B \cdot \frac{a_n}{b_m} X^{n-m}$. Par construction, $\deg A_1 \leqslant n - 1$, et l'hypothèse de récurrence donne $A_1 = B Q_1 + R_1$ avec $\deg R_1 < \deg B$. Alors $A = B(Q_1 + \frac{a_n}{b_m} X^{n-m}) + R_1$ convient. \hfill$\square$
+\end{proofbox}
+
+\begin{methodbox}[Pose de la division (à la main)]
+Comme la division d'entiers, mais terme à terme :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item Diviser le terme dominant de $A$ par celui de $B$ : on obtient le premier terme de $Q$.
+  \item Multiplier $B$ par ce terme et soustraire à $A$ : on obtient $A_1$ de degré strictement plus petit.
+  \item Recommencer avec $A_1$ jusqu'à ce que $\deg < \deg B$.
+\end{enumerate}
+\end{methodbox}
+
+\begin{exbox}[$A = 2X^4 - X^3 - 2X^2 + 3X - 1$, $B = X^2 - X + 1$]
+Étapes successives :
+\begin{itemize}[leftmargin=1cm]
+  \item $\frac{2X^4}{X^2} = 2X^2$ ; $A - 2X^2 \cdot B = X^3 - 4X^2 + 3X - 1$.
+  \item $\frac{X^3}{X^2} = X$ ; reste $-3X^2 + 2X - 1$.
+  \item $\frac{-3X^2}{X^2} = -3$ ; reste $-X + 2$.
+\end{itemize}
+Donc $Q = 2X^2 + X - 3$ et $R = -X + 2$. Vérification : $\deg R = 1 < 2 = \deg B$. \checkmark
+\end{exbox}
+
+\subsection{PGCD et algorithme d'Euclide}
+
+\begin{propbox}[--- Existence du pgcd]
+Soient $A, B \in \K[X]$, non tous deux nuls. Il existe un unique \textbf{polynôme unitaire} de plus grand degré qui divise à la fois $A$ et $B$. On l'appelle le \textbf{pgcd} de $A$ et $B$, noté $\text{pgcd}(A, B)$.
+\end{propbox}
+
+\begin{rembox}[Pourquoi unitaire]
+Si $D$ divise $A$ et $B$, alors $\lambda D$ aussi pour tout $\lambda \in \K^*$. Pour avoir l'unicité, on impose la convention <<~unitaire~>>. C'est l'analogue de la convention <<~positif~>> pour le pgcd dans $\Z$.
+\end{rembox}
+
+\begin{methodbox}[Algorithme d'Euclide]
+Soient $A, B \in \K[X]$, $B \neq 0$. On effectue les divisions euclidiennes successives :
+\begin{align*}
+  A &= B Q_1 + R_1 & \deg R_1 &< \deg B \\
+  B &= R_1 Q_2 + R_2 & \deg R_2 &< \deg R_1 \\
+  R_1 &= R_2 Q_3 + R_3 & \deg R_3 &< \deg R_2 \\
+  &\;\;\vdots \\
+  R_{k-1} &= R_k Q_{k+1} & &\text{(reste nul)}
+\end{align*}
+Le pgcd est le \textbf{dernier reste non nul} $R_k$, rendu unitaire par division par son coefficient dominant.
+
+L'algorithme termine car $\deg B > \deg R_1 > \deg R_2 > \cdots \geqslant 0$ (suite décroissante d'entiers positifs).
+\end{methodbox}
+
+\begin{exbox}[$\text{pgcd}(X^4 - 1, X^3 - 1)$]
+\begin{align*}
+  X^4 - 1 &= (X^3 - 1) \cdot X + (X - 1), \\
+  X^3 - 1 &= (X - 1)(X^2 + X + 1) + 0.
+\end{align*}
+Dernier reste non nul : $X - 1$ (déjà unitaire). Donc $\text{pgcd}(X^4 - 1, X^3 - 1) = X - 1$.
+\end{exbox}
+
+\begin{defbox}[--- Polynômes premiers entre eux]
+$A$ et $B$ sont \textbf{premiers entre eux} si $\text{pgcd}(A, B) = 1$.
+\end{defbox}
+
+\subsection{Théorème de Bézout}
+
+\begin{thmbox}[--- Théorème de Bézout]
+Soient $A, B \in \K[X]$ non tous deux nuls, et $D = \text{pgcd}(A, B)$. Il existe $U, V \in \K[X]$ tels que :
+\[
+  A U + B V = D.
+\]
+\end{thmbox}
+
+\begin{corollaire}[--- Caractérisation des polynômes premiers entre eux]
+$A$ et $B$ sont premiers entre eux $\iff$ il existe $U, V \in \K[X]$ tels que $AU + BV = 1$.
+\end{corollaire}
+
+\begin{methodbox}[Remontée de l'algorithme d'Euclide]
+Pour obtenir explicitement $U$ et $V$, on <<~remonte~>> l'algorithme d'Euclide :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item On part de la dernière ligne où le reste est non nul : $D = R_k$.
+  \item On exprime $R_k$ depuis la ligne $R_{k-2} = R_{k-1} Q_k + R_k$ : $R_k = R_{k-2} - R_{k-1} Q_k$.
+  \item On remplace $R_{k-1}$ par son expression issue de la ligne du dessus, et ainsi de suite.
+  \item On finit par exprimer $D$ comme combinaison linéaire de $A$ et $B$.
+\end{enumerate}
+\end{methodbox}
+
+\begin{exbox}[Bézout pour $X^4 - 1$ et $X^3 - 1$]
+On a vu $X^4 - 1 = (X^3 - 1) \cdot X + (X - 1)$, soit
+\[
+  X - 1 = 1 \cdot (X^4 - 1) + (-X) \cdot (X^3 - 1).
+\]
+Donc $U = 1$ et $V = -X$ conviennent.
+\end{exbox}
+
+\begin{corollaire}[--- Lemme de Gauss]
+Soient $A, B, C \in \K[X]$. Si $A \mid BC$ et $\text{pgcd}(A, B) = 1$, alors $A \mid C$.
+\end{corollaire}
+
+\begin{proofbox}
+Par Bézout, $\exists U, V$ tels que $AU + BV = 1$. Multiplions par $C$ : $A U C + B V C = C$. Or $A \mid AUC$ (évident) et $A \mid BVC$ (car $A \mid BC$). Donc $A \mid (AUC + BVC) = C$. \hfill$\square$
+\end{proofbox}
+
+\subsection{PPCM}
+
+\begin{propbox}[--- Existence du ppcm]
+Soient $A, B \in \K[X]$ non nuls. Il existe un unique polynôme unitaire $M$ de plus petit degré tel que $A \mid M$ et $B \mid M$. On l'appelle le \textbf{ppcm} de $A$ et $B$, noté $\text{ppcm}(A, B)$.
+
+De plus, si $C$ est un polynôme tel que $A \mid C$ et $B \mid C$, alors $M \mid C$.
+\end{propbox}
+
+\begin{exbox}
+$\text{ppcm}\bigl(X(X-2)^2(X^2+1)^4,\; (X+1)(X-2)^3(X^2+1)^3\bigr) = X(X+1)(X-2)^3(X^2+1)^4$.
+
+\textit{Règle :} pour chaque facteur irréductible, on prend la \textbf{plus grande} multiplicité.
+\end{exbox}
+
+
+\section{Racines et factorisation}
+
+\subsection{Fonction polynomiale et racines}
+
+\begin{defbox}[--- Racine]
+Soit $P = a_n X^n + \cdots + a_0 \in \K[X]$. Pour $\alpha \in \K$, on note $P(\alpha) = a_n \alpha^n + \cdots + a_0$. On dit que $\alpha$ est une \textbf{racine} (ou \textbf{zéro}) de $P$ si $P(\alpha) = 0$.
+\end{defbox}
+
+\begin{propbox}[--- Caractérisation par division]
+$P(\alpha) = 0 \iff (X - \alpha) \mid P$.
+\end{propbox}
+
+\begin{proofbox}
+La division euclidienne de $P$ par $X - \alpha$ donne $P = Q(X - \alpha) + R$ avec $\deg R < 1$, donc $R$ est une constante. En évaluant en $\alpha$ : $P(\alpha) = R$. Donc $P(\alpha) = 0 \iff R = 0 \iff (X - \alpha) \mid P$. \hfill$\square$
+\end{proofbox}
+
+\begin{defbox}[--- Multiplicité d'une racine]
+Soit $k \in \N^*$. $\alpha$ est une racine de \textbf{multiplicité $k$} de $P$ si $(X - \alpha)^k \mid P$ alors que $(X - \alpha)^{k+1} \nmid P$. On dit \textbf{simple} si $k = 1$, \textbf{double} si $k = 2$, etc.
+\end{defbox}
+
+\begin{propbox}[--- Caractérisations équivalentes de la multiplicité]
+Sont équivalents :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item[(i)] $\alpha$ est racine de multiplicité $k$ de $P$ ;
+  \item[(ii)] $\exists Q \in \K[X],\; P = (X - \alpha)^k Q$ et $Q(\alpha) \neq 0$ ;
+  \item[(iii)] $P(\alpha) = P'(\alpha) = \cdots = P^{(k-1)}(\alpha) = 0$ et $P^{(k)}(\alpha) \neq 0$.
+\end{enumerate}
+\end{propbox}
+
+\begin{rembox}[Polynôme dérivé]
+Pour $P(X) = a_0 + a_1 X + \cdots + a_n X^n$, le \textbf{polynôme dérivé} est
+\[
+  P'(X) = a_1 + 2 a_2 X + \cdots + n a_n X^{n-1}.
+\]
+La dérivation est purement formelle (algébrique), elle ne nécessite pas la notion de limite.
+\end{rembox}
+
+\subsection{Théorème de d'Alembert--Gauss}
+
+\begin{thmbox}[--- d'Alembert--Gauss (théorème fondamental de l'algèbre)]
+Tout polynôme à coefficients dans $\C$ de degré $n \geqslant 1$ admet \textbf{au moins} une racine dans $\C$. Il en admet \textbf{exactement} $n$ comptées avec multiplicité.
+\end{thmbox}
+
+\begin{rembox}
+Ce théorème est admis : sa démonstration relève de l'analyse complexe ou de la topologie. Il s'agit du résultat le plus profond du chapitre.
+\end{rembox}
+
+\begin{thmbox}[--- Cas général]
+Pour $\K$ quelconque, un polynôme $P \in \K[X]$ de degré $n \geqslant 1$ admet \textbf{au plus} $n$ racines dans $\K$.
+\end{thmbox}
+
+\begin{exbox}[$P(X) = X^n - 1$ a $n$ racines distinctes dans $\C$]
+Par d'Alembert--Gauss, $P$ a $n$ racines comptées avec multiplicité. Montrons qu'elles sont toutes simples : si $\alpha$ était racine multiple, on aurait $P(\alpha) = 0$ et $P'(\alpha) = 0$, soit $\alpha^n = 1$ et $n \alpha^{n-1} = 0$. La seconde donne $\alpha = 0$, en contradiction avec la première. Donc les $n$ racines sont distinctes : ce sont les \textbf{racines $n$-ièmes de l'unité} $e^{2 i k \pi / n}$ pour $k = 0, \ldots, n-1$.
+\end{exbox}
+
+\subsection{Polynômes irréductibles}
+
+\begin{defbox}[--- Polynôme irréductible]
+$P \in \K[X]$ de degré $\geqslant 1$ est \textbf{irréductible (sur $\K$)} si pour tout $Q \in \K[X]$ divisant $P$, soit $Q$ est une constante non nulle, soit $Q = \lambda P$ pour un $\lambda \in \K^*$.
+
+Autrement dit : les seuls diviseurs de $P$ sont les constantes et les multiples scalaires de $P$ lui-même. Si $P$ n'est pas irréductible, il est \textbf{réductible}.
+\end{defbox}
+
+\begin{intuitionbox}[Irréductible $\sim$ premier]
+La notion d'irréductible pour $\K[X]$ correspond exactement à celle de \emph{nombre premier} pour $\Z$. C'est pour cela que :
+\begin{itemize}[leftmargin=1cm]
+  \item Le \textbf{lemme d'Euclide} se transpose : $P$ irréductible et $P \mid AB \Rightarrow P \mid A$ ou $P \mid B$.
+  \item La \textbf{décomposition en facteurs irréductibles} existe et est unique (à constantes près).
+\end{itemize}
+Le lien avec la cybersécurité est crucial : pour construire $\mathrm{GF}(2^8)$ utilisé par AES, il faut un \emph{polynôme irréductible de degré $8$ sur $\F_2$}. AES en a choisi un précis : $X^8 + X^4 + X^3 + X + 1$. Le choix n'est pas anodin --- il optimise l'implémentation hardware.
+\end{intuitionbox}
+
+\begin{exbox}[L'irréductibilité dépend du corps]
+\begin{itemize}[leftmargin=1cm]
+  \item Tout polynôme de degré $1$ est irréductible (sur n'importe quel corps).
+  \item $X^2 + 1$ est \textbf{irréductible sur $\R$} (pas de racine réelle), mais \textbf{réductible sur $\C$} : $X^2 + 1 = (X - i)(X + i)$.
+  \item $X^2 - 2$ est \textbf{irréductible sur $\Q$} ($\sqrt{2} \notin \Q$), mais \textbf{réductible sur $\R$} : $X^2 - 2 = (X - \sqrt{2})(X + \sqrt{2})$.
+  \item $X^2 - 1 = (X - 1)(X + 1)$ est réductible sur $\Q$.
+\end{itemize}
+\end{exbox}
+
+\begin{propbox}[--- Lemme d'Euclide pour les polynômes]
+Soit $P \in \K[X]$ irréductible et $A, B \in \K[X]$. Si $P \mid AB$, alors $P \mid A$ ou $P \mid B$.
+\end{propbox}
+
+\begin{proofbox}
+Si $P \nmid A$, alors $\text{pgcd}(P, A) = 1$ (les seuls diviseurs unitaires de $P$ sont $1$ et $P$ lui-même rendu unitaire). Par le lemme de Gauss, $P \mid B$. \hfill$\square$
+\end{proofbox}
+
+\subsection{Théorème de factorisation}
+
+\begin{thmbox}[--- Décomposition en irréductibles]
+Tout polynôme non constant $A \in \K[X]$ s'écrit \textbf{de manière unique} (à l'ordre des facteurs près) :
+\[
+  A = \lambda \, P_1^{k_1} P_2^{k_2} \cdots P_r^{k_r}
+\]
+où $\lambda \in \K^*$, $r \in \N^*$, $k_i \in \N^*$, et les $P_i$ sont des polynômes irréductibles unitaires \emph{distincts}.
+\end{thmbox}
+
+\subsection{Factorisation dans $\C[X]$ et $\R[X]$}
+
+\begin{thmbox}[--- Irréductibles de $\C\lbrack X\rbrack$]
+Les polynômes irréductibles de $\C[X]$ sont \textbf{exactement les polynômes de degré $1$}.
+\end{thmbox}
+
+C'est une conséquence immédiate de d'Alembert--Gauss : tout polynôme non constant a une racine dans $\C$, donc se factorise par un facteur de degré $1$.
+
+\begin{thmbox}[--- Irréductibles de $\R\lbrack X\rbrack$]
+Les polynômes irréductibles de $\R[X]$ sont :
+\begin{itemize}[leftmargin=1cm]
+  \item les polynômes de \textbf{degré $1$} ;
+  \item les polynômes de \textbf{degré $2$ à discriminant $\Delta < 0$}.
+\end{itemize}
+
+Tout polynôme de $\R[X]$ se décompose donc en produit de polynômes de degré $1$ et de polynômes de degré $2$ irréductibles.
+\end{thmbox}
+
+\begin{intuitionbox}[Pourquoi degré 1 et degré 2 sur $\R$ ?]
+Si $P \in \R[X]$ et $\alpha \in \C$ est racine, alors le \emph{conjugué} $\bar\alpha$ est aussi racine (car $P$ a coefficients réels). Si $\alpha \notin \R$, alors $\alpha \neq \bar\alpha$ et $(X - \alpha)(X - \bar\alpha) = X^2 - 2\,\re(\alpha) X + |\alpha|^2$ est un polynôme \emph{réel} de degré $2$ à discriminant négatif. Donc tout polynôme réel se factorise en regroupant les racines complexes par paires conjuguées.
+
+Ce fait est ce qui justifie la décomposition en éléments simples sur $\R$ avec des termes en $\frac{aX + b}{X^2 + \alpha X + \beta}$.
+\end{intuitionbox}
+
+\begin{exbox}[Factorisation de $X^4 + 1$]
+\textbf{Sur $\C$.} D'abord $X^4 + 1 = (X^2 - i)(X^2 + i)$. Les racines de $X^2 = i$ sont $\pm \frac{\sqrt{2}}{2}(1 + i)$ ; celles de $X^2 = -i$ sont $\pm \frac{\sqrt{2}}{2}(1 - i)$. Donc :
+\[
+  X^4 + 1 = \prod_{k=0}^{3} \bigl(X - e^{i \pi/4 + i k \pi/2}\bigr) \quad \text{dans } \C[X].
+\]
+\textbf{Sur $\R$.} On regroupe les racines conjuguées :
+\[
+  X^4 + 1 = (X^2 + \sqrt{2} X + 1)(X^2 - \sqrt{2} X + 1) \quad \text{dans } \R[X].
+\]
+On peut vérifier en développant : le terme en $X^3$ est $\sqrt{2} - \sqrt{2} = 0$ ; le terme en $X^2$ est $1 - 2 + 1 = 0$ ; etc.
+\end{exbox}
+
+
+\section{Fractions rationnelles}
+
+\begin{defbox}[--- Fraction rationnelle]
+Une \textbf{fraction rationnelle} à coefficients dans $\K$ est une expression de la forme $F = \frac{P}{Q}$ avec $P, Q \in \K[X]$, $Q \neq 0$.
+\end{defbox}
+
+L'idée centrale est qu'on peut décomposer toute fraction en somme de fractions <<~atomiques~>> (les \emph{éléments simples}). C'est l'analogue, pour les fractions rationnelles, de la décomposition en facteurs irréductibles pour les polynômes.
+
+\subsection{Décomposition en éléments simples sur $\C$}
+
+\begin{thmbox}[--- DES sur $\C$]
+Soit $\frac{P}{Q}$ une fraction rationnelle à coefficients complexes avec $\text{pgcd}(P, Q) = 1$ et $Q = (X - \alpha_1)^{k_1} \cdots (X - \alpha_r)^{k_r}$ (factorisation de $Q$ sur $\C$). Alors il existe une \textbf{unique} écriture :
+\[
+  \frac{P}{Q} = E(X) + \sum_{j = 1}^{r} \sum_{i = 1}^{k_j} \frac{a_{j, i}}{(X - \alpha_j)^i}
+\]
+où $E(X) \in \C[X]$ est appelé la \textbf{partie polynomiale}, et les $\frac{a}{(X - \alpha)^i}$ sont les \textbf{éléments simples}.
+\end{thmbox}
+
+\begin{methodbox}[DES sur $\C$ : marche à suivre]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Partie polynomiale.} Si $\deg P < \deg Q$, alors $E = 0$. Sinon, division euclidienne $P = QE + R$ donne $\frac{P}{Q} = E + \frac{R}{Q}$ avec $\deg R < \deg Q$.
+  \item \textbf{Factorisation du dénominateur} dans $\C[X]$.
+  \item \textbf{Décomposition théorique} avec des coefficients à déterminer (le théorème garantit qu'elle existe et est unique).
+  \item \textbf{Calcul des coefficients} : plusieurs méthodes (identification, multiplication par $(X - \alpha)^k$ et évaluation, dérivation, valeur numérique).
+\end{enumerate}
+\end{methodbox}
+
+\begin{methodbox}[Calcul efficace des $a_{j, k_j}$ (le coefficient <<~du haut~>>)]
+Pour calculer le coefficient $a_{j, k_j}$ de $\frac{1}{(X - \alpha_j)^{k_j}}$ :
+\[
+  a_{j, k_j} = \bigl[(X - \alpha_j)^{k_j} \cdot \tfrac{P(X)}{Q(X)}\bigr]_{X = \alpha_j}.
+\]
+On multiplie la fraction par $(X - \alpha_j)^{k_j}$ pour faire <<~disparaître~>> le pôle, puis on évalue en $\alpha_j$.
+\end{methodbox}
+
+\begin{exbox}[Décomposition de $\frac{X^5 - 2X^3 + 4X^2 - 8X + 11}{X^3 - 3X + 2}$]
+\textbf{Étape 1.} Division euclidienne : $P = (X^2 + 1) Q + (2X^2 - 5X + 9)$. Donc $E(X) = X^2 + 1$ et il reste $\frac{2X^2 - 5X + 9}{X^3 - 3X + 2}$.
+
+\textbf{Étape 2.} $X^3 - 3X + 2 = (X - 1)^2 (X + 2)$ (la racine $1$ est double).
+
+\textbf{Étape 3.} Forme théorique : $\frac{2X^2 - 5X + 9}{(X-1)^2 (X+2)} = \frac{a}{(X-1)^2} + \frac{b}{X-1} + \frac{c}{X+2}$.
+
+\textbf{Étape 4.} \emph{Calcul de $a$ :} multiplier par $(X-1)^2$ et évaluer en $1$ :
+\[
+  a = \frac{2(1)^2 - 5(1) + 9}{1 + 2} = \frac{6}{3} = 2.
+\]
+\emph{Calcul de $c$ :} multiplier par $(X+2)$ et évaluer en $-2$ :
+\[
+  c = \frac{2(4) + 10 + 9}{(-3)^2} = \frac{27}{9} = 3.
+\]
+\emph{Calcul de $b$ :} évaluer la décomposition en un point simple, par exemple $X = 0$ :
+\[
+  \frac{9}{2} = \frac{a}{1} + \frac{b}{-1} + \frac{c}{2} = 2 - b + \frac{3}{2} \implies b = 2 + \frac{3}{2} - \frac{9}{2} = -1.
+\]
+Conclusion :
+\[
+  \frac{X^5 - 2X^3 + 4X^2 - 8X + 11}{X^3 - 3X + 2} = X^2 + 1 + \frac{2}{(X-1)^2} + \frac{-1}{X-1} + \frac{3}{X+2}.
+\]
+\end{exbox}
+
+\subsection{Décomposition en éléments simples sur $\R$}
+
+\begin{thmbox}[--- DES sur $\R$]
+Soit $\frac{P}{Q}$ une fraction rationnelle à coefficients réels avec $\text{pgcd}(P, Q) = 1$. Alors $\frac{P}{Q}$ s'écrit de manière unique comme somme :
+\begin{itemize}[leftmargin=1cm]
+  \item d'une partie polynomiale $E(X) \in \R[X]$ ;
+  \item d'éléments simples de \textbf{première espèce} : $\frac{a}{(X - \alpha)^i}$ ;
+  \item d'éléments simples de \textbf{seconde espèce} : $\frac{aX + b}{(X^2 + \alpha X + \beta)^i}$ avec $\Delta = \alpha^2 - 4\beta < 0$.
+\end{itemize}
+\end{thmbox}
+
+\begin{exbox}[DES sur $\R$ de $\frac{3X^4 + 5X^3 + 11X^2 + 5X + 3}{(X^2 + X + 1)^2 (X - 1)}$]
+$\deg P = 4 < \deg Q = 5$, donc $E = 0$. Le facteur $X^2 + X + 1$ est irréductible sur $\R$ ($\Delta = -3 < 0$). Forme théorique :
+\[
+  \frac{P(X)}{Q(X)} = \frac{aX + b}{(X^2 + X + 1)^2} + \frac{cX + d}{X^2 + X + 1} + \frac{e}{X - 1}.
+\]
+Après calcul (méthodes mixtes), on obtient :
+\[
+  \frac{P(X)}{Q(X)} = \frac{2X + 1}{(X^2 + X + 1)^2} + \frac{-1}{X^2 + X + 1} + \frac{3}{X - 1}.
+\]
+\end{exbox}
+
+
+\section{Synthèse : le pont algèbre $\to$ cryptographie}
+
+\begin{intuitionbox}[Connexions identifiées]
+
+\textbf{1. L'analogie $\Z \leftrightarrow \K[X]$ comme machine à transposer.} Tout théorème sur les entiers (Bézout, Gauss, factorisation) a son pendant sur les polynômes. La structure abstraite commune (anneau principal, anneau factoriel) est à l'\oe uvre dans les deux cas. Quand tu apprends un résultat dans $\Z$, transpose-le dans $\K[X]$ et inversement.
+
+\textbf{2. Polynôme irréductible $\sim$ nombre premier.} Cette analogie est la clé pour comprendre la \emph{construction des corps finis}. $\Z/p\Z = \F_p$ est un corps si et seulement si $p$ est premier. De même, $\K[X]/(P)$ est un corps si et seulement si $P$ est irréductible. C'est exactement comme cela qu'AES construit $\F_{2^8}$ : avec un polynôme irréductible.
+
+\textbf{3. d'Alembert--Gauss et les racines complexes.} Sur $\C$, un polynôme de degré $n$ a exactement $n$ racines (avec multiplicité). C'est ce qui rend la décomposition en éléments simples \emph{toujours possible} sur $\C$. Sur $\R$, on doit composer avec les facteurs de degré $2$ irréductibles (paires de racines conjuguées).
+
+\textbf{4. Division euclidienne = CRC.} Le calcul du CRC (présent dans toute trame réseau) est exactement une division euclidienne dans $\F_2[X]$. Le polynôme générateur est fixé par la norme (CRC-32 utilise un polynôme de degré $32$). Le reste est le code de contrôle. Si tu modifies les bits, le reste change : détection.
+
+\textbf{5. Interpolation = Shamir.} Étant donné $k$ points $(x_i, y_i)$ avec les $x_i$ distincts, il existe un \emph{unique} polynôme de degré $< k$ passant par ces points (interpolation de Lagrange). C'est exactement ce qui rend Shamir's Secret Sharing sûr : avec $k - 1$ parts on a $k - 1$ points, mais cela ne détermine pas le polynôme (donc pas le secret $P(0)$). Avec $k$ parts, on a unicité.
+
+\textbf{6. Quotient $\K[X]/(P)$ = corps fini.} Pour AES, l'opération SubBytes calcule $a^{-1}$ dans $\F_{2^8} = \F_2[X]/(X^8 + X^4 + X^3 + X + 1)$. L'inverse existe pour tout $a \neq 0$ précisément parce que le polynôme modulo lequel on travaille est irréductible. Maîtriser ce chapitre, c'est comprendre \emph{pourquoi} les S-boxes d'AES sont définies de cette manière.
+
+\textbf{7. Élément simple = pôle.} La décomposition en éléments simples est l'outil naturel pour calculer des primitives (intégrales de fractions rationnelles), pour les transformées en $z$ et de Laplace (traitement du signal, cryptanalyse différentielle), et pour analyser les fonctions de transfert dans les LFSR.
+\end{intuitionbox}
+
+

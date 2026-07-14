@@ -14,6 +14,7 @@
 *.ilg
 *.lof
 *.lot
+build/
 
 # PDF généré (optionnel - décommenter si vous ne voulez pas versionner le PDF)
 # cahier_de_recherches.pdf

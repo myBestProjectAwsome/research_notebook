@@ -1,0 +1,283 @@
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 6 : LIMITES ET FONCTIONS  ║
+% ║              CONTINUES                ║
+% ╚═══════════════════════════════════════╝
+\chapter{Limites et Fonctions Continues}
+
+\begin{intuitionbox}[Motivation]
+Les équations simples comme $ax + b = 0$ ou $ax^2 + bx + c = 0$ se résolvent par des formules explicites. Mais pour une équation aussi naturelle que $x + e^x = 0$, aucune formule n'existe. La continuité permet de prouver l'\emph{existence} d'une solution, d'en montrer l'\emph{unicité}, et de la calculer par approximation. C'est un saut conceptuel majeur : on passe de <<~trouver la solution~>> à <<~prouver qu'elle existe~>>.
+\end{intuitionbox}
+
+
+\section{Notions de fonction}
+
+\subsection{Définitions fondamentales}
+
+\begin{defbox}[--- Fonction réelle]
+Une \textbf{fonction d'une variable réelle à valeurs réelles} est une application $f : U \to \R$, où $U$ est une partie de $\R$ (en général un intervalle ou une réunion d'intervalles). On appelle $U$ le \textbf{domaine de définition} de $f$.
+
+Le \textbf{graphe} de $f$ est l'ensemble $\Gamma_f = \{(x, f(x)) \mid x \in U\} \subset \R^2$.
+\end{defbox}
+
+\subsection{Opérations sur les fonctions}
+
+Soient $f, g : U \to \R$ deux fonctions définies sur une même partie $U$ de $\R$.
+
+\begin{propbox}[--- Opérations élémentaires]
+\begin{itemize}[leftmargin=1cm]
+  \item \textbf{Somme :} $(f + g)(x) = f(x) + g(x)$
+  \item \textbf{Produit :} $(f \times g)(x) = f(x) \times g(x)$
+  \item \textbf{Multiplication scalaire :} $(\lambda \cdot f)(x) = \lambda \cdot f(x)$ pour $\lambda \in \R$
+\end{itemize}
+\end{propbox}
+
+\subsection{Fonctions majorées, minorées, bornées}
+
+\begin{defbox}[--- Bornes d'une fonction]
+Soit $f : U \to \R$.
+\begin{itemize}[leftmargin=1cm]
+  \item $f$ est \textbf{majorée} sur $U$ si $\exists M \in \R, \; \forall x \in U, \; f(x) \leqslant M$.
+  \item $f$ est \textbf{minorée} sur $U$ si $\exists m \in \R, \; \forall x \in U, \; f(x) \geqslant m$.
+  \item $f$ est \textbf{bornée} sur $U$ si $\exists M \in \R, \; \forall x \in U, \; |f(x)| \leqslant M$.
+\end{itemize}
+\end{defbox}
+
+\subsection{Monotonie, parité, périodicité}
+
+\begin{defbox}[--- Monotonie]
+Soit $f : U \to \R$.
+\begin{itemize}[leftmargin=1cm]
+  \item $f$ est \textbf{croissante} si $\forall x, y \in U, \; x \leqslant y \implies f(x) \leqslant f(y)$.
+  \item $f$ est \textbf{strictement croissante} si $\forall x, y \in U, \; x < y \implies f(x) < f(y)$.
+  \item \textbf{Décroissante} et \textbf{strictement décroissante} se définissent en inversant les inégalités sur $f$.
+  \item $f$ est \textbf{monotone} si elle est croissante ou décroissante.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[--- Parité et périodicité]
+Soit $I$ un intervalle symétrique par rapport à $0$.
+\begin{itemize}[leftmargin=1cm]
+  \item $f$ est \textbf{paire} si $\forall x \in I, \; f(-x) = f(x)$ (symétrie par rapport à l'axe des ordonnées).
+  \item $f$ est \textbf{impaire} si $\forall x \in I, \; f(-x) = -f(x)$ (symétrie par rapport à l'origine).
+  \item $f : \R \to \R$ est \textbf{périodique de période} $T > 0$ si $\forall x \in \R, \; f(x + T) = f(x)$.
+\end{itemize}
+\end{defbox}
+
+\begin{exbox}[Fonctions classiques]
+$x \mapsto x^{2n}$ est paire, $x \mapsto x^{2n+1}$ est impaire. $\cos$ est paire, $\sin$ est impaire. $\sin$ et $\cos$ sont $2\pi$-périodiques, $\tan$ est $\pi$-périodique.
+\end{exbox}
+
+
+\section{Limites}
+
+\subsection{Limite en un point}
+
+\begin{defbox}[--- Limite finie en un point]
+Soit $f : I \to \R$ définie sur un intervalle $I$, $x_0 \in \R$ un point de $I$ ou une extrémité de $I$, et $\ell \in \R$. On dit que $f$ a pour \textbf{limite} $\ell$ en $x_0$ si :
+\[\forall \varepsilon > 0, \; \exists \delta > 0, \; \forall x \in I, \quad |x - x_0| < \delta \implies |f(x) - \ell| < \varepsilon\]
+On note $\displaystyle\lim_{x \to x_0} f(x) = \ell$.
+\end{defbox}
+
+\begin{intuitionbox}[Structure $\varepsilon$-$\delta$]
+La structure est la même que pour les suites (chapitre 3), mais adaptée aux fonctions. Pour les suites : <<~à partir d'un certain rang $N$~>>. Pour les fonctions : <<~dans un voisinage de taille $\delta$~>>. L'ordre des quantificateurs est crucial : $\delta$ dépend de $\varepsilon$, jamais l'inverse.
+\end{intuitionbox}
+
+\begin{defbox}[--- Limites infinies et en l'infini]
+\begin{itemize}[leftmargin=1cm]
+  \item $\displaystyle\lim_{x \to x_0} f(x) = +\infty$ si $\forall A > 0, \; \exists \delta > 0, \; \forall x \in I, \; |x - x_0| < \delta \implies f(x) > A$.
+  \item $\displaystyle\lim_{x \to +\infty} f(x) = \ell$ si $\forall \varepsilon > 0, \; \exists B > 0, \; \forall x \in I, \; x > B \implies |f(x) - \ell| < \varepsilon$.
+  \item $\displaystyle\lim_{x \to +\infty} f(x) = +\infty$ si $\forall A > 0, \; \exists B > 0, \; \forall x \in I, \; x > B \implies f(x) > A$.
+\end{itemize}
+\end{defbox}
+
+\subsection{Limites à gauche et à droite}
+
+\begin{defbox}[--- Limites latérales]
+Soit $f$ définie sur $]a, x_0[ \cup ]x_0, b[$.
+\begin{itemize}[leftmargin=1cm]
+  \item \textbf{Limite à droite :} $\displaystyle\lim_{x_0^+} f = \lim_{\substack{x \to x_0 \\ x > x_0}} f(x)$, soit $\forall \varepsilon > 0, \; \exists \delta > 0, \; x_0 < x < x_0 + \delta \implies |f(x) - \ell| < \varepsilon$.
+  \item \textbf{Limite à gauche :} $\displaystyle\lim_{x_0^-} f = \lim_{\substack{x \to x_0 \\ x < x_0}} f(x)$, définie de manière analogue.
+\end{itemize}
+Si $f$ admet une limite en $x_0$, alors les limites à gauche et à droite coïncident. Réciproquement, si les limites latérales existent, sont égales et valent $f(x_0)$, alors $f$ a une limite en $x_0$.
+\end{defbox}
+
+\begin{exbox}[Partie entière]
+La fonction partie entière $E$ au point $x = 2$ : $\lim_{2^+} E = 2$ (car $E(x) = 2$ pour $x \in ]2, 3[$) et $\lim_{2^-} E = 1$ (car $E(x) = 1$ pour $x \in [1, 2[$). Les limites latérales étant différentes, $E$ n'a pas de limite en $2$.
+\end{exbox}
+
+\subsection{Propriétés des limites}
+
+\begin{propbox}[--- Unicité de la limite]
+Si une fonction admet une limite, alors cette limite est unique.
+\end{propbox}
+
+\begin{propbox}[--- Opérations sur les limites]
+Si $\displaystyle\lim_{x_0} f = \ell \in \R$ et $\displaystyle\lim_{x_0} g = \ell' \in \R$, alors :
+\begin{itemize}[leftmargin=1cm]
+  \item $\displaystyle\lim_{x_0} (\lambda \cdot f) = \lambda \cdot \ell$ \quad pour tout $\lambda \in \R$
+  \item $\displaystyle\lim_{x_0} (f + g) = \ell + \ell'$
+  \item $\displaystyle\lim_{x_0} (f \times g) = \ell \times \ell'$
+  \item Si $\ell \neq 0$, alors $\displaystyle\lim_{x_0} \frac{1}{f} = \frac{1}{\ell}$
+\end{itemize}
+\end{propbox}
+
+\begin{propbox}[--- Composition des limites]
+Si $\displaystyle\lim_{x_0} f = \ell$ et $\displaystyle\lim_{\ell} g = \ell'$, alors $\displaystyle\lim_{x_0} g \circ f = \ell'$.
+\end{propbox}
+
+\begin{rembox}[Formes indéterminées]
+Certaines combinaisons ne permettent pas de conclure directement. Les formes indéterminées sont : $+\infty - \infty$, $0 \times \infty$, $\frac{\infty}{\infty}$, $\frac{0}{0}$, $1^{\infty}$, $\infty^0$.
+\end{rembox}
+
+\begin{thmbox}[--- Théorème des gendarmes (fonctions)]
+Si $f \leqslant g \leqslant h$ et $\displaystyle\lim_{x_0} f = \lim_{x_0} h = \ell \in \R$, alors $g$ admet une limite en $x_0$ et $\displaystyle\lim_{x_0} g = \ell$.
+\end{thmbox}
+
+
+\section{Continuité en un point}
+
+\subsection{Définition}
+
+\begin{defbox}[--- Continuité en un point]
+Soit $I$ un intervalle et $f : I \to \R$. On dit que $f$ est \textbf{continue en} $x_0 \in I$ si :
+\[\forall \varepsilon > 0, \; \exists \delta > 0, \; \forall x \in I, \quad |x - x_0| < \delta \implies |f(x) - f(x_0)| < \varepsilon\]
+c'est-à-dire si $f$ admet une limite en $x_0$ et cette limite vaut $f(x_0)$.
+
+$f$ est \textbf{continue sur $I$} si elle est continue en tout point de $I$.
+\end{defbox}
+
+\begin{intuitionbox}[Interprétation visuelle]
+Une fonction est continue sur un intervalle si on peut tracer son graphe <<~sans lever le crayon~>>. La discontinuité se manifeste par un saut dans le graphe. La continuité dit que des perturbations infiniment petites de l'entrée produisent des perturbations infiniment petites de la sortie.
+\end{intuitionbox}
+
+\begin{exbox}[Fonctions continues classiques]
+Les fonctions suivantes sont continues sur leur domaine de définition : les constantes, $x \mapsto \sqrt{x}$ sur $[0, +\infty[$, $\sin$, $\cos$, $|x|$, $\exp$, $\ln$ sur $]0, +\infty[$. La fonction partie entière $E$ n'est pas continue aux points entiers.
+\end{exbox}
+
+\subsection{Propriétés}
+
+\begin{lemme}
+Soit $f : I \to \R$ continue en $x_0$ avec $f(x_0) \neq 0$. Alors il existe $\delta > 0$ tel que $\forall x \in ]x_0 - \delta, x_0 + \delta[, \; f(x) \neq 0$.
+\end{lemme}
+
+\begin{proofbox}
+Supposons $f(x_0) > 0$. Par continuité avec $\varepsilon = f(x_0)/2 > 0$, il existe $\delta > 0$ tel que $|x - x_0| < \delta \implies f(x) > f(x_0) - f(x_0)/2 = f(x_0)/2 > 0$. Donc $f(x) \neq 0$ dans $]x_0 - \delta, x_0 + \delta[$. Le cas $f(x_0) < 0$ est analogue.
+\end{proofbox}
+
+\begin{propbox}[--- Stabilité par opérations]
+Si $f$ et $g$ sont continues en $x_0$, alors $\lambda f$, $f + g$, $f \times g$ sont continues en $x_0$, et $1/f$ est continue en $x_0$ si $f(x_0) \neq 0$.
+\end{propbox}
+
+\begin{propbox}[--- Stabilité par composition]
+Si $f$ est continue en $x_0$ et $g$ est continue en $f(x_0)$, alors $g \circ f$ est continue en $x_0$.
+\end{propbox}
+
+\begin{exbox}[Conséquences]
+Les polynômes sont continus sur $\R$ (sommes et produits de fonctions continues). Les fractions rationnelles $P(x)/Q(x)$ sont continues partout où $Q(x) \neq 0$.
+\end{exbox}
+
+\subsection{Prolongement par continuité}
+
+\begin{defbox}[--- Prolongement par continuité]
+Soit $f : I \setminus \{x_0\} \to \R$. Si $f$ admet une limite finie $\ell = \lim_{x_0} f$, on définit le \textbf{prolongement par continuité} $\tilde{f} : I \to \R$ par $\tilde{f}(x) = f(x)$ si $x \neq x_0$ et $\tilde{f}(x_0) = \ell$. Alors $\tilde{f}$ est continue en $x_0$.
+\end{defbox}
+
+\begin{exbox}
+$f(x) = x \sin(1/x)$ sur $\R^*$ : comme $|f(x)| \leqslant |x| \to 0$, on prolonge par $\tilde{f}(0) = 0$.
+\end{exbox}
+
+\subsection{Suites et continuité}
+
+\begin{propbox}[--- Caractérisation séquentielle de la continuité]
+$f$ est continue en $x_0$ si et seulement si : pour toute suite $(u_n)$ convergeant vers $x_0$, la suite $(f(u_n))$ converge vers $f(x_0)$.
+\end{propbox}
+
+\begin{intuitionbox}[Application aux suites récurrentes]
+Si $f$ est continue et $u_n \to \ell$, alors $f(\ell) = \ell$ : les limites de suites récurrentes $u_{n+1} = f(u_n)$ sont des \textbf{points fixes} de $f$. On utilise intensivement cette propriété étudiée au chapitre 3.
+\end{intuitionbox}
+
+
+\section{Continuité sur un intervalle}
+
+\subsection{Théorème des valeurs intermédiaires}
+
+\begin{thmbox}[--- Théorème des valeurs intermédiaires (TVI)]
+Soit $f : [a, b] \to \R$ une fonction continue sur un segment. Pour tout réel $y$ compris entre $f(a)$ et $f(b)$, il existe $c \in [a, b]$ tel que $f(c) = y$.
+\end{thmbox}
+
+\begin{proofbox}
+(Cas $f(a) < f(b)$.) Soit $y \in [f(a), f(b)]$. On pose $A = \{x \in [a, b] \mid f(x) \leqslant y\}$. Cet ensemble est non vide ($a \in A$) et majoré par $b$, donc $c = \sup A$ existe.
+
+\textbf{Étape 1 :} $f(c) \leqslant y$. Il existe $(u_n)$ dans $A$ avec $u_n \to c$. Par continuité $f(u_n) \to f(c)$, et comme $f(u_n) \leqslant y$, on a $f(c) \leqslant y$.
+
+\textbf{Étape 2 :} $f(c) \geqslant y$. Si $c = b$, alors $f(b) \geqslant y$ directement. Sinon, pour $x \in ]c, b]$, $x \notin A$ donc $f(x) > y$. Par continuité à droite, $f(c) \geqslant y$.
+
+Conclusion : $f(c) = y$.
+\end{proofbox}
+
+\begin{corollaire}
+Si $f : [a, b] \to \R$ est continue et $f(a) \cdot f(b) < 0$, alors il existe $c \in ]a, b[$ tel que $f(c) = 0$.
+\end{corollaire}
+
+\begin{exbox}[Tout polynôme de degré impair a une racine réelle]
+Soit $P(x) = a_n x^n + \cdots + a_0$ avec $n$ impair et $a_n > 0$. Alors $\lim_{-\infty} P = -\infty$ et $\lim_{+\infty} P = +\infty$, donc il existe $a, b$ avec $P(a) < 0 < P(b)$. Par le TVI, $P$ s'annule.
+\end{exbox}
+
+\begin{corollaire}
+Si $f : I \to \R$ est continue sur un intervalle $I$, alors $f(I)$ est un intervalle.
+\end{corollaire}
+
+\subsection{Fonctions continues sur un segment}
+
+\begin{thmbox}[--- Image d'un segment]
+Si $f : [a, b] \to \R$ est continue, alors il existe $m, M \in \R$ tels que $f([a, b]) = [m, M]$.
+
+Autrement dit : $f$ est bornée et atteint ses bornes (elle admet un minimum $m$ et un maximum $M$).
+\end{thmbox}
+
+\begin{intuitionbox}[Importance pour l'optimisation]
+Ce théorème garantit qu'une fonction continue sur un segment admet toujours un minimum et un maximum. C'est la base théorique de tout problème d'optimisation sur un domaine borné fermé.
+\end{intuitionbox}
+
+
+\section{Fonctions monotones et bijections}
+
+\begin{thmbox}[--- Théorème de la bijection]
+Soit $f : I \to \R$ continue et strictement monotone sur un intervalle $I$. Alors :
+\begin{enumerate}[leftmargin=1cm]
+  \item $f$ est une bijection de $I$ dans $J = f(I)$.
+  \item La bijection réciproque $f^{-1} : J \to I$ est continue et strictement monotone de même sens de variation que $f$.
+\end{enumerate}
+\end{thmbox}
+
+\begin{proofbox}[Idée de la preuve]
+\textbf{Injectivité :} si $f$ est strictement monotone et $f(x) = f(x')$, alors $x < x'$ donnerait $f(x) \neq f(x')$ (contradiction), et de même $x > x'$, donc $x = x'$.
+
+\textbf{Surjectivité sur $J$ :} par le TVI, $f(I)$ est un intervalle, et c'est exactement $J$.
+
+\textbf{Continuité de $f^{-1}$ :} on fixe $y_0 \in J$, $x_0 = f^{-1}(y_0)$, $\varepsilon > 0$. Comme $f$ est strictement croissante, on choisit $\delta > 0$ tel que $f(x_0 - \varepsilon) < y_0 - \delta$ et $f(x_0 + \varepsilon) > y_0 + \delta$. Alors $|y - y_0| < \delta \implies |f^{-1}(y) - x_0| < \varepsilon$.
+\end{proofbox}
+
+\begin{exbox}[Fonction racine $n$-ième]
+$f : [0, +\infty[ \to [0, +\infty[$ définie par $f(x) = x^n$ est continue et strictement croissante, avec $\lim_{+\infty} f = +\infty$. Par le théorème de la bijection, $f$ est bijective et sa réciproque $f^{-1}(x) = x^{1/n} = \sqrt[n]{x}$ est continue et strictement croissante.
+\end{exbox}
+
+\begin{intuitionbox}[Lien avec le chapitre Ensembles]
+Le théorème de la bijection fait le lien entre l'analyse (continuité) et l'algèbre (bijection) étudiée au chapitre 5. La stricte monotonie garantit l'injectivité, le TVI garantit la surjectivité. En cryptographie, la bijectivité d'une fonction de chiffrement est essentielle pour pouvoir déchiffrer.
+\end{intuitionbox}
+
+
+% ─── SYNTHÈSE ───
+\section{Synthèse personnelle --- Limites et Continuité}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Le $\varepsilon$-$\delta$ généralise le $\varepsilon$-$N$ des suites.} La définition de limite pour les fonctions est la version continue de celle des suites. Le rang $N$ est remplacé par un voisinage $\delta$.
+
+\textbf{2. Le TVI est un théorème d'existence.} Il ne donne pas la valeur de la solution mais prouve qu'elle existe. C'est la philosophie de l'analyse : prouver l'existence avant de chercher la valeur.
+
+\textbf{3. Continuité $+$ monotonie $=$ bijection.} Cette combinaison est extrêmement puissante et réapparaît constamment. En crypto, on a besoin de fonctions bijectives (chiffrement/déchiffrement), et la monotonie stricte est un moyen simple de la garantir.
+
+\textbf{4. Les suites récurrentes bouclent.} La caractérisation séquentielle de la continuité relie directement ce chapitre au chapitre 3 (suites) : $f$ continue et $u_n \to \ell \implies f(\ell) = \ell$.
+\end{intuitionbox}
+
+

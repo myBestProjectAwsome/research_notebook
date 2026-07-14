@@ -1,0 +1,233 @@
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 7 : DÉRIVÉE D'UNE         ║
+% ║              FONCTION                 ║
+% ╚═══════════════════════════════════════╝
+\chapter{Dérivée d'une Fonction}
+
+\begin{intuitionbox}[Motivation]
+La continuité nous dit que $f(x) \approx f(x_0)$ pour $x$ proche de $x_0$ (approximation constante). La dérivée fait mieux : elle donne $f(x) \approx f(x_0) + f'(x_0)(x - x_0)$ (approximation affine par la tangente). Par exemple, $\sqrt{1{,}01} \approx 1 + \frac{0{,}01}{2} = 1{,}005$, ce qui est extrêmement précis.
+\end{intuitionbox}
+
+
+\section{Dérivée}
+
+\subsection{Dérivée en un point}
+
+\begin{defbox}[--- Dérivabilité]
+Soit $I$ un intervalle ouvert, $f : I \to \R$ et $x_0 \in I$. La fonction $f$ est \textbf{dérivable en $x_0$} si le taux d'accroissement admet une limite finie :
+\[f'(x_0) = \lim_{x \to x_0} \frac{f(x) - f(x_0)}{x - x_0}\]
+Ce nombre $f'(x_0)$ est le \textbf{nombre dérivé} de $f$ en $x_0$. $f$ est \textbf{dérivable sur $I$} si elle l'est en tout point de $I$.
+\end{defbox}
+
+\begin{exbox}
+$f(x) = x^2$ : $\displaystyle\frac{x^2 - x_0^2}{x - x_0} = \frac{(x - x_0)(x + x_0)}{x - x_0} = x + x_0 \xrightarrow{x \to x_0} 2x_0$. Donc $f'(x) = 2x$.
+\end{exbox}
+
+\begin{exbox}[Dérivée de $\sin$]
+On utilise $\frac{\sin x}{x} \to 1$ quand $x \to 0$ et la formule $\sin p - \sin q = 2\sin\frac{p-q}{2}\cos\frac{p+q}{2}$. Le taux d'accroissement se réécrit :
+\[\frac{\sin x - \sin x_0}{x - x_0} = \frac{\sin\frac{x-x_0}{2}}{\frac{x-x_0}{2}} \cdot \cos\frac{x+x_0}{2} \xrightarrow{x \to x_0} 1 \cdot \cos x_0\]
+Donc $(\sin)' = \cos$.
+\end{exbox}
+
+\subsection{Tangente}
+
+L'équation de la tangente au graphe de $f$ au point $(x_0, f(x_0))$ est :
+\[y = f'(x_0)(x - x_0) + f(x_0)\]
+
+\subsection{Écritures équivalentes}
+
+\begin{propbox}[--- Reformulations de la dérivabilité]
+$f$ est dérivable en $x_0$ si et seulement si :
+\begin{itemize}[leftmargin=1cm]
+  \item $\displaystyle\lim_{h \to 0} \frac{f(x_0 + h) - f(x_0)}{h}$ existe et est finie.
+  \item Il existe $\ell \in \R$ et $\varepsilon : I \to \R$ avec $\varepsilon(x) \to 0$ quand $x \to x_0$ tels que : $f(x) = f(x_0) + (x - x_0)\ell + (x - x_0)\varepsilon(x)$.
+\end{itemize}
+\end{propbox}
+
+\begin{propbox}[--- Dérivabilité implique continuité]
+Si $f$ est dérivable en $x_0$, alors $f$ est continue en $x_0$.
+
+\medskip
+\textbf{Attention :} la réciproque est fausse. Exemple : $f(x) = |x|$ est continue en $0$ mais pas dérivable en $0$ (le taux d'accroissement vaut $+1$ à droite et $-1$ à gauche).
+\end{propbox}
+
+\begin{proofbox}
+Si $f$ est dérivable en $x_0$, on écrit $f(x) = f(x_0) + (x - x_0)\ell + (x - x_0)\varepsilon(x)$, où $(x-x_0)\ell \to 0$ et $(x-x_0)\varepsilon(x) \to 0$ quand $x \to x_0$. Donc $f(x) \to f(x_0)$.
+\end{proofbox}
+
+
+\section{Calcul des dérivées}
+
+\subsection{Opérations}
+
+\begin{propbox}[--- Dérivées et opérations]
+Pour $f, g$ dérivables sur $I$ :
+\begin{itemize}[leftmargin=1cm]
+  \item $(f + g)' = f' + g'$ \quad et \quad $(\lambda f)' = \lambda f'$
+  \item $(f \times g)' = f'g + fg'$
+  \item $\displaystyle\left(\frac{1}{f}\right)' = -\frac{f'}{f^2}$ \quad (si $f \neq 0$)
+  \item $\displaystyle\left(\frac{f}{g}\right)' = \frac{f'g - fg'}{g^2}$ \quad (si $g \neq 0$)
+\end{itemize}
+\end{propbox}
+
+\subsection{Tableau des dérivées usuelles}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l||l|l|}
+\hline
+\textbf{Fonction} & \textbf{Dérivée} & \textbf{Composée} & \textbf{Dérivée} \\
+\hline
+$x^n$ & $nx^{n-1}$ & $u^n$ & $nu'u^{n-1}$ \\
+$\frac{1}{x}$ & $-\frac{1}{x^2}$ & $\frac{1}{u}$ & $-\frac{u'}{u^2}$ \\
+$\sqrt{x}$ & $\frac{1}{2\sqrt{x}}$ & $\sqrt{u}$ & $\frac{u'}{2\sqrt{u}}$ \\
+$x^\alpha$ & $\alpha x^{\alpha-1}$ & $u^\alpha$ & $\alpha u' u^{\alpha-1}$ \\
+$e^x$ & $e^x$ & $e^u$ & $u' e^u$ \\
+$\ln x$ & $\frac{1}{x}$ & $\ln u$ & $\frac{u'}{u}$ \\
+$\cos x$ & $-\sin x$ & $\cos u$ & $-u'\sin u$ \\
+$\sin x$ & $\cos x$ & $\sin u$ & $u'\cos u$ \\
+$\tan x$ & $1 + \tan^2 x = \frac{1}{\cos^2 x}$ & $\tan u$ & $\frac{u'}{\cos^2 u}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Composition}
+
+\begin{propbox}[--- Dérivée d'une composée]
+Si $f$ est dérivable en $x$ et $g$ est dérivable en $f(x)$, alors :
+\[(g \circ f)'(x) = g'(f(x)) \cdot f'(x)\]
+\end{propbox}
+
+\begin{exbox}
+$\frac{d}{dx}\ln(1 + x^2) = \frac{2x}{1 + x^2}$, car $g(x) = \ln x$ et $f(x) = 1 + x^2$.
+\end{exbox}
+
+\begin{corollaire}[Dérivée de la bijection réciproque]
+Si $f : I \to J$ est dérivable, bijective et $f' \neq 0$ sur $I$, alors $f^{-1}$ est dérivable et :
+\[(f^{-1})'(x) = \frac{1}{f'(f^{-1}(x))}\]
+\end{corollaire}
+
+\begin{rembox}[Astuce pratique]
+On peut retrouver la formule en dérivant $f(f^{-1}(x)) = x$ : cela donne $f'(f^{-1}(x)) \cdot (f^{-1})'(x) = 1$.
+\end{rembox}
+
+\subsection{Dérivées successives et formule de Leibniz}
+
+\begin{defbox}[--- Dérivées d'ordre supérieur]
+On note $f^{(0)} = f$, $f^{(1)} = f'$, $f^{(2)} = f''$, et $f^{(n+1)} = (f^{(n)})'$. Si $f^{(n)}$ existe, $f$ est dite $n$ fois dérivable.
+\end{defbox}
+
+\begin{thmbox}[--- Formule de Leibniz]
+\[(f \cdot g)^{(n)} = \sum_{k=0}^{n} \binom{n}{k} f^{(n-k)} \cdot g^{(k)}\]
+\end{thmbox}
+
+\begin{intuitionbox}[Analogie avec Newton]
+La formule de Leibniz est l'analogue pour les dérivées de la formule du binôme de Newton pour les puissances : $(a+b)^n = \sum \binom{n}{k} a^{n-k} b^k$. Les coefficients binomiaux apparaissent dans les deux cas.
+\end{intuitionbox}
+
+
+\section{Extremum local, théorème de Rolle}
+
+\subsection{Points critiques et extremums}
+
+\begin{defbox}[--- Points critiques et extremums]
+Soit $f : I \to \R$.
+\begin{itemize}[leftmargin=1cm]
+  \item $x_0$ est un \textbf{point critique} si $f'(x_0) = 0$.
+  \item $f$ admet un \textbf{maximum local} en $x_0$ s'il existe un voisinage $J$ de $x_0$ tel que $\forall x \in I \cap J, \; f(x) \leqslant f(x_0)$.
+  \item \textbf{Minimum local} : même définition avec $f(x) \geqslant f(x_0)$.
+\end{itemize}
+\end{defbox}
+
+\begin{thmbox}[--- Condition nécessaire d'extremum]
+Si $I$ est ouvert, $f : I \to \R$ est dérivable et $f$ admet un extremum local en $x_0$, alors $f'(x_0) = 0$.
+\end{thmbox}
+
+\begin{proofbox}
+Supposons $x_0$ maximum local. Pour $x < x_0$ : $\frac{f(x) - f(x_0)}{x - x_0} \geqslant 0$ donc $\lim_{x \to x_0^-} \geqslant 0$. Pour $x > x_0$ : $\frac{f(x) - f(x_0)}{x - x_0} \leqslant 0$ donc $\lim_{x \to x_0^+} \leqslant 0$. Comme $f$ est dérivable, les deux limites sont égales à $f'(x_0)$, d'où $f'(x_0) = 0$.
+\end{proofbox}
+
+\begin{rembox}[Réciproque fausse]
+$f(x) = x^3$ vérifie $f'(0) = 0$ mais $x_0 = 0$ n'est ni maximum ni minimum local.
+\end{rembox}
+
+\subsection{Théorème de Rolle}
+
+\begin{thmbox}[--- Théorème de Rolle]
+Soit $f : [a, b] \to \R$ telle que :
+\begin{itemize}[leftmargin=1cm]
+  \item $f$ est continue sur $[a, b]$,
+  \item $f$ est dérivable sur $]a, b[$,
+  \item $f(a) = f(b)$.
+\end{itemize}
+Alors il existe $c \in ]a, b[$ tel que $f'(c) = 0$.
+\end{thmbox}
+
+\begin{proofbox}
+Si $f$ est constante, tout $c$ convient. Sinon, il existe $x_0$ avec $f(x_0) \neq f(a)$. Supposons $f(x_0) > f(a)$. Par le théorème des bornes atteintes (chapitre 6), $f$ atteint son maximum en un point $c \in [a, b]$. Comme $f(c) \geqslant f(x_0) > f(a) = f(b)$, on a $c \neq a$ et $c \neq b$, donc $c \in ]a, b[$. En ce point, $f$ admet un maximum local et est dérivable, donc $f'(c) = 0$.
+\end{proofbox}
+
+
+\section{Théorème des accroissements finis}
+
+\begin{thmbox}[--- Théorème des accroissements finis (TAF)]
+Soit $f : [a, b] \to \R$ continue sur $[a, b]$ et dérivable sur $]a, b[$. Il existe $c \in ]a, b[$ tel que :
+\[f(b) - f(a) = f'(c)(b - a)\]
+\end{thmbox}
+
+\begin{proofbox}
+On pose $\ell = \frac{f(b) - f(a)}{b - a}$ et $g(x) = f(x) - \ell(x - a)$. Alors $g(a) = f(a)$ et $g(b) = f(a)$, donc par Rolle il existe $c \in ]a, b[$ tel que $g'(c) = 0$, i.e. $f'(c) = \ell = \frac{f(b) - f(a)}{b - a}$.
+\end{proofbox}
+
+\begin{intuitionbox}[Interprétation géométrique]
+Le TAF dit qu'il existe un point où la tangente est parallèle à la corde reliant les extrémités. C'est <<~Rolle rendu oblique~>> : on ramène le cas général à $f(a) = f(b)$ en soustrayant la droite.
+\end{intuitionbox}
+
+\subsection{Signe de la dérivée et variations}
+
+\begin{corollaire}[Lien dérivée-monotonie]
+Soit $f : [a, b] \to \R$ continue sur $[a, b]$ et dérivable sur $]a, b[$.
+\begin{itemize}[leftmargin=1cm]
+  \item $f' \geqslant 0$ sur $]a, b[$ $\iff$ $f$ est croissante.
+  \item $f' \leqslant 0$ sur $]a, b[$ $\iff$ $f$ est décroissante.
+  \item $f' = 0$ sur $]a, b[$ $\iff$ $f$ est constante.
+  \item $f' > 0$ sur $]a, b[$ $\implies$ $f$ est strictement croissante.
+\end{itemize}
+\end{corollaire}
+
+\subsection{Inégalité des accroissements finis}
+
+\begin{corollaire}[Inégalité des accroissements finis]
+Si $f : I \to \R$ est dérivable et $|f'(x)| \leqslant M$ pour tout $x \in I$, alors :
+\[\forall x, y \in I, \quad |f(x) - f(y)| \leqslant M|x - y|\]
+\end{corollaire}
+
+\begin{exbox}
+Pour $f(x) = \sin x$, $|f'(x)| = |\cos x| \leqslant 1$, donc $|\sin x - \sin y| \leqslant |x - y|$ pour tout $x, y$. En particulier $|\sin x| \leqslant |x|$.
+\end{exbox}
+
+\subsection{Règle de l'Hospital}
+
+\begin{corollaire}[Règle de l'Hospital]
+Soient $f, g : I \to \R$ dérivables, $x_0 \in I$, $f(x_0) = g(x_0) = 0$ et $g'(x) \neq 0$ pour $x \neq x_0$. Si $\displaystyle\lim_{x \to x_0} \frac{f'(x)}{g'(x)} = \ell$, alors $\displaystyle\lim_{x \to x_0} \frac{f(x)}{g(x)} = \ell$.
+\end{corollaire}
+
+\begin{exbox}
+$\displaystyle\lim_{x \to 1} \frac{\ln(x^2 + x - 1)}{\ln x}$ : $f(1) = g(1) = 0$, $\frac{f'(x)}{g'(x)} = \frac{2x+1}{x^2+x-1} \cdot x = \frac{2x^2 + x}{x^2 + x - 1} \to 3$ quand $x \to 1$.
+\end{exbox}
+
+
+% ─── SYNTHÈSE ───
+\section{Synthèse personnelle --- Dérivées}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. Hiérarchie d'approximation.} Continuité $\to$ approximation constante. Dérivabilité $\to$ approximation affine (tangente). Dérivées successives $\to$ approximation polynomiale (Taylor, à venir).
+
+\textbf{2. Dérivabilité $\implies$ continuité, pas l'inverse.} C'est une implication stricte ($|x|$ est le contre-exemple canonique). La dérivabilité est une propriété plus forte.
+
+\textbf{3. Le TAF est le couteau suisse de l'analyse.} Il permet de passer d'informations locales ($f'$) à des informations globales ($f(b) - f(a)$). Tous les corollaires (monotonie, inégalité, Hospital) en découlent.
+
+\textbf{4. Leibniz et Newton, même combat.} La formule de Leibniz pour $(fg)^{(n)}$ et le binôme de Newton pour $(a+b)^n$ partagent les mêmes coefficients binomiaux --- c'est le chapitre 5 (dénombrement) qui réapparaît en analyse.
+\end{intuitionbox}
+
+

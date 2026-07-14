@@ -1,0 +1,225 @@
+\documentclass[12pt,a4paper]{report}
+
+% ── Encodage et langue ──
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% babel french non disponible dans cet environnement
+% Pour compiler localement, décommenter :
+% \usepackage[french]{babel}
+
+% ── Mise en page ──
+\usepackage[margin=2.5cm, top=3cm, bottom=3cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\onehalfspacing
+
+% ── Mathématiques ──
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% ── Graphiques et couleurs ──
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, positioning, decorations.pathreplacing, matrix}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+
+% ── Divers ──
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{bookmark}
+% microtype désactivé (incompatible avec les polices disponibles)
+% \usepackage{microtype}
+
+% ═══════════════════════════════════════
+%   PALETTE DE COULEURS
+% ═══════════════════════════════════════
+\definecolor{deepblue}{HTML}{1B3A5C}
+\definecolor{accentblue}{HTML}{2E86C1}
+\definecolor{lightblue}{HTML}{D6EAF8}
+\definecolor{deepgreen}{HTML}{1E6F50}
+\definecolor{lightgreen}{HTML}{D5F5E3}
+\definecolor{deepred}{HTML}{922B21}
+\definecolor{lightred}{HTML}{FADBD8}
+\definecolor{deeporange}{HTML}{B9770E}
+\definecolor{lightorange}{HTML}{FDEBD0}
+\definecolor{deeppurple}{HTML}{6C3483}
+\definecolor{lightpurple}{HTML}{EBDEF0}
+\definecolor{darkgray}{HTML}{2C3E50}
+\definecolor{pagebg}{HTML}{FDFEFE}
+
+% ═══════════════════════════════════════
+%   ENVIRONNEMENTS THÉORIQUES
+% ═══════════════════════════════════════
+\theoremstyle{definition}
+\newtheorem{definition}{Définition}[chapter]
+\newtheorem{exemple}{Exemple}[chapter]
+
+\theoremstyle{plain}
+\newtheorem{theoreme}{Théorème}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{corollaire}{Corollaire}[chapter]
+\newtheorem{lemme}{Lemme}[chapter]
+
+\theoremstyle{remark}
+\newtheorem{remarque}{Remarque}[chapter]
+
+% ═══════════════════════════════════════
+%   BOÎTES COLORÉES (tcolorbox)
+% ═══════════════════════════════════════
+
+% Boîte Définition
+\newtcolorbox{defbox}[1][]{
+  colback=lightblue,
+  colframe=accentblue,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={Définition~#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% Boîte Théorème
+\newtcolorbox{thmbox}[1][]{
+  colback=lightgreen,
+  colframe=deepgreen,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={Théorème~#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% Boîte Proposition
+\newtcolorbox{propbox}[1][]{
+  colback=lightgreen!60,
+  colframe=deepgreen!70,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={Proposition~#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% Boîte Preuve / Démonstration
+\newtcolorbox{proofbox}[1][Démonstration]{
+  colback=white,
+  colframe=darkgray!50,
+  coltitle=darkgray,
+  fonttitle=\itshape\sffamily,
+  title={#1},
+  arc=2pt,
+  boxrule=0.5pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  breakable
+}
+
+% Boîte Remarque
+\newtcolorbox{rembox}[1][Remarque]{
+  colback=lightorange,
+  colframe=deeporange,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% Boîte Exemple
+\newtcolorbox{exbox}[1][Exemple]{
+  colback=lightpurple!50,
+  colframe=deeppurple!70,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={#1},
+  arc=3pt,
+  boxrule=1pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  breakable
+}
+
+% Boîte Intuition personnelle
+\newtcolorbox{intuitionbox}[1][Mon intuition]{
+  colback=lightred!40,
+  colframe=deepred!70,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={\(\star\) #1},
+  arc=3pt,
+  boxrule=1.5pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  breakable
+}
+
+% Boîte Méthode
+\newtcolorbox{methodbox}[1][Méthode]{
+  enhanced,
+  colback=white,
+  colframe=accentblue!80,
+  coltitle=white,
+  fonttitle=\bfseries\sffamily,
+  title={#1},
+  arc=3pt,
+  boxrule=1.5pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  shadow={2pt}{-2pt}{0pt}{black!20},
+  breakable
+}
+
+% ═══════════════════════════════════════
+%   EN-TÊTES ET PIEDS DE PAGE
+% ═══════════════════════════════════════
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\sffamily\color{darkgray}\leftmark}
+\fancyhead[R]{\small\sffamily\color{darkgray}Cahier de Recherche}
+\fancyfoot[C]{\small\sffamily\color{darkgray}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ═══════════════════════════════════════
+%   FORMAT DES TITRES
+% ═══════════════════════════════════════
+\titleformat{\chapter}[display]
+  {\normalfont\Huge\bfseries\sffamily\color{deepblue}}
+  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\sffamily\color{deepblue}}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\sffamily\color{accentblue}}
+  {\thesubsection}{1em}{}
+
+% ═══════════════════════════════════════
+%   COMMANDES PERSONNALISÉES
+% ═══════════════════════════════════════
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\K}{\mathbb{K}}
+\DeclareMathOperator{\re}{Re}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\argop}{arg}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Ima}{Im}
+\newcommand{\abs}[1]{\left|#1\right|}
+
+% ═══════════════════════════════════════
+%   HYPERREF CONFIG
+% ═══════════════════════════════════════
+\hypersetup{
+  colorlinks=true,
+  linkcolor=deepblue,
+  urlcolor=accentblue,
+  citecolor=deepgreen,
+  pdftitle={Cahier de Recherche -- Mathématiques},
+  pdfauthor={},
+  bookmarksnumbered=true,
+}
+

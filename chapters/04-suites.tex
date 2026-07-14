@@ -1,0 +1,330 @@
+% ╔═══════════════════════════════════════╗
+% ║   CHAPITRE 4 : LES SUITES            ║
+% ╚═══════════════════════════════════════╝
+\chapter{Les Suites Numériques}
+
+\section{Définitions fondamentales}
+
+\begin{defbox}[--- Suite numérique]
+Une \textbf{suite} est une application $u : \N \to \R$ (ou $\C$). Pour $n \in \N$, on note $u(n) = u_n$ le \textbf{terme général}. La suite est notée $(u_n)_{n \in \N}$ ou $(u_n)_{n \geqslant n_0}$.
+\end{defbox}
+
+\begin{defbox}[--- Bornitude]
+Soit $(u_n)$ une suite.
+\begin{itemize}[leftmargin=1cm]
+  \item $(u_n)$ est \textbf{majorée} si $\exists M \in \R,\; \forall n \in \N,\; u_n \leqslant M$.
+  \item $(u_n)$ est \textbf{minorée} si $\exists m \in \R,\; \forall n \in \N,\; u_n \geqslant m$.
+  \item $(u_n)$ est \textbf{bornée} si $\exists M \in \R,\; \forall n \in \N,\; |u_n| \leqslant M$.
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}[--- Monotonie]
+\begin{itemize}[leftmargin=1cm]
+  \item $(u_n)$ est \textbf{croissante} si $\forall n \in \N,\; u_{n+1} \geqslant u_n$, soit $u_{n+1} - u_n \geqslant 0$.
+  \item Pour une suite à termes \textbf{strictement positifs} : $(u_n)$ croissante $\Leftrightarrow$ $\forall n,\; \frac{u_{n+1}}{u_n} \geqslant 1$.
+\end{itemize}
+\end{defbox}
+
+
+\section{Limites}
+
+\subsection{Définition formelle}
+
+\begin{defbox}[--- Limite finie]
+La suite $(u_n)$ a pour limite $\ell \in \R$ si :
+\[
+  \forall \varepsilon > 0,\; \exists N \in \N,\; \forall n \geqslant N,\; |u_n - \ell| \leqslant \varepsilon
+\]
+On note $\displaystyle\lim_{n \to +\infty} u_n = \ell$. La suite est alors dite \textbf{convergente}.
+\end{defbox}
+
+\begin{defbox}[--- Limite infinie]
+$(u_n)$ tend vers $+\infty$ si :
+\[
+  \forall A > 0,\; \exists N \in \N,\; \forall n \geqslant N,\; u_n \geqslant A
+\]
+\end{defbox}
+
+\begin{intuitionbox}[Lecture de la définition $\varepsilon$-$N$]
+La définition dit : <<~quel que soit le niveau de précision $\varepsilon$ que l'on exige, il existe un rang $N$ à partir duquel tous les termes de la suite sont dans la bande $[\ell - \varepsilon,\, \ell + \varepsilon]$~>>.
+
+\textbf{Attention à l'ordre :} $N$ \emph{dépend} de $\varepsilon$. Plus $\varepsilon$ est petit, plus $N$ est grand (en général). On ne peut \textbf{pas} échanger $\forall \varepsilon$ et $\exists N$.
+\end{intuitionbox}
+
+\subsection{Unicité de la limite}
+
+\begin{propbox}[--- Unicité]
+Si une suite converge, sa limite est unique.
+\end{propbox}
+
+\begin{proofbox}
+Par l'absurde. Supposons $u_n \to \ell$ et $u_n \to \ell'$ avec $\ell \neq \ell'$. Posons $\varepsilon = \frac{|\ell - \ell'|}{2} > 0$.
+\begin{itemize}[leftmargin=1cm]
+  \item Il existe $N_1$ tel que $n \geqslant N_1 \Rightarrow |u_n - \ell| < \varepsilon$.
+  \item Il existe $N_2$ tel que $n \geqslant N_2 \Rightarrow |u_n - \ell'| < \varepsilon$.
+\end{itemize}
+Pour $N = \max(N_1, N_2)$, l'inégalité triangulaire donne :
+\[
+  |\ell - \ell'| = |\ell - u_N + u_N - \ell'| \leqslant |u_N - \ell| + |u_N - \ell'| < 2\varepsilon = |\ell - \ell'|
+\]
+Contradiction : $|\ell - \ell'| < |\ell - \ell'|$. Donc $\ell = \ell'$. \hfill$\square$
+\end{proofbox}
+
+\subsection{Opérations sur les limites}
+
+\begin{propbox}[--- Opérations (cas fini)]
+Si $\displaystyle\lim u_n = \ell$ et $\displaystyle\lim v_n = \ell'$ (limites finies), alors :
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $\displaystyle\lim (\lambda u_n) = \lambda \ell$ \quad pour $\lambda \in \R$.
+  \item $\displaystyle\lim (u_n + v_n) = \ell + \ell'$.
+  \item $\displaystyle\lim (u_n \cdot v_n) = \ell \cdot \ell'$.
+  \item Si $\ell \neq 0$, alors $u_n \neq 0$ pour $n$ assez grand et $\displaystyle\lim \frac{1}{u_n} = \frac{1}{\ell}$.
+\end{enumerate}
+\end{propbox}
+
+\begin{rembox}[Formes indéterminées]
+Certaines combinaisons ne permettent pas de conclure directement :
+\[
+  +\infty - \infty, \qquad 0 \times \infty, \qquad \frac{\infty}{\infty}, \qquad \frac{0}{0}, \qquad 1^\infty
+\]
+Il faut alors une étude au cas par cas (factorisation, encadrement, etc.).
+\end{rembox}
+
+
+\section{Théorèmes d'encadrement}
+
+\begin{thmbox}[--- Théorème des gendarmes]
+Si $u_n \leqslant v_n \leqslant w_n$ pour tout $n$ et $\displaystyle\lim u_n = \lim w_n = \ell$, alors $(v_n)$ converge et $\displaystyle\lim v_n = \ell$.
+\end{thmbox}
+
+\begin{proofbox}
+En soustrayant $(u_n)$, on se ramène à montrer : si $0 \leqslant v_n' \leqslant w_n'$ et $\lim w_n' = 0$, alors $\lim v_n' = 0$.
+
+Soit $\varepsilon > 0$. Il existe $N$ tel que $n \geqslant N \Rightarrow |w_n'| < \varepsilon$. Comme $|v_n'| = v_n' \leqslant w_n' = |w_n'|$, on a $|v_n'| < \varepsilon$ pour $n \geqslant N$. \hfill$\square$
+\end{proofbox}
+
+\begin{propbox}[--- Suite convergente $\Rightarrow$ suite bornée]
+Toute suite convergente est bornée.
+\end{propbox}
+
+\begin{proofbox}
+Soit $(u_n)$ convergente vers $\ell$. Pour $\varepsilon = 1$, il existe $N$ tel que $n \geqslant N \Rightarrow |u_n| \leqslant |\ell| + 1$.
+
+Posons $M = \max(|u_0|, |u_1|, \ldots, |u_{N-1}|, |\ell| + 1)$. Alors $|u_n| \leqslant M$ pour tout $n$. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[La réciproque est fausse !]
+La suite $u_n = (-1)^n$ est bornée (par 1) mais diverge. La bornitude est nécessaire mais pas suffisante pour la convergence. Il faut ajouter la monotonie (théorème de la suite monotone) ou une autre condition.
+\end{intuitionbox}
+
+
+\section{Exemples remarquables}
+
+\subsection{Suite géométrique}
+
+\begin{propbox}[--- Suite géométrique $u_n = a^n$]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item $a = 1$ : $u_n = 1$ pour tout $n$.
+  \item $a > 1$ : $\lim u_n = +\infty$.
+  \item $-1 < a < 1$ : $\lim u_n = 0$.
+  \item $a \leqslant -1$ : $(u_n)$ diverge.
+\end{enumerate}
+
+\textbf{Somme partielle} ($a \neq 1$) :
+\[
+  \sum_{k=0}^{n} a^k = \frac{1 - a^{n+1}}{1 - a}
+\]
+Si $|a| < 1$ : $\displaystyle\sum_{k=0}^{+\infty} a^k = \frac{1}{1-a}$.
+\end{propbox}
+
+\begin{intuitionbox}[La somme télescopique cachée]
+La preuve de la somme géométrique est un pattern télescopique : en multipliant $S = 1 + a + \cdots + a^n$ par $(1-a)$, les termes intermédiaires s'annulent deux à deux, ne laissant que $1 - a^{n+1}$.
+
+Ce mécanisme revient constamment : somme télescopique, produit télescopique, ou même le calcul de l'inverse d'une matrice par élimination.
+\end{intuitionbox}
+
+\subsection{Le critère du rapport}
+
+\begin{thmbox}[--- Critère $|u_{n+1}/u_n| < \ell < 1$]
+Si $(u_n)$ est une suite de réels non nuls et s'il existe $\ell < 1$ tel que $\left|\frac{u_{n+1}}{u_n}\right| < \ell$ pour tout $n$ (ou à partir d'un certain rang), alors $\lim u_n = 0$.
+\end{thmbox}
+
+\begin{proofbox}
+On écrit $\frac{u_n}{u_0} = \frac{u_1}{u_0} \cdot \frac{u_2}{u_1} \cdots \frac{u_n}{u_{n-1}}$, d'où $|u_n| < |u_0| \cdot \ell^n$. Comme $\ell < 1$, $\ell^n \to 0$ et donc $u_n \to 0$. \hfill$\square$
+\end{proofbox}
+
+\begin{exbox}[Application classique : $\lim \frac{a^n}{n!} = 0$]
+Pour $u_n = \frac{a^n}{n!}$ (avec $a$ fixé), on a $\frac{u_{n+1}}{u_n} = \frac{a}{n+1} \to 0$. Donc $\lim u_n = 0$.
+
+\textbf{Interprétation :} la factorielle croît plus vite que n'importe quelle exponentielle.
+\end{exbox}
+
+
+\section{Théorèmes de convergence}
+
+\subsection{Suite monotone bornée}
+
+\begin{thmbox}[--- Convergence monotone]
+Toute suite croissante et majorée est convergente.
+
+\medskip
+\textit{Variantes :}
+\begin{itemize}[leftmargin=1cm]
+  \item Suite décroissante et minorée $\Rightarrow$ convergente.
+  \item Suite croissante non majorée $\Rightarrow$ tend vers $+\infty$.
+\end{itemize}
+\end{thmbox}
+
+\begin{proofbox}
+Soit $A = \{u_n \mid n \in \N\}$. L'ensemble $A$ est non vide et majoré, donc admet une borne supérieure $\ell = \sup A$ (propriété de $\R$).
+
+Soit $\varepsilon > 0$. Par caractérisation de la borne supérieure, il existe $u_N \in A$ tel que $\ell - \varepsilon < u_N \leqslant \ell$.
+
+Comme $(u_n)$ est croissante, pour $n \geqslant N$ : $\ell - \varepsilon < u_N \leqslant u_n \leqslant \ell$, donc $|u_n - \ell| \leqslant \varepsilon$. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Pourquoi ce théorème est si puissant]
+Ce théorème permet de prouver la convergence \emph{sans connaître la limite}. On montre séparément :
+\begin{enumerate}[leftmargin=1cm]
+  \item La monotonie (souvent par récurrence ou par étude du signe de $u_{n+1} - u_n$).
+  \item La bornitude (souvent par récurrence ou majoration).
+\end{enumerate}
+La limite est ensuite déterminée par passage à la limite dans la relation de récurrence (pour les suites récurrentes) ou par identification.
+\end{intuitionbox}
+
+\subsection{Suites adjacentes}
+
+\begin{defbox}[--- Suites adjacentes]
+Les suites $(u_n)$ et $(v_n)$ sont \textbf{adjacentes} si :
+\begin{enumerate}[leftmargin=1cm]
+  \item $(u_n)$ est croissante et $(v_n)$ est décroissante,
+  \item $\forall n,\; u_n \leqslant v_n$,
+  \item $\lim(v_n - u_n) = 0$.
+\end{enumerate}
+\end{defbox}
+
+\begin{thmbox}[--- Convergence des suites adjacentes]
+Si $(u_n)$ et $(v_n)$ sont adjacentes, elles convergent vers la même limite $\ell$, avec :
+\[
+  u_0 \leqslant u_1 \leqslant \cdots \leqslant u_n \leqslant \cdots \leqslant \ell \leqslant \cdots \leqslant v_n \leqslant \cdots \leqslant v_1 \leqslant v_0
+\]
+\end{thmbox}
+
+\begin{proofbox}
+$(u_n)$ est croissante et majorée par $v_0$ : elle converge vers $\ell$.
+
+$(v_n)$ est décroissante et minorée par $u_0$ : elle converge vers $\ell'$.
+
+Enfin $\ell' - \ell = \lim(v_n - u_n) = 0$, donc $\ell' = \ell$. \hfill$\square$
+\end{proofbox}
+
+
+\subsection{Suites extraites et Bolzano-Weierstrass}
+
+\begin{defbox}[--- Suite extraite]
+Une \textbf{suite extraite} de $(u_n)$ est une suite $(u_{\varphi(n)})$ où $\varphi : \N \to \N$ est strictement croissante.
+\end{defbox}
+
+\begin{propbox}
+Si $\lim u_n = \ell$, alors toute suite extraite converge aussi vers $\ell$.
+
+\textbf{Contraposée :} si deux sous-suites convergent vers des limites distinctes, la suite diverge.
+\end{propbox}
+
+\begin{thmbox}[--- Bolzano-Weierstrass]
+Toute suite bornée admet une sous-suite convergente.
+\end{thmbox}
+
+\begin{proofbox}[Démonstration (par dichotomie)]
+Les valeurs de $(u_n)$ sont contenues dans $[a_0, b_0]$. On coupe en deux : au moins l'un des sous-intervalles contient $u_n$ pour une infinité d'indices. On note $[a_1, b_1]$ cet intervalle et on choisit $\varphi(1) > \varphi(0)$ tel que $u_{\varphi(1)} \in [a_1, b_1]$.
+
+En itérant, on construit :
+\begin{itemize}[leftmargin=1cm]
+  \item des intervalles emboîtés $[a_k, b_k]$ de longueur $\frac{b_0 - a_0}{2^k} \to 0$,
+  \item une suite extraite $(u_{\varphi(n)})$ avec $u_{\varphi(n)} \in [a_n, b_n]$.
+\end{itemize}
+Les suites $(a_n)$ et $(b_n)$ sont adjacentes, elles convergent vers un même $\ell$. Par le théorème des gendarmes, $u_{\varphi(n)} \to \ell$. \hfill$\square$
+\end{proofbox}
+
+
+\section{Suites récurrentes}
+
+\begin{defbox}[--- Suite récurrente]
+Soit $f : \R \to \R$. Une suite récurrente est définie par :
+\[
+  u_0 \in \R \quad \text{et} \quad u_{n+1} = f(u_n) \;\text{ pour } n \geqslant 0.
+\]
+\end{defbox}
+
+\begin{propbox}[--- Points fixes et limite]
+Si $f$ est continue et $(u_n)$ converge vers $\ell$, alors $f(\ell) = \ell$ \quad ($\ell$ est un \textbf{point fixe} de $f$).
+\end{propbox}
+
+\begin{proofbox}
+Comme $u_n \to \ell$ et $f$ continue, $f(u_n) \to f(\ell)$. Or $f(u_n) = u_{n+1} \to \ell$. Par unicité de la limite, $f(\ell) = \ell$. \hfill$\square$
+\end{proofbox}
+
+\begin{methodbox}[Étude complète d'une suite récurrente $u_{n+1} = f(u_n)$]
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Tracer} le graphe de $f$ et la droite $y = x$ (indispensable).
+  \item \textbf{Points fixes :} résoudre $f(\ell) = \ell$.
+  \item \textbf{Stabilité :} montrer que $f([a,b]) \subset [a,b]$ pour un intervalle bien choisi.
+  \item \textbf{Monotonie :} étudier le signe de $f(x) - x$ ou utiliser la croissance/décroissance de $f$.
+  \item \textbf{Convergence :} appliquer le théorème de convergence monotone.
+  \item \textbf{Identifier la limite :} parmi les points fixes.
+\end{enumerate}
+\end{methodbox}
+
+\subsection{Cas $f$ croissante}
+
+\begin{propbox}
+Si $f : [a,b] \to [a,b]$ est continue et croissante, et $u_0 \in [a,b]$, alors $(u_n)$ est \textbf{monotone} et converge vers un point fixe $\ell \in [a,b]$.
+\begin{itemize}[leftmargin=1cm]
+  \item Si $u_1 \geqslant u_0$ : $(u_n)$ croissante.
+  \item Si $u_1 \leqslant u_0$ : $(u_n)$ décroissante.
+\end{itemize}
+\end{propbox}
+
+\subsection{Cas $f$ décroissante}
+
+\begin{propbox}
+Si $f : [a,b] \to [a,b]$ est continue et décroissante, alors :
+\begin{itemize}[leftmargin=1cm]
+  \item La sous-suite $(u_{2n})$ converge vers $\ell$ vérifiant $f \circ f(\ell) = \ell$.
+  \item La sous-suite $(u_{2n+1})$ converge vers $\ell'$ vérifiant $f \circ f(\ell') = \ell'$.
+\end{itemize}
+On étudie $f \circ f$ (qui est croissante) pour se ramener au cas précédent.
+\end{propbox}
+
+\begin{exbox}[Le nombre d'or comme point fixe]
+Soit $f(x) = 1 + \frac{1}{x}$ et $u_0 > 0$ avec $u_{n+1} = f(u_n)$.
+
+$f$ est décroissante sur $]0, +\infty[$. On calcule $f \circ f(x) = \frac{2x+1}{x+1}$.
+
+Les points fixes de $f \circ f$ : $\frac{2x+1}{x+1} = x \Leftrightarrow x^2 - x - 1 = 0$, dont la racine positive est $\ell = \frac{1 + \sqrt{5}}{2}$ --- le nombre d'or.
+
+On montre que $(u_{2n})$ et $(u_{2n+1})$ convergent toutes deux vers $\varphi = \frac{1+\sqrt{5}}{2}$.
+\end{exbox}
+
+\begin{intuitionbox}[Escalier vs escargot]
+\textbf{$f$ croissante :} le graphe donne un <<~escalier~>> (monotone). Les termes montent ou descendent vers le point fixe.
+
+\textbf{$f$ décroissante :} le graphe donne un <<~escargot~>> (spirale). Les termes alternent de part et d'autre du point fixe, se rapprochant en spirale.
+
+Toujours tracer le graphe : il dit immédiatement si la suite converge et vers quel point fixe.
+\end{intuitionbox}
+
+
+\section{Synthèse personnelle --- Suites}
+
+\begin{intuitionbox}[Connexions identifiées]
+\textbf{1. La logique au service de l'analyse.} La définition $\varepsilon$-$N$ de la convergence est une phrase logique avec quantificateurs imbriqués. Nier cette définition (pour montrer la divergence) exige exactement les compétences du chapitre 1.
+
+\textbf{2. Les complexes dans les suites.} La somme géométrique $\sum a^k = \frac{1 - a^{n+1}}{1-a}$ est valable pour $a \in \C$. Les racines de l'unité (chapitre 2) sont reliées aux suites récurrentes via les suites définies par $u_{n+1} = e^{2i\pi/n} \cdot u_n$.
+
+\textbf{3. Pattern récurrent : séparer existence et calcul.} Les théorèmes de convergence monotone et de Bolzano-Weierstrass prouvent l'\emph{existence} d'une limite sans la calculer. L'identification de la limite (point fixe, borne sup) est une étape distincte. Cette séparation est un principe fondamental en mathématiques.
+
+\textbf{4. La borne supérieure comme clé de voûte.} Le théorème de convergence monotone repose sur la propriété de la borne supérieure de $\R$, qui est l'axiome fondamental distinguant $\R$ de $\Q$. C'est pourquoi les suites de rationnels peuvent converger vers un irrationnel (par ex. les approximations décimales de $\pi$).
+\end{intuitionbox}
+
+

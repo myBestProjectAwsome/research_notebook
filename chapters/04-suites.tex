@@ -388,6 +388,36 @@ Cet exercice est une version <<~explicite~>> de la remarque faite plus haut sur 
 \end{intuitionbox}
 
 
+\begin{exbox}[Exercice 1.3 --- Décroissance à partir d'un certain rang]
+Montrer que $u_n = \dfrac{3^n}{n!}$ est décroissante à partir d'un certain rang (préciser lequel).
+\end{exbox}
+
+\begin{proofbox}[Solution]
+\textbf{Étape 1 : le rapport de deux termes consécutifs.} Pour tout $n \in \N$, $u_n > 0$, donc on peut former :
+\[
+  \frac{u_{n+1}}{u_n} = \frac{3^{n+1}/(n+1)!}{3^n/n!} = 3 \cdot \frac{n!}{(n+1)!} = \frac{3}{n+1}
+\]
+
+\textbf{Étape 2 : comparer ce rapport à $1$.}
+\[
+  \frac{u_{n+1}}{u_n} \leqslant 1 \quad\Longleftrightarrow\quad \frac{3}{n+1} \leqslant 1 \quad\Longleftrightarrow\quad n \geqslant 2
+\]
+Précisément : pour $n = 2$, le rapport vaut exactement $1$ ($u_2 = u_3 = \frac{9}{2}$) ; pour $n \geqslant 3$, $\frac{3}{n+1} < 1$ strictement, donc $u_{n+1} < u_n$.
+
+\textbf{Étape 3 : vérification numérique.}
+\[
+  u_0 = 1, \quad u_1 = 3, \quad u_2 = \frac{9}{2}, \quad u_3 = \frac{9}{2}, \quad u_4 = \frac{27}{8}, \quad u_5 = \frac{81}{40}
+\]
+La suite croît strictement de $u_0$ à $u_2$, stagne entre $u_2$ et $u_3$, puis décroît strictement.
+
+\textbf{Conclusion.} $(u_n)$ est \textbf{décroissante à partir du rang $n = 2$} (au sens large, avec égalité en ce seul point), et \textbf{strictement décroissante à partir du rang $n = 3$}. \hfill$\square$
+\end{proofbox}
+
+\begin{intuitionbox}[Lien avec le critère du rapport]
+Cette suite est exactement l'exemple $u_n = \frac{a^n}{n!}$ du critère du rapport (avec $a = 3$), où l'on avait établi $\lim u_n = 0$ (section précédente). L'exercice en donne une seconde lecture : $(u_n)$ est minorée par $0$ (quotient de deux termes positifs) et décroissante à partir du rang $3$. Le théorème de convergence monotone garantit alors la convergence, et en passant à la limite dans $u_{n+1} = \frac{3}{n+1} u_n$ --- où $\frac{3}{n+1} \to 0$ --- on retrouve $\ell = 0$. Deux méthodes indépendantes, une même limite : c'est souvent le signe qu'on a bien compris la suite.
+\end{intuitionbox}
+
+
 \section{Synthèse personnelle --- Suites}
 
 \begin{intuitionbox}[Connexions identifiées]

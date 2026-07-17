@@ -17,6 +17,17 @@
 % ── Mathématiques ──
 \usepackage{amsmath, amssymb, amsthm, mathtools}
 
+% ═══════════════════════════════════════
+%   POLICES
+%   Corps : Palatino (newpx) · Titres : Fira Sans · Code : Inconsolata
+% ═══════════════════════════════════════
+\let\Bbbk\relax                       % évite le conflit amssymb / newpxmath
+\usepackage[scaled=.98]{newpxtext}
+\usepackage[varg,bigdelims]{newpxmath}
+\usepackage[scaled=0.92]{FiraSans}    % \sffamily (titres, encadrés)
+\usepackage[varqu,scaled=0.86]{zi4}   % \ttfamily (code, Inconsolata)
+\usepackage[activate={true,nocompatibility},final,tracking=true,factor=1100]{microtype}
+
 % ── Graphiques et couleurs ──
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, calc, positioning, decorations.pathreplacing, matrix}
@@ -25,10 +36,9 @@
 
 % ── Divers ──
 \usepackage{enumitem}
+\setlist{itemsep=2pt, topsep=4pt, parsep=0pt}
 \usepackage{hyperref}
 \usepackage{bookmark}
-% microtype désactivé (incompatible avec les polices disponibles)
-% \usepackage{microtype}
 
 % ═══════════════════════════════════════
 %   PALETTE DE COULEURS
@@ -45,6 +55,7 @@
 \definecolor{deeppurple}{HTML}{6C3483}
 \definecolor{lightpurple}{HTML}{EBDEF0}
 \definecolor{darkgray}{HTML}{2C3E50}
+\definecolor{softgray}{HTML}{7F8C9B}
 \definecolor{pagebg}{HTML}{FDFEFE}
 
 % ═══════════════════════════════════════
@@ -67,131 +78,126 @@
 %   BOÎTES COLORÉES (tcolorbox)
 % ═══════════════════════════════════════
 
+% Style de base commun à tous les encadrés
+\tcbset{
+  rnbase/.style={
+    enhanced, breakable,
+    fonttitle=\bfseries\sffamily,
+    fontupper=\normalfont,
+    coltitle=white,
+    arc=4pt, boxrule=0.9pt,
+    left=10pt, right=10pt, top=7pt, bottom=7pt,
+    boxsep=1pt,
+    toptitle=1.5pt, bottomtitle=1.5pt,
+    enlarge top by=1pt, enlarge bottom by=1pt,
+  }
+}
+
 % Boîte Définition
 \newtcolorbox{defbox}[1][]{
-  colback=lightblue,
-  colframe=accentblue,
-  coltitle=white,
-  fonttitle=\bfseries\sffamily,
-  title={Définition~#1},
-  arc=3pt,
-  boxrule=1pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt
+  rnbase,
+  colback=lightblue!55, colframe=accentblue,
+  title={Définition~#1}
 }
 
 % Boîte Théorème
 \newtcolorbox{thmbox}[1][]{
-  colback=lightgreen,
-  colframe=deepgreen,
-  coltitle=white,
-  fonttitle=\bfseries\sffamily,
-  title={Théorème~#1},
-  arc=3pt,
-  boxrule=1pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt
+  rnbase,
+  colback=lightgreen!70, colframe=deepgreen,
+  title={Théorème~#1}
 }
 
 % Boîte Proposition
 \newtcolorbox{propbox}[1][]{
-  colback=lightgreen!60,
-  colframe=deepgreen!70,
-  coltitle=white,
-  fonttitle=\bfseries\sffamily,
-  title={Proposition~#1},
-  arc=3pt,
-  boxrule=1pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt
+  rnbase,
+  colback=lightgreen!40, colframe=deepgreen!75,
+  title={Proposition~#1}
 }
 
-% Boîte Preuve / Démonstration
+% Boîte Preuve / Démonstration (sobre, barre latérale)
 \newtcolorbox{proofbox}[1][Démonstration]{
-  colback=white,
-  colframe=darkgray!50,
-  coltitle=darkgray,
-  fonttitle=\itshape\sffamily,
+  enhanced, breakable,
+  colback=white, colframe=softgray!45,
+  coltitle=darkgray, fonttitle=\itshape\sffamily,
   title={#1},
-  arc=2pt,
-  boxrule=0.5pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt,
-  breakable
+  arc=2pt, boxrule=0.5pt,
+  left=12pt, right=10pt, top=6pt, bottom=6pt,
+  borderline west={2.5pt}{0pt}{softgray!55},
 }
 
 % Boîte Remarque
 \newtcolorbox{rembox}[1][Remarque]{
-  colback=lightorange,
-  colframe=deeporange,
-  coltitle=white,
-  fonttitle=\bfseries\sffamily,
-  title={#1},
-  arc=3pt,
-  boxrule=1pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt
+  rnbase,
+  colback=lightorange!70, colframe=deeporange,
+  title={#1}
 }
 
 % Boîte Exemple
 \newtcolorbox{exbox}[1][Exemple]{
-  colback=lightpurple!50,
-  colframe=deeppurple!70,
-  coltitle=white,
-  fonttitle=\bfseries\sffamily,
-  title={#1},
-  arc=3pt,
-  boxrule=1pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt,
-  breakable
+  rnbase,
+  colback=lightpurple!45, colframe=deeppurple!75,
+  title={#1}
 }
 
-% Boîte Intuition personnelle
+% Boîte Intuition personnelle (mise en avant)
 \newtcolorbox{intuitionbox}[1][Mon intuition]{
-  colback=lightred!40,
-  colframe=deepred!70,
-  coltitle=white,
-  fonttitle=\bfseries\sffamily,
-  title={\(\star\) #1},
-  arc=3pt,
-  boxrule=1.5pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt,
-  breakable
+  rnbase,
+  colback=lightred!35, colframe=deepred!75,
+  boxrule=1.3pt,
+  title={\(\star\)~#1},
+  drop fuzzy shadow=deepred!25,
 }
 
-% Boîte Méthode
+% Boîte Méthode (mise en avant)
 \newtcolorbox{methodbox}[1][Méthode]{
-  enhanced,
-  colback=white,
-  colframe=accentblue!80,
-  coltitle=white,
-  fonttitle=\bfseries\sffamily,
+  rnbase,
+  colback=white, colframe=accentblue!85,
+  boxrule=1.3pt,
   title={#1},
-  arc=3pt,
-  boxrule=1.5pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt,
-  shadow={2pt}{-2pt}{0pt}{black!20},
-  breakable
+  drop fuzzy shadow=accentblue!25,
 }
 
 % ═══════════════════════════════════════
 %   EN-TÊTES ET PIEDS DE PAGE
 % ═══════════════════════════════════════
+\setlength{\headheight}{15pt}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\sffamily\color{darkgray}\leftmark}
-\fancyhead[R]{\small\sffamily\color{darkgray}Cahier de Recherche}
-\fancyfoot[C]{\small\sffamily\color{darkgray}\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\sffamily\color{softgray}\nouppercase{\leftmark}}
+\fancyhead[R]{\small\sffamily\color{softgray}Cahier de Recherche}
+\fancyfoot[C]{\sffamily\color{softgray}\thepage}
+\renewcommand{\headrulewidth}{0.6pt}
 \renewcommand{\footrulewidth}{0pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{accentblue!55}\leaders\hrule height \headrulewidth\hfill}}
 
 % ═══════════════════════════════════════
 %   FORMAT DES TITRES
 % ═══════════════════════════════════════
+% Noms français (babel désactivé dans cet environnement)
+\renewcommand{\chaptername}{Chapitre}
+\renewcommand{\appendixname}{Annexe}
+
+% Chapitre : numéro accentué + filet coloré
 \titleformat{\chapter}[display]
-  {\normalfont\Huge\bfseries\sffamily\color{deepblue}}
-  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+  {\normalfont\sffamily}
+  {\raggedright\bfseries\large\color{accentblue}%
+    \MakeUppercase{\chaptertitlename}\hspace{0.4em}%
+    {\fontsize{40}{40}\selectfont\color{deepblue}\thechapter}}
+  {6pt}
+  {\Huge\bfseries\color{deepblue}}
+  [\vspace{6pt}{\color{accentblue!70}\titlerule[2pt]}]
+\titlespacing*{\chapter}{0pt}{4pt}{26pt}
+
+% Section : numéro accentué + filet fin clair dessous
 \titleformat{\section}
   {\normalfont\Large\bfseries\sffamily\color{deepblue}}
-  {\thesection}{1em}{}
+  {\color{accentblue}\thesection}{0.8em}{}
+  [\vspace{2pt}{\color{lightblue}\titlerule[1.2pt]}]
+
+% Sous-section
 \titleformat{\subsection}
   {\normalfont\large\bfseries\sffamily\color{accentblue}}
-  {\thesubsection}{1em}{}
+  {\color{accentblue!70}\thesubsection}{0.7em}{}
 
 % ═══════════════════════════════════════
 %   COMMANDES PERSONNALISÉES
@@ -222,4 +228,3 @@
   pdfauthor={},
   bookmarksnumbered=true,
 }
-
